@@ -1,10 +1,15 @@
 from datetime import datetime
 from fastapi import APIRouter, Request
-from fastapi.responses import Response, PlainTextResponse, JSONResponse
-from app.config import settings
+from fastapi.responses import Response, PlainTextResponse, JSONResponse, FileResponse
+from app.config import settings, STATIC_DIR
 from app.database import db_cursor
 
 router = APIRouter()
+
+
+@router.get("/favicon.ico", include_in_schema=False)
+async def favicon_ico():
+    return FileResponse(str(STATIC_DIR / "favicon.ico"), media_type="image/x-icon")
 
 
 def get_all_public_urls() -> list[dict]:
