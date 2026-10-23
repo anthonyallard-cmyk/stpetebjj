@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-16 bg-[#09090B]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="space-y-2 border-b border-white/10 pb-6">
+            <div class="text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">Academy Search</div>
+            <h1 class="font-display font-black text-3xl sm:text-5xl text-white">
+                Search Results {% if query %}for "<span class="text-[#CE1E36]">{{ query }}</span>"{% endif %}
+            </h1>
+        </div>
+
+        {% if matched_programs %}
+        <div class="space-y-4">
+            <h2 class="font-display font-bold text-xl text-white">Programs &amp; Classes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for prog in matched_programs %}
+                <a href="{{ prog.url }}" class="bezel-card block">
+                    <div class="bezel-card-inner p-5 space-y-2">
+                        <span class="text-xs font-mono-tech text-[#FF4D64]">{{ prog.badge }}</span>
+                        <h3 class="font-display font-bold text-lg text-white">{{ prog.name }}</h3>
+                        <p class="text-xs text-zinc-400">{{ prog.short_desc }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if matched_instructors %}
+        <div class="space-y-4">
+            <h2 class="font-display font-bold text-xl text-white">Instructors &amp; Professors</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for inst in matched_instructors %}
+                <a href="/st-pete-jiu-jitsu-professors#{{ inst.slug }}" class="bezel-card block">
+                    <div class="bezel-card-inner p-5 flex items-center gap-4">
+                        <img src="{{ inst.image }}" alt="{{ inst.name }}" class="w-16 h-16 rounded-xl object-cover">
+                        <div>
+                            <h3 class="font-display font-bold text-white">{{ inst.name }}</h3>
+                            <div class="text-xs text-[#FF4D64] font-mono-tech">{{ inst.rank }}</div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if matched_posts %}
+        <div class="space-y-4">
+            <h2 class="font-display font-bold text-xl text-white">Mat Corner Articles</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for post in matched_posts %}
+                <a href="/{{ post.slug }}" class="bezel-card block">
+                    <div class="bezel-card-inner p-5 space-y-2">
+                        <div class="text-xs font-mono-tech text-zinc-500">{{ post.published_at }}</div>
+                        <h3 class="font-display font-bold text-white">{{ post.title }}</h3>
+                        <p class="text-xs text-zinc-400">{{ post.excerpt }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

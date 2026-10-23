@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="relative py-16 bg-[#09090B] border-b border-white/10 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('/static/images/hero-bjj-gi.jpg');"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#09090B]/80 via-[#09090B]/90 to-[#09090B]"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="space-y-3 max-w-3xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">
+                    <span class="w-6 h-0.5 bg-[#CE1E36]"></span>
+                    <span>Live Academy Class Calendar • 5540 Haines Rd N, St. Petersburg, FL</span>
+                </div>
+                <h1 class="font-display font-black text-3xl sm:text-5xl text-white tracking-tight">
+                    {{ page_heading or "Our Brazilian Jiu-Jitsu Class Schedule — Saint Petersburg, Florida" }}
+                </h1>
+                <p class="text-zinc-300 text-base sm:text-lg">
+                    Beginners are invited to join <strong>any Fundamentals class</strong> on our weekly schedule—your first introductory class is always <strong>FREE</strong> and a clean loaner Gi uniform is provided!
+                </p>
+            </div>
+            <div class="flex flex-wrap gap-3 shrink-0">
+                <a href="/contact#free-trial" class="btn-crimson px-6 py-3.5 rounded-xl font-display font-bold text-xs sm:text-sm uppercase tracking-wider">
+                    Book Free Intro Class
+                </a>
+                <a href="/wp-content/uploads/2017/01/Waiver.pdf" target="_blank" rel="noopener" class="px-5 py-3.5 rounded-xl bg-zinc-900 border border-white/15 text-xs sm:text-sm font-semibold text-white hover:border-[#CE1E36] transition">
+                    Download Waiver (PDF)
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ZenPlanner Live Calendar Widget Section (White High-Contrast Shell for Optimal Readability) -->
+<section class="py-12 bg-[#101014] border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <!-- First-Time Student Quick Tips Bar -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-2xl bg-[#18181B] border border-white/10 flex items-start gap-3.5">
+                <span class="w-8 h-8 rounded-lg bg-[#CE1E36]/20 text-[#FF4D64] font-mono-tech font-bold flex items-center justify-center shrink-0">01</span>
+                <div class="text-xs sm:text-sm">
+                    <strong class="text-white block">Arrive 10 Minutes Early</strong>
+                    <span class="text-zinc-400">So we can fit you with a clean loaner Gi uniform and introduce you to our instructors.</span>
+                </div>
+            </div>
+            <div class="p-4 rounded-2xl bg-[#18181B] border border-white/10 flex items-start gap-3.5">
+                <span class="w-8 h-8 rounded-lg bg-[#CE1E36]/20 text-[#FF4D64] font-mono-tech font-bold flex items-center justify-center shrink-0">02</span>
+                <div class="text-xs sm:text-sm">
+                    <strong class="text-white block">Paired With A Senior Student</strong>
+                    <span class="text-zinc-400">New students are paired 1-on-1 with an experienced student to help guide you through every technique.</span>
+                </div>
+            </div>
+            <div class="p-4 rounded-2xl bg-[#18181B] border border-white/10 flex items-start gap-3.5">
+                <span class="w-8 h-8 rounded-lg bg-[#CE1E36]/20 text-[#FF4D64] font-mono-tech font-bold flex items-center justify-center shrink-0">03</span>
+                <div class="text-xs sm:text-sm">
+                    <strong class="text-white block">Questions? Text (727) 619-4255</strong>
+                    <span class="text-zinc-400">Text (preferred) or call us anytime, or click any class below to reserve your spot!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authentic ZenPlanner Calendar Embed (Exact Partition & Instance ID from stpetebjj.com) -->
+        <div class="zenplanner-shell">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-4 border-b border-zinc-200">
+                <div>
+                    <h2 class="font-display font-extrabold text-xl text-[#09090B]">Live Weekly Class Calendar</h2>
+                    <p class="text-xs text-zinc-500">Powered by ZenPlanner Studio • Updated in real time</p>
+                </div>
+                <a href="https://stpetebjj.zenplanner.com/zenplanner/portal/calendar.cfm" target="_blank" rel="noopener" class="text-xs font-mono-tech font-semibold text-[#CE1E36] hover:underline">
+                    Open Full-Screen Calendar in New Tab &nearr;
+                </a>
+            </div>
+
+            <div id="calendar_6c9eb298-1fa2-455c-b545-e89677f1cd74" class="min-h-[380px]"></div>
+            <script type="text/javascript">
+            (function(win, doc, zenJSHost, src, module, partitionApiKey, widgetInstanceId) {
+                win.zenplanner = win.zenplanner || {};
+                win.zenplanner.directLoadArgs = win.zenplanner.directLoadArgs || [];
+                var tryCount = 0, intervalId = null;
+                function afterLoad() {
+                    if (win.zenplanner.directLoader !== undefined && window.zenplanner.directLoader !== null) {
+                        clearInterval(intervalId);
+                        for (var i = 0, l = win.zenplanner.directLoadArgs.length; i < l; i++) {
+                            if (win.zenplanner.directLoadArgs[i].widgetInstanceId === widgetInstanceId) {
+                                win.zenplanner.directLoader.loadWidget(zenJSHost, module, partitionApiKey, widgetInstanceId);
+                            }
+                        }
+                    } else if (tryCount++ > 200) {
+                        console.log('Zen Planner widget : ' + module + ', failed to load.');
+                        clearInterval(intervalId);
+                    }
+                }
+                if (win.zenplanner.directLoader === undefined || win.zenplanner.directLoader === null) {
+                    win.zenplanner.directLoadArgs.push({
+                        module: module,
+                        partitionApiKey: partitionApiKey,
+                        widgetInstanceId: widgetInstanceId
+                    });
+                    var s = doc.createElement('script');
+                    s.async = 1;
+                    s.src = zenJSHost + '/' + src;
+                    doc.head.appendChild(s);
+                    intervalId = setInterval(afterLoad, 50);
+                } else {
+                    win.zenplanner.directLoader.loadWidget(zenJSHost, module, partitionApiKey, widgetInstanceId);
+                }
+            })(
+                window,
+                document,
+                'https://studio.zenplanner.com',
+                'zenplanner/studio/target/zp-widget-direct.js',
+                'calendar',
+                'e5375747-e005-479f-bf4c-a6963ec54790',
+                '6c9eb298-1fa2-455c-b545-e89677f1cd74'
+            );
+            </script>
+        </div>
+    </div>
+</section>
+
+<!-- Class Programs Breakdown -->
+<section id="programs" class="py-16 bg-[#09090B]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="max-w-2xl">
+            <div class="text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64] mb-1">Program Guide</div>
+            <h2 class="font-display font-black text-3xl text-white">Which Class Should You <span class="text-[#CE1E36]">Attend?</span></h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for prog in nav_programs %}
+            <div class="bezel-card">
+                <div class="bezel-card-inner p-6 space-y-3">
+                    <span class="px-2.5 py-1 rounded bg-[#CE1E36]/20 text-[#FF4D64] text-xs font-mono-tech font-bold">{{ prog.badge }}</span>
+                    <h3 class="font-display font-extrabold text-xl text-white">{{ prog.name }}</h3>
+                    <div class="text-xs font-mono-tech text-zinc-400">{{ prog.level }}</div>
+                    <p class="text-sm text-zinc-300 leading-relaxed">{{ prog.short_desc }}</p>
+                    <div class="pt-2">
+                        <a href="{{ prog.url }}" class="text-xs font-display font-bold uppercase tracking-wider text-[#FF4D64] hover:underline">
+                            Learn More &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

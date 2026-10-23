@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="relative py-16 bg-[#09090B] border-b border-white/10 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('/wp-content/uploads/2019/05/Slide-1.jpg');"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#09090B]/85 via-[#09090B]/95 to-[#09090B]"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl space-y-4">
+            <div class="inline-flex items-center gap-2 text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">
+                <span class="w-6 h-0.5 bg-[#CE1E36]"></span>
+                <span>Carlos Gracie Jr. &rarr; Eduardo "Veio" de Lima &rarr; Sean Lynch Lineage</span>
+            </div>
+            <h1 class="font-display font-black text-4xl sm:text-6xl text-white tracking-tight">
+                {{ page_heading or "St. Pete Jiu-Jitsu Professors & Instructors" }}
+            </h1>
+            <p class="text-lg text-zinc-300 leading-relaxed">
+                Meet the black belt professors, national Judo &amp; wrestling champions, and seasoned grappling coaches who lead classes every day on the mats at St. Pete Brazilian Jiu-Jitsu.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Full-Width Alternating Editorial Profiles (Preserving 100% Original Instructor Text & Photos) -->
+<section class="py-16 bg-[#09090B]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        {% for inst in instructors %}
+        <article id="{{ inst.slug }}" class="bezel-card scroll-mt-28">
+            <div class="bezel-card-inner p-6 sm:p-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                    <!-- Portrait Image -->
+                    <div class="lg:col-span-4 {{ 'lg:order-2' if loop.index is even else '' }}">
+                        <div class="relative rounded-2xl overflow-hidden border border-white/15 bg-zinc-900 shadow-2xl">
+                            <img src="{{ inst.image }}" alt="{{ inst.name }}" class="w-full h-80 sm:h-96 object-cover object-top">
+                            <div class="absolute bottom-3 left-3 right-3 p-3 rounded-xl bg-black/85 backdrop-blur-md border border-white/15 flex items-center justify-between">
+                                <span class="text-xs font-mono-tech font-bold text-[#FF4D64]">{{ inst.rank }}</span>
+                                <span class="belt-bar-accent scale-75 origin-right"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Full Biography -->
+                    <div class="lg:col-span-8 space-y-4 {{ 'lg:order-1' if loop.index is even else '' }}">
+                        <div class="space-y-1">
+                            <div class="text-xs font-mono-tech uppercase tracking-wider text-zinc-400">{{ inst.lineage }}</div>
+                            <h2 class="font-display font-black text-2xl sm:text-4xl text-white">
+                                <a href="/dt_team/{{ inst.slug }}" class="hover:text-[#FF4D64] transition">{{ inst.name }}</a>
+                            </h2>
+                            <div class="text-sm font-semibold text-[#FF4D64]">{{ inst.role }} • {{ inst.rank }}</div>
+                        </div>
+
+                        <div class="prose prose-invert max-w-none space-y-4 text-zinc-300 text-base leading-relaxed">
+                            {{ inst.bio | safe }}
+                        </div>
+
+                        <div class="pt-3 flex flex-wrap items-center gap-4">
+                            <a href="/contact#free-trial" class="btn-crimson px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider">
+                                Train With {{ inst.name.split(' ')[1] if ' ' in inst.name else inst.name }} — Free Class
+                            </a>
+                            <a href="/dt_team/{{ inst.slug }}" class="text-xs font-mono-tech text-zinc-400 hover:text-white underline">
+                                Dedicated Instructor Profile &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

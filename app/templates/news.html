@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-16 bg-[#09090B]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
+            <div class="space-y-2 max-w-3xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">
+                    <span class="w-6 h-0.5 bg-[#CE1E36]"></span>
+                    <span>Mat Corner • Belt Promotions, Seminars &amp; Academy News</span>
+                </div>
+                <h1 class="font-display font-black text-3xl sm:text-5xl text-white tracking-tight">
+                    {{ page_heading or "Mat Corner — Academy News & Promotions" }}
+                </h1>
+            </div>
+            <div class="flex flex-wrap gap-2 text-xs font-mono-tech">
+                <a href="/news" class="px-3.5 py-2 rounded-xl border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if not active_category else 'bg-zinc-900 text-zinc-300 border-white/10 hover:text-white' }}">All Posts</a>
+                <a href="/category/promotions" class="px-3.5 py-2 rounded-xl border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if active_category == 'promotions' else 'bg-zinc-900 text-zinc-300 border-white/10 hover:text-white' }}">Promotions</a>
+                <a href="/category/eventsgatherings" class="px-3.5 py-2 rounded-xl border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if active_category == 'eventsgatherings' else 'bg-zinc-900 text-zinc-300 border-white/10 hover:text-white' }}">Events &amp; Seminars</a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+            {% for post in posts %}
+            <article class="bezel-card flex flex-col">
+                <div class="bezel-card-inner flex flex-col justify-between">
+                    <div>
+                        <a href="/{{ post.slug }}" class="block relative h-52 overflow-hidden bg-zinc-900">
+                            <img src="{{ post.featured_image }}" alt="{{ post.title }}" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 left-3 px-2.5 py-1 rounded bg-[#CE1E36] text-white text-[10px] font-mono-tech font-bold uppercase">
+                                {{ post.category_name }}
+                            </span>
+                        </a>
+                        <div class="p-6 space-y-2.5">
+                            <div class="text-xs font-mono-tech text-zinc-500">{{ post.published_at }}</div>
+                            <h2 class="font-display font-extrabold text-xl text-white">
+                                <a href="/{{ post.slug }}" class="hover:text-[#FF4D64] transition">{{ post.title }}</a>
+                            </h2>
+                            <p class="text-sm text-zinc-400 leading-relaxed">{{ post.excerpt }}</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-5 pt-2 border-t border-white/5">
+                        <a href="/{{ post.slug }}" class="text-xs font-display font-bold uppercase tracking-wider text-[#FF4D64] hover:underline">
+                            Read Full Story &rarr;
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,195 @@
+/* St. Pete Brazilian Jiu-Jitsu — Agency-Tier Custom Design System
+   Palette: Obsidian (#09090B), Enso Crimson (#CE1E36), Crisp White (#FAFAFA) */
+
+:root {
+    --bg-obsidian: #09090B;
+    --bg-charcoal: #121216;
+    --bg-surface: #18181B;
+    --crimson: #CE1E36;
+    --crimson-dark: #A31428;
+    --crimson-glow: rgba(206, 30, 54, 0.35);
+    --text-white: #FAFAFA;
+    --text-zinc: #A1A1AA;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-crimson: rgba(206, 30, 54, 0.45);
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-obsidian);
+    color: var(--text-white);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+h1, h2, h3, h4, .font-display {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.025em;
+}
+
+.font-mono-tech {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Sticky Header Scroll State — Semi-Translucent Blur */
+.site-header {
+    transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                backdrop-filter 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.35s ease;
+}
+
+.site-header.scrolled {
+    background-color: rgba(9, 9, 11, 0.88) !important;
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.75), 0 1px 0 0 rgba(206, 30, 54, 0.3);
+}
+
+/* Double-Bezel Agency Card Architecture */
+.bezel-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 1.25rem;
+    padding: 0.375rem;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bezel-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(206, 30, 54, 0.55);
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.7), 0 0 28px -6px rgba(206, 30, 54, 0.25);
+}
+
+.bezel-card-inner {
+    background: #131317;
+    border-radius: 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Light Mode Double-Bezel Card for White Contrast Sections */
+.bezel-card-light {
+    background: #F4F4F6;
+    border: 1px solid rgba(9, 9, 11, 0.08);
+    border-radius: 1.25rem;
+    padding: 0.375rem;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.35s ease,
+                box-shadow 0.35s ease;
+}
+
+.bezel-card-light:hover {
+    transform: translateY(-4px);
+    border-color: rgba(206, 30, 54, 0.45);
+    box-shadow: 0 20px 40px -15px rgba(9, 9, 11, 0.12);
+}
+
+.bezel-card-light-inner {
+    background: #FFFFFF;
+    border-radius: 0.95rem;
+    border: 1px solid rgba(9, 9, 11, 0.06);
+    height: 100%;
+}
+
+/* Crimson CTA Button with Tactile Glow */
+.btn-crimson {
+    background: linear-gradient(135deg, #E0243E 0%, #CE1E36 55%, #A61428 100%);
+    color: #FFFFFF;
+    box-shadow: 0 10px 25px -6px rgba(206, 30, 54, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.25s ease;
+}
+
+.btn-crimson:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px -6px rgba(206, 30, 54, 0.75), inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+    filter: brightness(1.06);
+}
+
+.btn-crimson:active {
+    transform: translateY(0);
+}
+
+/* Hero Slider Transitions */
+.hero-slide {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.85s ease;
+}
+
+.hero-slide.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 10;
+}
+
+.hero-slide .slide-bg {
+    transform: scale(1.04);
+    transition: transform 6.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-slide.active .slide-bg {
+    transform: scale(1.0);
+}
+
+/* Tatami Subtle Texture Pattern */
+.bg-tatami {
+    background-image: radial-gradient(rgba(206, 30, 54, 0.10) 1px, transparent 1px),
+                      radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: 0 0, 16px 16px;
+}
+
+/* Black Belt Red Bar Accent */
+.belt-bar-accent {
+    display: inline-flex;
+    align-items: center;
+    height: 8px;
+    width: 76px;
+    background: #18181B;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.belt-bar-accent::before {
+    content: "";
+    display: block;
+    width: 34px;
+    height: 100%;
+    background: #CE1E36;
+    border-right: 2px solid #FFFFFF;
+    box-shadow: 6px 0 0 0 #18181B, 8px 0 0 0 #FFFFFF, 14px 0 0 0 #18181B, 16px 0 0 0 #FFFFFF;
+}
+
+/* ZenPlanner Container Styling */
+.zenplanner-shell {
+    background: #FFFFFF;
+    color: #09090B;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #E4E4E7;
+    min-height: 420px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #09090B;
+}
+::-webkit-scrollbar-thumb {
+    background: #27272A;
+    border-radius: 5px;
+    border: 2px solid #09090B;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #CE1E36;
+}

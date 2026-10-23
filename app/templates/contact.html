@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Contact Page Hero -->
+<section class="py-14 bg-[#09090B] border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl space-y-3">
+            <div class="inline-flex items-center gap-2 text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">
+                <span class="w-6 h-0.5 bg-[#CE1E36]"></span>
+                <span>5540 Haines Rd N, St. Petersburg, FL 33714 • (727) 619-4255</span>
+            </div>
+            <h1 class="font-display font-black text-4xl sm:text-6xl text-white tracking-tight">
+                Contact <span class="text-[#CE1E36]">St. Pete BJJ</span>
+            </h1>
+            <p class="text-zinc-300 text-base sm:text-lg">
+                Text (preferred) or call us at <a href="tel:17276194255" class="text-white font-bold underline">(727) 619-4255</a>, register for your free introductory class below, or stop by the academy!
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- 3-Column Contact Info + Free Trial Booking + ZenPlanner Widget & FAQs -->
+<section id="free-trial" class="py-16 bg-[#09090B] border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            <!-- Column 1 (4 Cols): Contact Information & Waiver -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bezel-card">
+                    <div class="bezel-card-inner p-6 space-y-5">
+                        <h2 class="font-display font-extrabold text-xl text-white">Contact Information</h2>
+
+                        <div class="space-y-1">
+                            <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Address:</div>
+                            <div class="text-base font-bold text-white">5540 Haines Rd N</div>
+                            <div class="text-sm text-zinc-300">St. Petersburg, FL 33714</div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Phone Number:</div>
+                            <div class="text-sm text-zinc-300">Text (preferred) or call us at</div>
+                            <a href="tel:17276194255" class="text-lg font-mono-tech font-bold text-white hover:text-[#FF4D64] transition block">(727) 619-4255</a>
+                            <div class="text-xs text-zinc-500">Vanity: 727.619.4BJJ</div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Email:</div>
+                            <a href="mailto:info@stpetebjj.com" class="text-sm font-semibold text-white underline hover:text-[#FF4D64]">info@stpetebjj.com</a>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Social Links &amp; Waiver:</div>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="https://www.facebook.com/StPeteBJJ/" target="_blank" rel="noopener" class="px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs font-semibold text-white hover:border-[#CE1E36] transition">Facebook</a>
+                                <a href="https://www.instagram.com/StPeteBJJ/" target="_blank" rel="noopener" class="px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs font-semibold text-white hover:border-[#CE1E36] transition">Instagram</a>
+                                <a href="/wp-content/uploads/2017/01/Waiver.pdf" target="_blank" rel="noopener" class="px-3.5 py-2 rounded-xl bg-[#CE1E36]/20 border border-[#CE1E36]/40 text-xs font-semibold text-[#FF4D64] hover:bg-[#CE1E36] hover:text-white transition">Waiver (PDF)</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZenPlanner Free Trial Direct Widget (Preserved from Original /contact Page) -->
+                <div class="zenplanner-shell">
+                    <div class="text-xs font-mono-tech uppercase text-zinc-500 mb-2">ZenPlanner Studio Free Trial Portal</div>
+                    <div id="freetrial_39e9efab-01e0-43e6-8211-e2b1288fa494"></div>
+                    <script type="text/javascript">
+                    (function(win, doc, zenJSHost, src, module, partitionApiKey, widgetInstanceId) {
+                        win.zenplanner = win.zenplanner || {};
+                        win.zenplanner.directLoadArgs = win.zenplanner.directLoadArgs || [];
+                        var tryCount = 0, intervalId = null;
+                        function afterLoad() {
+                            if (win.zenplanner.directLoader !== undefined && window.zenplanner.directLoader !== null) {
+                                clearInterval(intervalId);
+                                for (var i = 0, l = win.zenplanner.directLoadArgs.length; i < l; i++) {
+                                    if (win.zenplanner.directLoadArgs[i].widgetInstanceId === widgetInstanceId) {
+                                        win.zenplanner.directLoader.loadWidget(zenJSHost, module, partitionApiKey, widgetInstanceId);
+                                    }
+                                }
+                            } else if (tryCount++ > 200) {
+                                clearInterval(intervalId);
+                            }
+                        }
+                        if (win.zenplanner.directLoader === undefined || win.zenplanner.directLoader === null) {
+                            win.zenplanner.directLoadArgs.push({
+                                module: module,
+                                partitionApiKey: partitionApiKey,
+                                widgetInstanceId: widgetInstanceId
+                            });
+                            var s = doc.createElement('script');
+                            s.async = 1;
+                            s.src = zenJSHost + '/' + src;
+                            doc.head.appendChild(s);
+                            intervalId = setInterval(afterLoad, 50);
+                        } else {
+                            win.zenplanner.directLoader.loadWidget(zenJSHost, module, partitionApiKey, widgetInstanceId);
+                        }
+                    })(
+                        window,
+                        document,
+                        'https://studio.zenplanner.com',
+                        'zenplanner/studio/target/zp-widget-direct.js',
+                        'freetrial',
+                        'e5375747-e005-479f-bf4c-a6963ec54790',
+                        '39e9efab-01e0-43e6-8211-e2b1288fa494'
+                    );
+                    </script>
+                </div>
+            </div>
+
+            <!-- Column 2 (4 Cols): Direct Free Class & Inquiry Form (Protected by reCAPTCHA v3) -->
+            <div class="lg:col-span-4">
+                <div class="bezel-card">
+                    <div class="bezel-card-inner p-6 space-y-5">
+                        <div>
+                            <span class="px-2.5 py-1 rounded bg-[#CE1E36]/20 text-[#FF4D64] font-mono-tech text-[11px] font-bold uppercase">Instant Confirmation</span>
+                            <h2 class="font-display font-extrabold text-xl text-white mt-2">Book Free Class or Send Message</h2>
+                            <p class="text-xs text-zinc-400 mt-1">
+                                Remember: for your first class, a clean loaner Gi uniform is provided at no charge!
+                            </p>
+                        </div>
+
+                        <form class="bjj-inquiry-form space-y-3.5">
+                            <input type="text" name="website_url" class="hidden" tabindex="-1" autocomplete="off">
+                            <div>
+                                <label class="block text-xs font-mono-tech uppercase text-zinc-400 mb-1">Your Name *</label>
+                                <input type="text" name="name" required placeholder="First & Last Name" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white focus:border-[#CE1E36] focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono-tech uppercase text-zinc-400 mb-1">Phone / Text Number *</label>
+                                <input type="tel" name="phone" required placeholder="(727) 555-0199" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white focus:border-[#CE1E36] focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono-tech uppercase text-zinc-400 mb-1">Email Address *</label>
+                                <input type="email" name="email" required placeholder="you@example.com" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white focus:border-[#CE1E36] focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono-tech uppercase text-zinc-400 mb-1">Class / Inquiry Topic</label>
+                                <select name="program_interest" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white focus:border-[#CE1E36] focus:outline-none">
+                                    <option value="Free Introductory Class (Fundamentals)">Free Introductory Class (Fundamentals)</option>
+                                    <option value="Juniors BJJ (Ages 12-18)">Juniors Fundamentals (Ages 12–18)</option>
+                                    <option value="Advanced Gi / No-Gi BJJ">Advanced Gi / No-Gi Grappling</option>
+                                    <option value="Visitor Single Drop-In ($20)">Visitor Drop-In / BJJ Globetrotter</option>
+                                    <option value="Private Instruction">Private Instruction Inquiry</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono-tech uppercase text-zinc-400 mb-1">Message / Preferred Class Day</label>
+                                <textarea name="message" rows="3" placeholder="How can we help you?" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white focus:border-[#CE1E36] focus:outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="btn-crimson w-full py-3.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider">
+                                Send Request &rarr;
+                            </button>
+                            <div class="form-status-box hidden"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3 (4 Cols): Frequently Asked Questions (Verbatim from Original Contact Page) -->
+            <div class="lg:col-span-4 space-y-4">
+                <h2 class="font-display font-extrabold text-xl text-white">Frequently Asked Questions:</h2>
+                <div class="space-y-3">
+                    {% for faq in faqs %}
+                    <div class="rounded-2xl bg-[#131317] border border-white/10 overflow-hidden">
+                        <button type="button" class="faq-toggle w-full px-4 py-3.5 text-left flex items-center justify-between gap-3 hover:bg-white/5 transition">
+                            <span class="font-display font-bold text-sm text-white">{{ faq.question }}</span>
+                            <svg class="faq-icon w-4 h-4 text-[#CE1E36] shrink-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div class="px-4 pb-4 text-xs sm:text-sm text-zinc-300 leading-relaxed {{ '' if loop.index <= 2 else 'hidden' }}">
+                            {{ faq.answer | safe }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Full-Width Google Maps Embed (Exact Coordinates & Embed from Original Contact Page) -->
+<section class="bg-[#09090B]">
+    <iframe
+        title="St. Pete Brazilian Jiu-Jitsu Location — 5540 Haines Rd N, St. Petersburg, FL 33714"
+        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d56463.04711454587!2d-82.684235!3d27.811604!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88c2e3f5338df6ab%3A0x6c3b9ec6cf0c86d5!2s5540+Haines+Rd+N%2C+St+Petersburg%2C+FL+33714!5e0!3m2!1sen!2sus!4v1446849481865"
+        width="100%"
+        height="450"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+    ></iframe>
+</section>
+{% endblock %}

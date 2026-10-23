@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-16 bg-[#09090B]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="space-y-2 border-b border-white/10 pb-6">
+            <div class="text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">Complete Directory</div>
+            <h1 class="font-display font-black text-3xl sm:text-5xl text-white">HTML <span class="text-[#CE1E36]">Sitemap</span></h1>
+            <p class="text-sm text-zinc-400">Complete index of all pages, class schedules, programs, photo galleries, and Mat Corner articles on St. Pete Brazilian Jiu-Jitsu.</p>
+        </div>
+
+        <div class="bezel-card">
+            <div class="bezel-card-inner p-6 sm:p-8">
+                <ul class="divide-y divide-white/10">
+                    {% for u in urls %}
+                    <li class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <a href="{{ u.loc }}" class="font-display font-bold text-white hover:text-[#FF4D64] transition">{{ u.title }}</a>
+                        <span class="text-xs font-mono-tech text-zinc-500">{{ u.loc }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-16 bg-[#09090B]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="space-y-3">
+            <a href="/news" class="text-xs font-mono-tech text-[#FF4D64] hover:underline">&larr; Back to Mat Corner</a>
+            <div class="flex items-center gap-3 text-xs font-mono-tech text-zinc-400">
+                <a href="/category/{{ post.category_slug }}" class="px-2.5 py-1 rounded bg-[#CE1E36]/20 text-[#FF4D64] font-bold uppercase">{{ post.category_name }}</a>
+                <span>•</span>
+                <span>{{ post.published_at }}</span>
+            </div>
+            <h1 class="font-display font-black text-3xl sm:text-5xl text-white tracking-tight">{{ post.title }}</h1>
+        </div>
+
+        <article class="bezel-card">
+            <div class="bezel-card-inner p-6 sm:p-10 space-y-8">
+                {% if post.featured_image %}
+                <div class="rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 max-h-[480px] flex justify-center">
+                    <img src="{{ post.featured_image }}" alt="{{ post.title }}" class="max-h-[480px] w-auto object-contain">
+                </div>
+                {% endif %}
+
+                <div class="prose prose-invert max-w-none space-y-4 text-zinc-200 text-base sm:text-lg leading-relaxed">
+                    {{ post.content | safe }}
+                </div>
+
+                <div class="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+                    <div class="text-sm text-zinc-400">
+                        Want to train with us on the mats in St. Petersburg? Your first class is always free!
+                    </div>
+                    <a href="/contact#free-trial" class="btn-crimson px-6 py-3 rounded-xl font-display font-bold text-xs uppercase tracking-wider">
+                        Book Free Intro Class
+                    </a>
+                </div>
+            </div>
+        </article>
+
+        {% if related_posts %}
+        <div class="pt-8 space-y-4">
+            <h2 class="font-display font-bold text-2xl text-white">More From Mat Corner</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {% for rp in related_posts %}
+                <a href="/{{ rp.slug }}" class="p-4 rounded-2xl bg-[#131317] border border-white/10 hover:border-[#CE1E36] transition space-y-2">
+                    <div class="text-[11px] font-mono-tech text-[#FF4D64]">{{ rp.published_at }}</div>
+                    <h3 class="font-display font-bold text-sm text-white">{{ rp.title }}</h3>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

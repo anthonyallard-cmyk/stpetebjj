@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Program Detail Hero -->
+<section class="relative py-16 lg:py-24 bg-[#09090B] border-b border-white/10 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center opacity-25" style="background-image: url('{{ program.image }}');"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-[#09090B] via-[#09090B]/90 to-[#09090B]/60"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl space-y-5">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#CE1E36]/20 border border-[#CE1E36]/40 text-xs font-mono-tech uppercase tracking-wider text-[#FF4D64]">
+                <span>{{ program.badge }}</span>
+                <span>•</span>
+                <span>{{ program.level }}</span>
+            </div>
+            <h1 class="font-display font-black text-4xl sm:text-6xl text-white tracking-tight">
+                St. Pete BJJ <span class="text-[#CE1E36]">{{ program.name }}</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-zinc-200 leading-relaxed">
+                {{ program.short_desc }}
+            </p>
+            <div class="flex flex-wrap gap-4 pt-2">
+                <a href="/contact#free-trial" class="btn-crimson px-6 py-3.5 rounded-xl font-display font-bold text-sm uppercase tracking-wider">
+                    Try Your First Class Free
+                </a>
+                <a href="/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2" class="px-6 py-3.5 rounded-xl bg-white text-[#09090B] font-display font-bold text-sm uppercase tracking-wider hover:bg-zinc-200 transition">
+                    View Weekly Class Schedule
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Preserved Original Graphic Banner + Full Verbatim Text & Curriculum Breakdown -->
+<section class="py-16 bg-[#09090B] border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <!-- Left 7 Cols: Original Banner Image + Verbatim Content -->
+            <div class="lg:col-span-7 space-y-8">
+                {% if program.banner_image %}
+                <div class="rounded-2xl overflow-hidden border border-white/15 shadow-xl bg-zinc-900">
+                    <img src="{{ program.banner_image }}" alt="St. Pete BJJ {{ program.name }}" class="w-full h-auto object-cover">
+                </div>
+                {% endif %}
+
+                <div class="prose prose-invert max-w-none space-y-5 text-zinc-200 text-base sm:text-lg leading-relaxed">
+                    {% if program.slug == 'fundamentals-classes' %}
+                    <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white">St. Pete BJJ Fundamentals Classes</h2>
+                    <p>
+                        At <strong>St. Pete BJJ</strong>, our Fundamentals Classes are designed to benefit students beginning their journey in Brazilian Jiu-Jitsu, while also offering valuable technical adjustments to more experienced students. Following a <strong>16-week curriculum</strong>, our Fundamentals Classes build a solid foundation in self-defense using the techniques that form the basics of Brazilian Jiu-Jitsu. Students in our fundamentals classes will learn everything from escapes and sweeps, to throws and takedowns, to chokes and joint locks, in a controlled and safe environment.
+                    </p>
+                    <p>
+                        Beginners are invited to join in any fundamentals class to begin their jiu-jitsu journey. Here they will be paired with a senior student who will help them work through the techniques being taught. Fundamentals class format begins with a short warm-up, followed by a self-defense technique before moving onto the basic principles of grappling. For your first class a clean gi (uniform) will be provided to you. You can wear shorts under the gi if you prefer, and a t-shirt, rash guard or sports bra will provide extra comfort.
+                    </p>
+                    {% elif program.slug == 'advanced-classes' %}
+                    <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white">St. Pete BJJ Advanced Classes</h2>
+                    <p>
+                        Once students have obtained a <strong>third stripe on their white belt</strong> (or above), they are able to attend our Advanced Classes. Our Advanced Classes follow a curriculum that combines self-defense and sport jiu-jitsu strategies and tactics. The Advanced curriculum builds upon the basics and dives deeper into the vast array of techniques available to the Jiu-Jitsu practitioner. Students wanting to expand their skill set or compete in tournaments will undoubtedly benefit from our Advanced curriculum. These classes also include full live sparring sessions.
+                    </p>
+                    {% else %}
+                    {{ program.description | safe }}
+                    {% endif %}
+                </div>
+
+                <!-- Curriculum Pillars Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                    <div class="p-5 rounded-2xl bg-[#131317] border border-white/10 space-y-1.5">
+                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Pillar 01</div>
+                        <h3 class="font-display font-bold text-lg text-white">Stand-Up &amp; Self-Defense</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">Clinches, grip breaks, headlock escapes, safe breakfalls, and high-percentage takedowns.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-[#131317] border border-white/10 space-y-1.5">
+                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Pillar 02</div>
+                        <h3 class="font-display font-bold text-lg text-white">Guard &amp; Sweeps</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">Closed guard, half guard, open guard retention, and leverage-based sweeps to reverse top position.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-[#131317] border border-white/10 space-y-1.5">
+                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Pillar 03</div>
+                        <h3 class="font-display font-bold text-lg text-white">Guard Passing &amp; Pins</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">Pressure and mobility passing into side control, knee-on-belly, mount, and back control.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-[#131317] border border-white/10 space-y-1.5">
+                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Pillar 04</div>
+                        <h3 class="font-display font-bold text-lg text-white">Escapes &amp; Submissions</h3>
+                        <p class="text-xs text-zinc-400 leading-relaxed">Systematic pin escapes paired with high-percentage chokes and joint locks.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right 5 Cols: Editorial Action Visual + Quick Free Class Booking Card -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bezel-card">
+                    <div class="bezel-card-inner overflow-hidden">
+                        <img src="{{ program.image }}" alt="{{ program.name }}" class="w-full h-64 object-cover">
+                        <div class="p-6 space-y-4">
+                            <h3 class="font-display font-extrabold text-xl text-white">Ready to Step on the Mats?</h3>
+                            <p class="text-sm text-zinc-400">
+                                Your first introductory class is 100% free and includes a clean loaner Gi uniform. No long-term contracts, ever.
+                            </p>
+                            <form class="bjj-inquiry-form space-y-3">
+                                <input type="text" name="website_url" class="hidden" tabindex="-1" autocomplete="off">
+                                <input type="hidden" name="program_interest" value="{{ program.name }}">
+                                <input type="text" name="name" required placeholder="Your Full Name *" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white">
+                                <input type="tel" name="phone" required placeholder="Phone / Text Number *" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white">
+                                <input type="email" name="email" required placeholder="Email Address *" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white">
+                                <button type="submit" class="btn-crimson w-full py-3.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider">
+                                    Book Free {{ program.name }} Session &rarr;
+                                </button>
+                                <div class="form-status-box hidden"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

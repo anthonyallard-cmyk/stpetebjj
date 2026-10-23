@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-16 bg-[#09090B]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-8">
+            <div class="space-y-2">
+                <a href="/st-pete-bjj-photo-galleries" class="text-xs font-mono-tech text-[#FF4D64] hover:underline">&larr; Back to All St. Pete BJJ Photo Galleries</a>
+                <h1 class="font-display font-black text-3xl sm:text-5xl text-white">{{ gallery.title }}</h1>
+                <p class="text-zinc-400 text-sm sm:text-base max-w-2xl">{{ gallery.description }}</p>
+            </div>
+            <div class="px-4 py-2 rounded-xl bg-zinc-900 border border-white/10 text-xs font-mono-tech text-zinc-300 shrink-0">
+                {{ photos | length }} Photos in Album • Click to Enlarge
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {% for p in photos %}
+            <a href="{{ p.image_url }}" data-lightbox-src="{{ p.image_url }}" data-lightbox-caption="{{ p.title }}" class="bezel-card group block">
+                <div class="bezel-card-inner">
+                    <div class="aspect-[4/3] overflow-hidden bg-zinc-900">
+                        <img src="{{ p.image_url }}" alt="{{ p.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-3 text-xs text-zinc-400 truncate">{{ p.title }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

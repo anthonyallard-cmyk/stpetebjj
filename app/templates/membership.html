@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Header -->
+<section class="relative py-16 bg-[#09090B] border-b border-white/10 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('/wp-content/uploads/2019/05/Slide2web.jpg');"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#09090B]/85 via-[#09090B]/90 to-[#09090B]"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-3xl space-y-4">
+        <span class="inline-block px-3.5 py-1 rounded-full bg-[#CE1E36]/20 border border-[#CE1E36]/40 text-[#FF4D64] font-mono-tech font-bold text-xs uppercase tracking-widest">
+            Month-to-Month • Zero Contracts • Transparent Pricing
+        </span>
+        <h1 class="font-display font-black text-4xl sm:text-6xl text-white tracking-tight">
+            {{ page_heading or "Jiu-Jitsu Membership" }}
+        </h1>
+        <p class="text-lg text-zinc-200 font-medium">
+            <strong>Your first introductory class is always free, we welcome new students to any Fundamentals class. Please contact us or stop in any time!</strong>
+        </p>
+    </div>
+</section>
+
+<!-- Preserved Verbatim Rates & Modern Membership Cards -->
+<section class="py-16 bg-white text-[#09090B] border-b border-zinc-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <!-- Verbatim Rate Summary Box (100% Preserved Original Links & Text) -->
+        <div class="p-8 rounded-3xl bg-[#09090B] text-white border border-zinc-800 shadow-2xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">
+                        <span>Official St. Pete BJJ Rate Sheet</span>
+                    </div>
+                    <h2 class="font-display font-black text-2xl sm:text-3xl text-white">
+                        Individual Class Rates &amp; Membership Rates
+                    </h2>
+                    <p class="text-sm text-zinc-300 leading-relaxed">
+                        Your first introductory class is always free—we welcome new students to any <a href="/fundamentals-classes" class="text-[#FF4D64] underline font-semibold">Fundamentals class</a>. Please <a href="/contact" class="text-[#FF4D64] underline font-semibold">contact us</a> or stop in any time!
+                    </p>
+                    <div class="space-y-1.5 text-xs text-zinc-400 italic pt-2">
+                        <p>*Membership rates are based on monthly automated payments. Billing is month to month, no contract required.</p>
+                        <p>**We offer membership discounts for students, military/veterans, and law enforcement; as well as couples and families.</p>
+                        <p>***We do recognize <strong>BJJ Globetrotters</strong> members.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Individual Class Rates -->
+                    <div class="p-5 rounded-2xl bg-zinc-900 border border-white/10 space-y-3">
+                        <h3 class="font-display font-extrabold text-base text-[#FF4D64] uppercase tracking-wider">Individual Class Rates</h3>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <a href="https://stpetebjj.sites.zenplanner.com/retail-product.cfm?productId=E7951814-35D2-433C-80F1-D818ED627B01" target="_blank" rel="noopener" class="text-white font-semibold underline decoration-[#CE1E36] hover:text-[#FF4D64]">
+                                    Single class drop-in
+                                </a>
+                                <span class="font-mono-tech font-bold text-white">$20</span>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <a href="https://stpetebjj.sites.zenplanner.com/retail-product.cfm?productId=40DB5254-3438-470D-81B8-903F19D618BE" target="_blank" rel="noopener" class="text-white font-semibold underline decoration-[#CE1E36] hover:text-[#FF4D64]">
+                                    10 Class package
+                                </a>
+                                <span class="font-mono-tech font-bold text-white">$180 <span class="text-xs text-emerald-400">(10% off)</span></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Membership Rates -->
+                    <div class="p-5 rounded-2xl bg-zinc-900 border border-[#CE1E36]/40 space-y-3">
+                        <h3 class="font-display font-extrabold text-base text-[#FF4D64] uppercase tracking-wider">Membership Rates</h3>
+                        <ul class="space-y-2.5 text-sm">
+                            <li class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <span class="text-zinc-200">Unlimited Monthly classes</span>
+                                <span class="font-mono-tech font-bold text-white">$130/mo</span>
+                            </li>
+                            <li class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <span class="text-zinc-200">Unlimited Juniors (12–18)</span>
+                                <span class="font-mono-tech font-bold text-white">$110/mo</span>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <span class="text-white font-bold">Full 6 Months Unlimited</span>
+                                <span class="font-mono-tech font-bold text-emerald-400">$700 (10% off)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Pricing Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for m in memberships %}
+            <div class="bezel-card-light {{ 'ring-2 ring-[#CE1E36]' if m.featured else '' }}">
+                <div class="bezel-card-light-inner p-6 flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-md text-[11px] font-mono-tech font-bold uppercase tracking-wider {{ 'bg-[#CE1E36] text-white' if m.featured else 'bg-zinc-100 text-zinc-700' }}">
+                                {{ m.badge }}
+                            </span>
+                            <span class="text-xs font-mono-tech text-zinc-400 uppercase">{{ m.category }}</span>
+                        </div>
+                        <h3 class="font-display font-extrabold text-xl text-[#09090B]">{{ m.name }}</h3>
+                        <div class="flex items-baseline gap-1">
+                            <span class="font-display font-black text-4xl text-[#09090B]">{{ m.price_display }}</span>
+                            {% if m.billing_period %}
+                            <span class="text-sm font-semibold text-zinc-500">{{ m.billing_period }}</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm text-zinc-600 leading-relaxed">{{ m.description }}</p>
+                        <ul class="space-y-2 pt-2 border-t border-zinc-100 text-xs sm:text-sm text-zinc-700">
+                            {% for feat in m.features %}
+                            <li class="flex items-start gap-2">
+                                <span class="text-[#CE1E36] font-bold">&#10003;</span>
+                                <span>{{ feat }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div>
+                        <a href="{{ m.external_url }}" target="{{ '_blank' if m.external_url.startswith('http') else '_self' }}" rel="noopener" class="w-full py-3.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider text-center block transition {{ 'btn-crimson' if m.featured else 'bg-[#09090B] text-white hover:bg-[#CE1E36]' }}">
+                            {% if m.slug == 'free-intro-class' %}Book Free Class{% elif m.category == 'dropin' %}Purchase Pass Online &nearr;{% else %}Register Online Below &darr;{% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Embedded ZenPlanner Online Registration Portal & Studio Widget -->
+<section id="register-online" class="py-16 bg-[#101014] border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <div class="text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64] mb-1">Direct Online Registration</div>
+                <h2 class="font-display font-black text-3xl text-white">Sign Up Online via <span class="text-[#CE1E36]">ZenPlanner</span></h2>
+                <p class="text-sm text-zinc-400 mt-1">
+                    Private Instruction is also available—<a href="/contact" class="text-white underline">contact us</a> for more details!
+                </p>
+            </div>
+            <a href="https://stpetebjj.zenplanner.com/zenplanner/portal/sign-up-now.cfm" target="_blank" rel="noopener" class="px-5 py-3 rounded-xl bg-zinc-900 border border-white/15 text-xs font-mono-tech font-bold text-white hover:border-[#CE1E36] transition">
+                Open Member Registration in New Window &nearr;
+            </a>
+        </div>
+
+        <!-- ZenPlanner Studio Membership Widget (from /memberships) -->
+        <div class="zenplanner-shell">
+            <div id="membership_ca2040c1-5909-4d97-871e-9f13e6fdab19" class="mb-6"></div>
+            <script type="text/javascript">
+            (function(win, doc, zenJSHost, src, module, partitionApiKey, widgetInstanceId) {
+                win.zenplanner = win.zenplanner || {};
+                win.zenplanner.directLoadArgs = win.zenplanner.directLoadArgs || [];
+                var tryCount = 0, intervalId = null;
+                function afterLoad() {
+                    if (win.zenplanner.directLoader !== undefined && window.zenplanner.directLoader !== null) {
+                        clearInterval(intervalId);
+                        for (var i = 0, l = win.zenplanner.directLoadArgs.length; i < l; i++) {
+                            if (win.zenplanner.directLoadArgs[i].widgetInstanceId === widgetInstanceId) {
+                                win.zenplanner.directLoader.loadWidget(zenJSHost, module, partitionApiKey, widgetInstanceId);
+                            }
+                        }
+                    } else if (tryCount++ > 200) {
+                        clearInterval(intervalId);
+                    }
+                }
+                if (win.zenplanner.directLoader === undefined || win.zenplanner.directLoader === null) {
+                    win.zenplanner.directLoadArgs.push({
+                        module: module,
+                        partitionApiKey: partitionApiKey,
+                        widgetInstanceId: widgetInstanceId
+                    });
+                    var s = doc.createElement('script');
+                    s.async = 1;
+                    s.src = zenJSHost + '/' + src;
+                    doc.head.appendChild(s);
+                    intervalId = setInterval(afterLoad, 50);
+                } else {
+                    win.zenplanner.directLoader.loadWidget(zenJSHost, module, partitionApiKey, widgetInstanceId);
+                }
+            })(
+                window,
+                document,
+                'https://studio.zenplanner.com',
+                'zenplanner/studio/target/zp-widget-direct.js',
+                'membership',
+                'e5375747-e005-479f-bf4c-a6963ec54790',
+                'ca2040c1-5909-4d97-871e-9f13e6fdab19'
+            );
+            </script>
+
+            <!-- Original ZenPlanner Portal Iframe (from /membership) -->
+            <div class="pt-4 border-t border-zinc-200">
+                <iframe
+                    id="idZenPlannerFrame"
+                    title="St. Pete BJJ ZenPlanner Member Registration"
+                    style="width: 100%; min-height: 520px; border: 0;"
+                    src="https://stpetebjj.zenplanner.com/zenplanner/portal/sign-up-now.cfm?type=Membership&amp;FRAME=true"
+                ></iframe>
+                <script src="https://stpetebjj.zenplanner.com/zenplanner/skin/js/resize.js"></script>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

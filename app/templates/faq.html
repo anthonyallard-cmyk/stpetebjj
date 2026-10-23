@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in faqs %}
+    {
+      "@type": "Question",
+      "name": {{ faq.question | tojson }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ (faq.answer | striptags) | tojson }}
+      }
+    }{{ "," if not loop.last else "" }}
+    {% endfor %}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-[#09090B]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div class="space-y-3 text-center max-w-3xl mx-auto">
+            <span class="px-3.5 py-1 rounded-full bg-[#CE1E36]/20 text-[#FF4D64] font-mono-tech text-xs font-bold uppercase tracking-widest">
+                Everything You Need To Know Before Stepping On The Mats
+            </span>
+            <h1 class="font-display font-black text-4xl sm:text-5xl text-white tracking-tight">
+                Frequently Asked <span class="text-[#CE1E36]">Questions</span>
+            </h1>
+            <p class="text-zinc-300 text-base sm:text-lg">
+                Have a question that isn't answered below? Text or call us anytime at <a href="tel:17276194255" class="text-white font-bold underline">(727) 619-4255</a>!
+            </p>
+        </div>
+
+        <div class="space-y-4">
+            {% for faq in faqs %}
+            <div class="bezel-card">
+                <div class="bezel-card-inner p-6 space-y-2">
+                    <h2 class="font-display font-extrabold text-xl text-white">{{ faq.question }}</h2>
+                    <div class="text-sm sm:text-base text-zinc-300 leading-relaxed">
+                        {{ faq.answer | safe }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="p-8 rounded-3xl bg-gradient-to-r from-[#CE1E36] to-[#991224] text-white flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="space-y-1">
+                <h2 class="font-display font-black text-2xl">Ready to Try Your Free Introductory Class?</h2>
+                <p class="text-sm text-white/90">A clean loaner Gi uniform is provided free of charge—just arrive 10 minutes before any Fundamentals class!</p>
+            </div>
+            <a href="/contact#free-trial" class="px-6 py-3.5 rounded-xl bg-white text-[#09090B] font-display font-extrabold text-xs uppercase tracking-wider shrink-0 hover:bg-zinc-100 transition">
+                Book Free Class Now &rarr;
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

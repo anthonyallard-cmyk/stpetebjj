@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard — St. Pete Brazilian Jiu-Jitsu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#09090B] text-zinc-100 min-h-screen">
+    <!-- Top Admin Bar -->
+    <header class="bg-[#121216] border-b border-white/10 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <img src="/static/images/logo-circle.png" alt="St. Pete BJJ" class="w-10 h-10 rounded-full border border-[#CE1E36]">
+            <div>
+                <div class="font-bold text-white text-base">St. Pete Brazilian Jiu-Jitsu — Admin Console</div>
+                <div class="text-xs text-zinc-400">5540 Haines Rd N, St. Petersburg, FL 33714 • (727) 619-4255</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+            <a href="/" target="_blank" class="px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/15 hover:border-[#CE1E36] transition">View Live Site &nearr;</a>
+            <a href="{{ admin_path }}/logout" class="px-3.5 py-2 rounded-xl bg-red-950/60 border border-red-500/30 text-red-200 hover:bg-red-900/60 transition">Sign Out</a>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        {% if msg %}
+        <div class="p-4 rounded-2xl bg-emerald-950/90 border border-emerald-500/40 text-emerald-200 text-sm font-medium">
+            &#10003; {{ msg }}
+        </div>
+        {% endif %}
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-2 border-b border-white/10 pb-4 text-xs sm:text-sm font-semibold">
+            <a href="{{ admin_path }}?tab=inquiries" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'inquiries' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
+                Free Class Inquiries ({{ quotes | length }})
+            </a>
+            <a href="{{ admin_path }}?tab=memberships" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'memberships' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
+                Memberships &amp; Rates ({{ memberships | length }})
+            </a>
+            <a href="{{ admin_path }}?tab=instructors" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'instructors' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
+                Instructors ({{ instructors | length }})
+            </a>
+            <a href="{{ admin_path }}?tab=security" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'security' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
+                Geo-IP Firewall &amp; reCAPTCHA ({{ security_events | length }})
+            </a>
+            <a href="{{ admin_path }}?tab=backups" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'backups' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
+                ZIP Backups ({{ backups | length }})
+            </a>
+        </div>
+
+        {% if active_tab == 'inquiries' %}
+        <div class="rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
+            <h2 class="font-bold text-xl text-white">Student Inquiries &amp; Free Intro Class Requests</h2>
+            {% if not quotes %}
+            <p class="text-sm text-zinc-400">No inquiries submitted yet.</p>
+            {% else %}
+            <div class="space-y-4">
+                {% for q in quotes %}
+                <form action="{{ admin_path }}/quotes/status" method="post" class="p-4 rounded-xl bg-zinc-900/90 border border-white/10 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                    <input type="hidden" name="quote_id" value="{{ q.id }}">
+                    <div class="lg:col-span-4 space-y-1">
+                        <div class="font-bold text-white">{{ q.name }} <span class="text-xs text-zinc-500 font-normal">({{ q.created_at }})</span></div>
+                        <div class="text-xs text-[#FF4D64]">{{ q.program_interest }}</div>
+                        <div class="text-xs text-zinc-300">{{ q.email }} • {{ q.phone }}</div>
+                    </div>
+                    <div class="lg:col-span-4 text-xs text-zinc-300">
+                        {{ q.message or 'No additional message.' }}
+                    </div>
+                    <div class="lg:col-span-4 flex items-center gap-2">
+                        <select name="status" class="px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
+                            <option value="new" {{ 'selected' if q.status == 'new' else '' }}>New</option>
+                            <option value="contacted" {{ 'selected' if q.status == 'contacted' else '' }}>Contacted</option>
+                            <option value="scheduled" {{ 'selected' if q.status == 'scheduled' else '' }}>Free Class Scheduled</option>
+                            <option value="joined" {{ 'selected' if q.status == 'joined' else '' }}>Joined Member</option>
+                        </select>
+                        <input type="text" name="internal_notes" value="{{ q.internal_notes }}" placeholder="Notes..." class="flex-1 px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
+                        <button type="submit" class="px-3 py-2 rounded-lg bg-[#CE1E36] text-xs font-bold text-white">Save</button>
+                    </div>
+                </form>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% elif active_tab == 'memberships' %}
+        <div class="rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
+            <h2 class="font-bold text-xl text-white">Manage Membership &amp; Class Package Rates</h2>
+            <div class="space-y-4">
+                {% for m in memberships %}
+                <form action="{{ admin_path }}/memberships/update" method="post" class="p-4 rounded-xl bg-zinc-900 border border-white/10 grid grid-cols-1 md:grid-cols-6 gap-3 items-center">
+                    <input type="hidden" name="membership_id" value="{{ m.id }}">
+                    <input type="text" name="name" value="{{ m.name }}" class="md:col-span-2 px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
+                    <input type="text" name="price_display" value="{{ m.price_display }}" class="px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white font-mono">
+                    <input type="text" name="billing_period" value="{{ m.billing_period or '' }}" class="px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
+                    <input type="text" name="badge" value="{{ m.badge or '' }}" class="px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
+                    <input type="hidden" name="description" value="{{ m.description }}">
+                    <input type="hidden" name="external_url" value="{{ m.external_url }}">
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#CE1E36] text-xs font-bold text-white">Update Rate</button>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% elif active_tab == 'instructors' %}
+        <div class="rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
+            <h2 class="font-bold text-xl text-white">Academy Instructors &amp; Black Belt Professors</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for inst in instructors %}
+                <div class="p-4 rounded-xl bg-zinc-900 border border-white/10 flex items-center gap-4">
+                    <img src="{{ inst.image }}" alt="{{ inst.name }}" class="w-16 h-16 rounded-xl object-cover">
+                    <div>
+                        <div class="font-bold text-white">{{ inst.name }}</div>
+                        <div class="text-xs text-[#FF4D64]">{{ inst.rank }} • {{ inst.role }}</div>
+                        <div class="text-xs text-zinc-400">{{ inst.lineage }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% elif active_tab == 'security' %}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-6 rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
+                <h2 class="font-bold text-xl text-white">Geo-IP Firewall, WAF &amp; reCAPTCHA v3 Settings</h2>
+                <form action="{{ admin_path }}/settings/update" method="post" class="space-y-4 text-xs">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-zinc-400 mb-1">Academy Phone</label>
+                            <input type="text" name="phone" value="{{ site.get('phone') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-zinc-400 mb-1">Contact Email</label>
+                            <input type="text" name="email_contact" value="{{ site.get('email_contact') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-zinc-400 mb-1">Allowed ISO Country Codes (Geo-IP Firewall)</label>
+                        <input type="text" name="geo_allowed_countries" value="{{ site.get('geo_allowed_countries', 'US, CA, MX, PR') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white font-mono">
+                    </div>
+                    <div class="flex flex-wrap gap-4 pt-1">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" name="geo_block_enabled" value="1" {{ 'checked' if site.get('geo_block_enabled', '1') == '1' else '' }}>
+                            <span>Block Malicious Foreign IPs</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" name="geo_allow_search_bots" value="1" {{ 'checked' if site.get('geo_allow_search_bots', '1') == '1' else '' }}>
+                            <span>Allow Googlebot / Bingbot</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" name="waf_block_scanners" value="1" {{ 'checked' if site.get('waf_block_scanners', '1') == '1' else '' }}>
+                            <span>Block Exploit Scanners (/wp-admin, /.env)</span>
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-zinc-400 mb-1">reCAPTCHA v3 Site Key</label>
+                            <input type="text" name="recaptcha_site_key" value="{{ site.get('recaptcha_site_key') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-zinc-400 mb-1">reCAPTCHA v3 Secret Key</label>
+                            <input type="text" name="recaptcha_secret_key" value="{{ site.get('recaptcha_secret_key') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white font-mono">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-zinc-400 mb-1">IP Blacklist (comma or newline separated)</label>
+                        <textarea name="geo_ip_blacklist" rows="2" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white font-mono">{{ site.get('geo_ip_blacklist', '') }}</textarea>
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#CE1E36] font-bold text-white">Save Security Settings</button>
+                </form>
+            </div>
+
+            <div class="lg:col-span-6 rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
+                <h2 class="font-bold text-xl text-white">Recent Blocked Security Events</h2>
+                {% if not security_events %}
+                <p class="text-xs text-zinc-400">No blocked threats logged yet.</p>
+                {% else %}
+                <div class="space-y-2 max-h-96 overflow-y-auto text-xs">
+                    {% for ev in security_events %}
+                    <div class="p-3 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-between">
+                        <div>
+                            <span class="font-mono font-bold text-red-400">{{ ev.ip_address }} ({{ ev.country_code }})</span>
+                            <span class="text-zinc-300 ml-2">{{ ev.reason }}</span>
+                            <div class="text-zinc-500 font-mono">{{ ev.request_path }}</div>
+                        </div>
+                        <span class="text-zinc-500">{{ ev.created_at }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% elif active_tab == 'backups' %}
+        <div class="rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="font-bold text-xl text-white">Database &amp; Configuration ZIP Backups</h2>
+                    <p class="text-xs text-zinc-400">Create and download instant snapshot archives of the SQLite database and configuration.</p>
+                </div>
+                <form action="{{ admin_path }}/backups/create" method="post">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#CE1E36] font-bold text-xs uppercase tracking-wider text-white">
+                        + Create New ZIP Backup
+                    </button>
+                </form>
+            </div>
+            <div class="space-y-2 text-xs">
+                {% for b in backups %}
+                <div class="p-3.5 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-between">
+                    <div>
+                        <span class="font-mono font-bold text-white">{{ b.filename }}</span>
+                        <span class="text-zinc-400 ml-3">{{ b.size_kb }} KB • {{ b.created_at }}</span>
+                    </div>
+                    <a href="{{ admin_path }}/backups/download/{{ b.filename }}" class="text-[#FF4D64] font-bold hover:underline">Download ZIP &darr;</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="py-16 bg-[#09090B] border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div class="space-y-2 max-w-3xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">
+                    <span class="w-6 h-0.5 bg-[#CE1E36]"></span>
+                    <span>Authentic Mat Room Photography • St. Petersburg, FL</span>
+                </div>
+                <h1 class="font-display font-black text-4xl sm:text-6xl text-white tracking-tight">
+                    St. Pete BJJ — <span class="text-[#CE1E36]">Photo Galleries</span>
+                </h1>
+                <p class="text-zinc-300 text-base sm:text-lg">
+                    Explore {{ all_photos | length }} candid photos across {{ galleries | length }} galleries from daily Gi &amp; No-Gi training, belt promotions, seminars, and team events.
+                </p>
+            </div>
+            <!-- Category Filter Pills (Preserving Original /dt_gallery_category/... Slugs) -->
+            <div class="flex flex-wrap gap-2 text-xs font-mono-tech">
+                <a href="/st-pete-bjj-photo-galleries" class="px-3.5 py-2 rounded-xl border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if not active_category else 'bg-zinc-900 text-zinc-300 border-white/10 hover:text-white' }}">All Galleries</a>
+                <a href="/dt_gallery_category/st-pete-bjj" class="px-3.5 py-2 rounded-xl border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if active_category == 'st-pete-bjj' else 'bg-zinc-900 text-zinc-300 border-white/10 hover:text-white' }}">St. Pete BJJ</a>
+                <a href="/dt_gallery_category/st-pete-brazilian-jiu-jitsu" class="px-3.5 py-2 rounded-xl border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if active_category == 'st-pete-brazilian-jiu-jitsu' else 'bg-zinc-900 text-zinc-300 border-white/10 hover:text-white' }}">General Training</a>
+                <a href="/dt_gallery_category/womens-brazilian-jiu-jitsu" class="px-3.5 py-2 rounded-xl border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if active_category == 'womens-brazilian-jiu-jitsu' else 'bg-zinc-900 text-zinc-300 border-white/10 hover:text-white' }}">Women's BJJ</a>
+            </div>
+        </div>
+
+        <!-- 6 Gallery Albums Grid (Exact /dt_gallery/{slug} Links) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+            {% for gal in galleries %}
+            <a href="/dt_gallery/{{ gal.slug }}" class="bezel-card group block">
+                <div class="bezel-card-inner">
+                    <div class="relative h-60 overflow-hidden bg-zinc-900">
+                        <img src="{{ gal.cover_image }}" alt="{{ gal.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#131317] via-transparent to-transparent"></div>
+                        <span class="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#CE1E36] text-white text-xs font-mono-tech font-bold shadow">
+                            {{ gal.photo_count }} Photos
+                        </span>
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <div class="text-xs font-mono-tech text-[#FF4D64] uppercase">{{ gal.category_name }}</div>
+                        <h2 class="font-display font-extrabold text-xl text-white group-hover:text-[#FF4D64] transition">{{ gal.title }}</h2>
+                        <p class="text-sm text-zinc-400 leading-relaxed">{{ gal.description }}</p>
+                        <div class="pt-2 text-xs font-display font-bold uppercase tracking-wider text-white inline-flex items-center gap-1">
+                            <span>Open Album</span>
+                            <span class="text-[#CE1E36]">&rarr;</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        <!-- Complete Lightbox Photo Wall -->
+        <div class="pt-8 border-t border-white/10 space-y-6">
+            <h2 class="font-display font-extrabold text-2xl text-white">All Academy Photos <span class="text-sm font-mono-tech text-zinc-400 font-normal">(Click any photo to enlarge)</span></h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {% for p in all_photos %}
+                <a href="{{ p.image_url }}" data-lightbox-src="{{ p.image_url }}" data-lightbox-caption="{{ p.title }}" class="group relative aspect-square rounded-xl overflow-hidden bg-zinc-900 border border-white/10">
+                    <img src="{{ p.image_url }}" alt="{{ p.title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
