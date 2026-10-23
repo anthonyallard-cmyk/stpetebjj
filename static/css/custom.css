@@ -268,15 +268,18 @@ html:not(.dark) main section:not(.hero-dark-keep) .bg-zinc-900\/95 {
     color: #09090B !important;
 }
 
-html:not(.dark) main section:not(.hero-dark-keep) h1,
-html:not(.dark) main section:not(.hero-dark-keep) h2,
-html:not(.dark) main section:not(.hero-dark-keep) h3,
-html:not(.dark) main section:not(.hero-dark-keep) .text-white:not(.btn-crimson):not(a.bg-\[\#09090B\]):not(a.bg-\[\#CE1E36\]):not(button.bg-\[\#CE1E36\]):not(span.bg-\[\#CE1E36\]):not(span.bg-black\/80):not(a.bg-red-600) {
+html:not(.dark) main section:not(.hero-dark-keep):not(.crimson-banner-keep) h1,
+html:not(.dark) main section:not(.hero-dark-keep):not(.crimson-banner-keep) h2,
+html:not(.dark) main section:not(.hero-dark-keep):not(.crimson-banner-keep) h3,
+html:not(.dark) main section:not(.hero-dark-keep):not(.crimson-banner-keep) .text-white:not(.btn-crimson):not(a.bg-\[\#09090B\]):not(a.bg-\[\#CE1E36\]):not(button.bg-\[\#CE1E36\]):not(span.bg-\[\#CE1E36\]):not(span.bg-black\/80):not(a.bg-red-600) {
     color: #09090B !important;
 }
 
-html:not(.dark) main section:not(.hero-dark-keep) .from-\[\#CE1E36\] h2,
-html:not(.dark) main section:not(.hero-dark-keep) .from-\[\#CE1E36\] p {
+html:not(.dark) main section.crimson-banner-keep,
+html:not(.dark) main section.crimson-banner-keep *,
+html:not(.dark) main section.bg-\[\#CE1E36\] *,
+html:not(.dark) main .from-\[\#CE1E36\] h2,
+html:not(.dark) main .from-\[\#CE1E36\] p {
     color: #FFFFFF !important;
 }
 
