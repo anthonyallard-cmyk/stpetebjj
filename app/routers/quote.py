@@ -111,27 +111,22 @@ async def search_autocomplete(q: str = Query("", min_length=1)):
                 "image": r["image"] or "/wp-content/uploads/2016/10/st-pete-bjj.jpg",
             })
 
-        # 2. Search Black Belt Instructors
+        # 2. Search Active Academy Instructors (featured = 1)
         cur.execute(
             """
             SELECT name, slug, rank, role, image
             FROM instructors
-            WHERE status = 1 AND (name LIKE ? OR rank LIKE ? OR role LIKE ? OR bio LIKE ?)
+            WHERE status = 1 AND featured = 1 AND (name LIKE ? OR rank LIKE ? OR role LIKE ? OR bio LIKE ?)
             ORDER BY sort_order ASC LIMIT 4
             """,
             (like_q, like_q, like_q, like_q),
         )
         for r in cur.fetchall():
-            url = (
-                "/dt_team/professor-eduardo-veio-de-lima"
-                if r["slug"] == "professor-eduardo-veio-de-lima"
-                else f"/st-pete-jiu-jitsu-professors#{r['slug']}"
-            )
             results.append({
                 "type": "Instructor",
                 "title": r["name"],
                 "subtitle": f"{r['rank']} • {r['role']}",
-                "url": url,
+                "url": f"/st-pete-jiu-jitsu-professors#{r['slug']}",
                 "image": r["image"],
             })
 

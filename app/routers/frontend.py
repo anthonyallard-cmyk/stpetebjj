@@ -45,7 +45,7 @@ def load_memberships() -> list[dict]:
 async def home_page(request: Request):
     ctx = get_common_context(request)
     with db_cursor() as cur:
-        cur.execute("SELECT * FROM instructors WHERE status = 1 ORDER BY sort_order ASC")
+        cur.execute("SELECT * FROM instructors WHERE status = 1 AND featured = 1 ORDER BY sort_order ASC")
         instructors = [dict(r) for r in cur.fetchall()]
 
         cur.execute("SELECT * FROM galleries WHERE status = 1 ORDER BY sort_order ASC LIMIT 6")
@@ -108,20 +108,43 @@ async def membership_page(request: Request):
 async def instructors_page(request: Request, cat_slug: str = ""):
     ctx = get_common_context(request)
     with db_cursor() as cur:
-        cur.execute("SELECT * FROM instructors WHERE status = 1 ORDER BY sort_order ASC")
+        cur.execute("SELECT * FROM instructors WHERE status = 1 AND featured = 1 ORDER BY sort_order ASC")
         instructors = [dict(r) for r in cur.fetchall()]
     is_staff = request.url.path == "/staff"
     ctx.update({
-        "page_heading": "Our Coaching Team & Lineage" if is_staff else "St. Pete Jiu-Jitsu Professors & Instructors",
-        "meta_title": "Instructors & Black Belt Professors | St. Pete Brazilian Jiu-Jitsu",
-        "meta_description": "Meet the black belt professors and grappling instructors at St. Pete Brazilian Jiu-Jitsu: 4th Degree Black Belt Sean Lynch, 6th Degree Black Belt Eduardo 'Veio' de Lima, Danny Watson, Shane Dunn, Brian Travis, JR Angeles, Jerry Outlaw, and Rodrigo Guimaraes.",
+        "page_heading": "Our Coaching Team" if is_staff else "Instructors",
+        "meta_title": "Instructors | St. Pete Brazilian Jiu-Jitsu",
+        "meta_description": "Meet the instructors at St. Pete Brazilian Jiu-Jitsu: 4th Degree Black Belt Sean Lynch, Danny Watson, Shane Dunn, Brian Travis, Neldo 'JR' Angeles, Prentice Gerald 'Jerry' Outlaw Jr., and Rodrigo 'Manilha' Guimaraes.",
         "instructors": instructors,
     })
     return templates.TemplateResponse(request, "instructors.html", ctx)
 
 
+@router.get("/lineage", response_class=HTMLResponse)
+@router.get("/dt_team/professor-eduardo-veio-de-lima", response_class=HTMLResponse)
+async def lineage_page(request: Request):
+    ctx = get_common_context(request)
+    with db_cursor() as cur:
+        cur.execute("SELECT * FROM instructors WHERE slug = 'professor-eduardo-veio-de-lima'")
+        row = cur.fetchone()
+        eduardo = dict(row) if row else {}
+        cur.execute("SELECT * FROM instructors WHERE slug = 'sean-lynch'")
+        sean_row = cur.fetchone()
+        sean = dict(sean_row) if sean_row else {}
+
+    ctx.update({
+        "eduardo": eduardo,
+        "sean": sean,
+        "meta_title": 'Our Lineage: Mitsuyo Maeda → Carlos Gracie → Carlos Gracie Jr. → Eduardo "Veio" de Lima → Sean Lynch | St. Pete BJJ',
+        "meta_description": 'Explore the direct Brazilian Jiu-Jitsu lineage of St. Pete BJJ: from Mitsuyo Maeda and Carlos Gracie Sr. to Carlos Gracie Jr., 6th Degree Black Belt Professor Eduardo "Veio" de Lima, and 4th Degree Black Belt Professor Sean Lynch.',
+    })
+    return templates.TemplateResponse(request, "lineage.html", ctx)
+
+
 @router.get("/dt_team/{slug}", response_class=HTMLResponse)
 async def instructor_detail_page(request: Request, slug: str):
+    if slug == "professor-eduardo-veio-de-lima":
+        return await lineage_page(request)
     ctx = get_common_context(request)
     with db_cursor() as cur:
         cur.execute("SELECT * FROM instructors WHERE slug = ? AND status = 1", (slug,))
@@ -129,7 +152,7 @@ async def instructor_detail_page(request: Request, slug: str):
         if not row:
             return RedirectResponse(url="/st-pete-jiu-jitsu-professors", status_code=302)
         instructor = dict(row)
-        cur.execute("SELECT * FROM instructors WHERE status = 1 ORDER BY sort_order ASC")
+        cur.execute("SELECT * FROM instructors WHERE status = 1 AND featured = 1 ORDER BY sort_order ASC")
         all_instructors = [dict(r) for r in cur.fetchall()]
 
     ctx.update({

@@ -252,7 +252,7 @@ def init_db():
             "Fast-Paced Clinch, Scrambles & Submissions",
             "High-pace submission grappling without the traditional kimono—focusing on underhooks, collar ties, wrestling scrambles, and high-percentage finishes.",
             """<p>Our <strong>No-Gi Submission Grappling</strong> classes train the art of Brazilian Jiu-Jitsu without the traditional kimono (gi), replacing cloth grips with natural body control: overhooks, underhooks, wrist control, collar ties, and dynamic leg entanglements.</p>
-<p>Led by veteran grapplers including former Marine RECON &amp; MMA coach Shane Dunn, powerlifting record-holder Danny Watson, and NCAA wrestling qualifier Professor Brian Travis, our No-Gi sessions blend classical Gracie Barra positional control with modern wrestling scrambles and submission hunting.</p>""",
+<p>Led by veteran grapplers including former Marine RECON &amp; MMA coach Shane Dunn, powerlifting record-holder Danny Watson, and NCAA wrestling qualifier Professor Brian Travis, our No-Gi sessions blend classical Brazilian Jiu-Jitsu positional control with modern wrestling scrambles and submission hunting.</p>""",
             "/static/images/hero-bjj-nogi.jpg",
             "/wp-content/uploads/2016/11/Slide-5.jpg",
             3, 1, 1
@@ -431,12 +431,12 @@ def init_db():
             "professor-eduardo-veio-de-lima",
             "6th Degree Black Belt",
             "Lineage Master & Gracie Barra Pioneer",
-            "Carlos 'Carlinhos' Gracie Jr. & Jean Jacques Machado → Eduardo de Lima",
+            "Mitsuyo Maeda → Carlos Gracie Sr. → Carlos Gracie Jr. → Eduardo de Lima",
             """<p>A <strong>6th degree black belt</strong> in Brazilian Jiu-Jitsu under Carlos &ldquo;Carlinhos&rdquo; Gracie, Jr. and head of <strong>Gracie Barra Clearwater</strong>, Professor Eduardo &ldquo;Veio&rdquo; de Lima has won multiple gold medals in the black belt divisions at the IBJJF Pan American Championships.</p>
 <p>Eduardo began training in BJJ at age nineteen in Rio de Janeiro, Brazil after his friend Renzo Gracie recommended he try a class at the original Gracie Barra Academy. For his first two years, he studied under Jean Jacques Machado (who awarded his blue and purple belts), and thereafter under Carlos Gracie, Jr., who awarded his brown and black belts—receiving his black belt in 1997 after eight years of intensive training.</p>
 <p>Once promoted to black belt, Eduardo served as head instructor of Gracie Barra in Rio, where legend Roger Gracie was one of his students in the children&rsquo;s class. Coming to Florida in 2000 with the support of Carlos Gracie, Jr., Eduardo built one of Tampa Bay&rsquo;s most respected black belt lineages and mentored Professor Sean Lynch from white belt to 4th degree black belt.</p>""",
             "/wp-content/uploads/2015/09/eduardo.jpg",
-            1, 2, 1
+            0, 99, 1
         ),
         (
             "Coach Danny Watson",
@@ -958,7 +958,7 @@ def init_db():
             "Instructors",
             "st-pete-jiu-jitsu-professors",
             "Black Belt Instructors & Professors | St. Pete Brazilian Jiu-Jitsu",
-            "Meet the black belt professors and coaches at St. Pete BJJ, led by 4th Degree Black Belt Professor Sean Lynch and 6th Degree Gracie Barra Pioneer Professor Eduardo 'Veio' de Lima.",
+            "Meet the black belt professors and coaches at St. Pete Brazilian Jiu-Jitsu in St. Petersburg, FL, led by 4th Degree Black Belt Professor Sean Lynch.",
             "Meet our lineage black belt professors and specialized grappling coaches at St. Pete Brazilian Jiu-Jitsu.",
             "instructors.html"
         ),

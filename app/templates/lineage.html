@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero-dark-keep relative py-16 bg-[#09090B] border-b border-white/10 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('/static/images/program-advanced.jpg');"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#09090B]/85 via-[#09090B]/95 to-[#09090B]"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl space-y-4">
+            <div class="inline-flex items-center gap-2 text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">
+                <span class="w-6 h-0.5 bg-[#CE1E36]"></span>
+                <span>Historical Roots of Brazilian Jiu-Jitsu</span>
+            </div>
+            <h1 class="font-display font-black text-4xl sm:text-6xl text-white tracking-tight">
+                Our <span class="text-[#CE1E36]">BJJ Lineage</span> &amp; Heritage
+            </h1>
+            <p class="text-lg text-zinc-300 leading-relaxed">
+                Tracing the historical martial arts lineage behind Head Instructor <strong>Professor Sean Lynch</strong>—from Kodokan Judo pioneer Mitsuyo Maeda and the Gracie family in Brazil to the founding of our independent St. Petersburg academy in 2013.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-[#09090B]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <!-- Lineage Chain Overview -->
+        <div class="p-6 rounded-2xl bg-[#131317] border border-white/10 flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-mono-tech font-bold">
+            <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">1. Mitsuyo Maeda</span>
+            <span class="text-[#CE1E36]">&rarr;</span>
+            <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">2. Carlos Gracie Sr.</span>
+            <span class="text-[#CE1E36]">&rarr;</span>
+            <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">3. Carlos Gracie Jr.</span>
+            <span class="text-[#CE1E36]">&rarr;</span>
+            <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">4. Eduardo "Veio" de Lima</span>
+            <span class="text-[#CE1E36]">&rarr;</span>
+            <span class="px-3.5 py-1.5 rounded-lg bg-[#CE1E36] text-white">5. Professor Sean Lynch (St. Pete BJJ)</span>
+        </div>
+
+        <!-- Step 1: Mitsuyo Maeda -->
+        <div class="bezel-card">
+            <div class="bezel-card-inner p-6 sm:p-8 space-y-2">
+                <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 01 • Kodokan Judo &amp; Jiu-Jitsu Pioneer (1878–1941)</div>
+                <h2 class="font-display font-extrabold text-2xl text-white">Mitsuyo &ldquo;Count Koma&rdquo; Maeda</h2>
+                <p class="text-sm sm:text-base text-zinc-300 leading-relaxed">
+                    Trained directly at the Kodokan in Tokyo under Judo founder Jigoro Kano, Mitsuyo Maeda traveled the world accepting challenge matches against wrestlers, boxers, and martial artists of every style. Arriving in Bel&eacute;m, Brazil in 1914, Maeda befriended Gast&atilde;o Gracie and began teaching the art of ground fighting and leverage-based submissions to Gast&atilde;o&rsquo;s eldest son, Carlos Gracie.
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 2: Carlos Gracie Sr. -->
+        <div class="bezel-card">
+            <div class="bezel-card-inner p-6 sm:p-8 space-y-2">
+                <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 02 • Founder of Brazilian Jiu-Jitsu (1902–1994)</div>
+                <h2 class="font-display font-extrabold text-2xl text-white">Grandmaster Carlos Gracie Sr.</h2>
+                <p class="text-sm sm:text-base text-zinc-300 leading-relaxed">
+                    As Maeda&rsquo;s premier Brazilian student, Carlos Gracie Sr. opened the first Gracie Jiu-Jitsu Academy in Brazil in 1925 alongside his brothers, including H&eacute;lio Gracie. Together they refined traditional Japanese techniques into a leverage-and-timing system designed so a smaller defender could overcome a larger, stronger opponent.
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 3: Carlos Gracie Jr. -->
+        <div class="bezel-card">
+            <div class="bezel-card-inner p-6 sm:p-8 space-y-2">
+                <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 03 • 8th Degree Coral Belt • Founder of IBJJF &amp; Gracie Barra</div>
+                <h2 class="font-display font-extrabold text-2xl text-white">Master Carlos &ldquo;Carlinhos&rdquo; Gracie Jr.</h2>
+                <p class="text-sm sm:text-base text-zinc-300 leading-relaxed">
+                    Son of Grandmaster Carlos Gracie Sr., Carlos &ldquo;Carlinhos&rdquo; Gracie Jr. dedicated his life to organizing and spreading Brazilian Jiu-Jitsu globally—founding the International Brazilian Jiu-Jitsu Federation (IBJJF), the Confederation of Brazilian Jiu-Jitsu (CBJJ), and the famed Gracie Barra team in Rio de Janeiro in 1986.
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 4: Eduardo "Veio" de Lima (Historical Teacher Profile) -->
+        <div class="bezel-card">
+            <div class="bezel-card-inner p-6 sm:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <div class="md:col-span-4">
+                        <img src="/wp-content/uploads/2015/09/eduardo.jpg" alt="Professor Eduardo Veio de Lima" class="w-full h-64 object-cover object-top rounded-xl border border-white/10">
+                    </div>
+                    <div class="md:col-span-8 space-y-3">
+                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 04 • Sean Lynch's Instructor (Retired)</div>
+                        <h2 class="font-display font-extrabold text-2xl text-white">Professor Eduardo &ldquo;Veio&rdquo; de Lima</h2>
+                        <div class="space-y-3 text-sm sm:text-base text-zinc-300 leading-relaxed">
+                            <p>
+                                A 6th degree black belt under Carlos &ldquo;Carlinhos&rdquo; Gracie Jr., Eduardo &ldquo;Veio&rdquo; de Lima began training at age nineteen in Rio de Janeiro at the original Gracie Barra Academy—studying for his first two years under Jean Jacques Machado (blue and purple belt) and thereafter under Carlos Gracie Jr. (brown and black belt, 1997), winning multiple gold medals at the IBJJF Pan American Championships.
+                            </p>
+                            <p>
+                                After serving as head instructor of Gracie Barra in Rio (where young Roger Gracie was in his kids&rsquo; class), Eduardo moved to Florida in 1999/2000. Sean Lynch became one of his earliest American students, earning his black belt from Eduardo in December 2009. <em>(Professor Eduardo is now retired and is not involved in the operation or instruction of St. Pete Brazilian Jiu-Jitsu.)</em>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Professor Sean Lynch -->
+        <div class="bezel-card">
+            <div class="bezel-card-inner p-6 sm:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <div class="md:col-span-4">
+                        <img src="/wp-content/uploads/2015/11/seanweb.jpg" alt="Professor Sean Lynch" class="w-full h-64 object-cover object-top rounded-xl border border-white/10">
+                    </div>
+                    <div class="md:col-span-8 space-y-3">
+                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 05 • 4th Degree Black Belt • Founder &amp; Head Instructor</div>
+                        <h2 class="font-display font-extrabold text-2xl text-white">Professor Sean Lynch — St. Pete Brazilian Jiu-Jitsu</h2>
+                        <div class="space-y-3 text-sm sm:text-base text-zinc-300 leading-relaxed">
+                            <p>
+                                Sean Lynch began training under Eduardo de Lima upon his arrival in the United States in 1999, began teaching in St. Petersburg in 2006, and opened <strong>St. Pete Brazilian Jiu-Jitsu</strong> as a 100% independent academy in 2013. Awarded his black belt in December 2009 and his <strong>4th degree in December 2023</strong>, Sean and our coaching staff carry this lineage forward in an open, ego-free environment.
+                            </p>
+                        </div>
+                        <div class="pt-2 flex flex-wrap gap-3">
+                            <a href="/st-pete-jiu-jitsu-professors" class="btn-crimson px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider">
+                                Meet All 7 St. Pete BJJ Instructors &rarr;
+                            </a>
+                            <a href="/contact#free-trial" class="px-5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-xs font-display font-bold uppercase tracking-wider text-white">
+                                Book Free Intro Class
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -78,61 +78,93 @@ html.dark .site-header.scrolled {
     box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.75), 0 1px 0 0 rgba(206, 30, 54, 0.3);
 }
 
-/* Overhanging Circular Logo Medallion -> Smoothly Minifies on Scroll */
+/* Overhanging Circular Logo Medallion -> Covers Top Bar when Full Size & Scrolled Up, Minifies with Brand Text when Scrolling or Smaller */
 .header-logo-slot {
-    width: 112px;
+    width: auto;
     height: 100%;
     position: relative;
     display: flex;
     align-items: flex-start;
     flex-shrink: 0;
-    transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .site-header.scrolled .header-logo-slot {
-    width: 64px;
     align-items: center;
 }
 
 .header-logo-medallion {
-    width: 106px;
-    height: 106px;
-    margin-top: 6px;
+    width: 132px;
+    height: 132px;
+    margin-top: -28px;
     border-radius: 9999px;
     background-color: #FFFFFF;
-    padding: 5px;
-    border: 2.5px solid #CE1E36;
-    box-shadow: 0 16px 34px -6px rgba(0, 0, 0, 0.38), 0 0 0 3px rgba(255, 255, 255, 0.95);
-    transition: width 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-                height 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-                margin-top 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-                padding 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+    padding: 2px;
+    border: none;
+    box-shadow: 0 14px 32px -6px rgba(0, 0, 0, 0.36);
+    transition: width 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+                height 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+                margin-top 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.36s cubic-bezier(0.16, 1, 0.3, 1),
                 transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 60;
 }
 
 .header-logo-medallion:hover {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
+.header-logo-brand-text {
+    opacity: 0;
+    max-width: 0;
+    margin-left: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transform: translateX(-8px);
+    transition: opacity 0.28s ease,
+                max-width 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+                margin-left 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Minified State when Scrolling */
 .site-header.scrolled .header-logo-medallion {
-    width: 54px;
-    height: 54px;
+    width: 48px;
+    height: 48px;
     margin-top: 0;
-    padding: 3px;
-    border-width: 2px;
-    box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.22);
+    padding: 2px;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.18);
 }
 
-@media (max-width: 640px) {
+.site-header.scrolled .header-logo-brand-text {
+    opacity: 1;
+    max-width: 220px;
+    margin-left: 0.75rem;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+/* Minified State when Header/Viewport is Smaller (< 768px) */
+@media (max-width: 767px) {
+    .site-header {
+        height: 68px;
+    }
     .header-logo-slot {
-        width: 88px;
+        align-items: center;
     }
     .header-logo-medallion {
-        width: 84px;
-        height: 84px;
-        margin-top: 6px;
+        width: 48px;
+        height: 48px;
+        margin-top: 0;
+        padding: 2px;
+        box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.18);
+    }
+    .header-logo-brand-text {
+        opacity: 1;
+        max-width: 220px;
+        margin-left: 0.75rem;
+        pointer-events: auto;
+        transform: translateX(0);
     }
 }
 
