@@ -40,19 +40,35 @@ h1, h2, h3, h4, .font-display {
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* Sticky Header Scroll State — Semi-Translucent Blur */
+/* Sticky Header Scroll State — Semi-Translucent Blur & Overhanging Medallion Logo */
 .site-header {
-    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    height: 82px;
+    transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 backdrop-filter 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.3s ease;
 }
 
+.site-header.scrolled {
+    height: 68px;
+}
+
+html:not(.dark) .site-header {
+    background-color: #FFFFFF !important;
+    border-bottom: 1px solid #E4E4E7 !important;
+}
+
 html:not(.dark) .site-header.scrolled {
-    background-color: rgba(255, 255, 255, 0.92) !important;
+    background-color: rgba(255, 255, 255, 0.93) !important;
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    box-shadow: 0 12px 32px -8px rgba(9, 9, 11, 0.08), 0 1px 0 0 rgba(206, 30, 54, 0.2);
+    box-shadow: 0 12px 32px -8px rgba(9, 9, 11, 0.10), 0 1px 0 0 rgba(206, 30, 54, 0.25);
+}
+
+html.dark .site-header {
+    background-color: rgba(9, 9, 11, 0.96) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
 }
 
 html.dark .site-header.scrolled {
@@ -60,6 +76,64 @@ html.dark .site-header.scrolled {
     backdrop-filter: blur(18px) saturate(180%);
     -webkit-backdrop-filter: blur(18px) saturate(180%);
     box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.75), 0 1px 0 0 rgba(206, 30, 54, 0.3);
+}
+
+/* Overhanging Circular Logo Medallion -> Smoothly Minifies on Scroll */
+.header-logo-slot {
+    width: 112px;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    flex-shrink: 0;
+    transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.site-header.scrolled .header-logo-slot {
+    width: 64px;
+    align-items: center;
+}
+
+.header-logo-medallion {
+    width: 106px;
+    height: 106px;
+    margin-top: 6px;
+    border-radius: 9999px;
+    background-color: #FFFFFF;
+    padding: 5px;
+    border: 2.5px solid #CE1E36;
+    box-shadow: 0 16px 34px -6px rgba(0, 0, 0, 0.38), 0 0 0 3px rgba(255, 255, 255, 0.95);
+    transition: width 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                height 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                margin-top 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 60;
+}
+
+.header-logo-medallion:hover {
+    transform: scale(1.05);
+}
+
+.site-header.scrolled .header-logo-medallion {
+    width: 54px;
+    height: 54px;
+    margin-top: 0;
+    padding: 3px;
+    border-width: 2px;
+    box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.22);
+}
+
+@media (max-width: 640px) {
+    .header-logo-slot {
+        width: 88px;
+    }
+    .header-logo-medallion {
+        width: 84px;
+        height: 84px;
+        margin-top: 6px;
+    }
 }
 
 /* Double-Bezel Agency Card Architecture (Adaptive Light & Dark Mode) */

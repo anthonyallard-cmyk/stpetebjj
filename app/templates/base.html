@@ -74,7 +74,7 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="/static/css/custom.css">
+    <link rel="stylesheet" href="/static/css/custom.css?v=3">
 
     <!-- Schema.org MartialArtsSchool / LocalBusiness JSON-LD -->
     <script type="application/ld+json">
@@ -146,22 +146,14 @@
         </div>
     </div>
 
-    <!-- Sticky Main Navigation Header (Crisp White by Default so Original Uncropped Logo Blends Seamlessly) -->
+    <!-- Sticky Main Navigation Header (Overhanging Circular Logo Medallion -> Minifies on Scroll) -->
     <header id="site-header" class="site-header sticky top-0 z-50 bg-white dark:bg-[#09090B]/95 border-b border-zinc-200 dark:border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20 gap-3">
-                <!-- Authentic St. Pete BJJ Brand Logo (Uncropped Original Logo on Crisp White Surface) -->
-                <a href="/" class="flex items-center gap-3 group shrink-0">
-                    <div class="h-14 w-14 sm:h-16 sm:w-16 rounded-xl bg-white p-0.5 flex items-center justify-center shrink-0">
-                        <img src="/wp-content/uploads/2016/10/st-pete-bjj.jpg" alt="St. Pete Brazilian Jiu-Jitsu Logo" class="h-full w-full object-contain">
-                    </div>
-                    <div class="hidden sm:block">
-                        <span class="block font-display font-black text-lg tracking-tight text-[#09090B] dark:text-white leading-none">
-                            ST. PETE <span class="text-[#CE1E36]">BJJ</span>
-                        </span>
-                        <span class="block text-[10px] font-mono-tech uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mt-1">
-                            Brazilian Jiu-Jitsu
-                        </span>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+            <div class="flex items-center justify-between h-full gap-4">
+                <!-- Authentic St. Pete BJJ Circular Medallion Logo (Overhangs Header & Shrinks on Scroll, No Redundant Text) -->
+                <a href="/" aria-label="St. Pete Brazilian Jiu-Jitsu Home" class="header-logo-slot group">
+                    <div id="header-logo-badge" class="header-logo-medallion flex items-center justify-center">
+                        <img src="/static/images/logo-medallion.png" alt="St. Pete Brazilian Jiu-Jitsu Logo" class="w-full h-full object-contain rounded-full">
                     </div>
                 </a>
 
@@ -298,8 +290,8 @@
                 <!-- Col 1: Brand & Lineage -->
                 <div class="lg:col-span-4 space-y-4">
                     <a href="/" class="flex items-center gap-3.5">
-                        <div class="w-16 h-16 rounded-2xl bg-white p-1 flex items-center justify-center shrink-0">
-                            <img src="/wp-content/uploads/2016/10/st-pete-bjj.jpg" alt="St. Pete Brazilian Jiu-Jitsu" class="w-full h-full object-contain">
+                        <div class="w-16 h-16 rounded-full bg-white p-1 border-2 border-[#CE1E36] shadow-lg flex items-center justify-center shrink-0">
+                            <img src="/static/images/logo-medallion.png" alt="St. Pete Brazilian Jiu-Jitsu" class="w-full h-full object-contain rounded-full">
                         </div>
                         <div>
                             <div class="font-display font-black text-xl text-white tracking-tight">ST. PETE <span class="text-[#CE1E36]">BJJ</span></div>
@@ -383,7 +375,7 @@
     {% if site.get('recaptcha_site_key') or settings.RECAPTCHA_SITE_KEY %}
     <script src="https://www.google.com/recaptcha/api.js?render={{ site.get('recaptcha_site_key') or settings.RECAPTCHA_SITE_KEY }}" async defer></script>
     {% endif %}
-    <script src="/static/js/main.js"></script>
+    <script src="/static/js/main.js?v=3"></script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>
