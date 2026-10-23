@@ -14,6 +14,17 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
+    // 1.5 Light / Dark Mode Theme Toggle (Defaults to Light Mode)
+    const themeToggleBtn = document.getElementById("theme-toggle-btn");
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+            const isDark = document.documentElement.classList.toggle("dark");
+            try {
+                localStorage.setItem("spbjj_theme", isDark ? "dark" : "light");
+            } catch (e) {}
+        });
+    }
+
     // 2. Mobile Navigation Drawer
     const mobileBtn = document.getElementById("mobile-menu-btn");
     const mobileMenu = document.getElementById("mobile-menu");
@@ -44,22 +55,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     const items = data.results || [];
                     if (items.length === 0) {
                         searchDropdown.innerHTML = `
-                            <div class="p-4 text-center text-sm text-zinc-400">
-                                No direct matches for "<span class="text-white font-semibold">${q}</span>".
+                            <div class="p-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                                No direct matches for "<span class="text-[#09090B] dark:text-white font-semibold">${q}</span>".
                                 <a href="/contact" class="block mt-2 text-[#CE1E36] font-semibold hover:underline">Ask us or book a Free Class &rarr;</a>
                             </div>`;
                         searchDropdown.classList.remove("hidden");
                         return;
                     }
                     searchDropdown.innerHTML = items.map(item => `
-                        <a href="${item.url}" class="flex items-center gap-3 p-3 hover:bg-zinc-800/90 transition border-b border-zinc-800/80 last:border-0">
-                            <img src="${item.image}" alt="${item.title}" class="w-11 h-11 rounded-lg object-cover bg-zinc-900 border border-zinc-700 shrink-0" onerror="this.src='/static/images/logo-circle.png'">
+                        <a href="${item.url}" class="flex items-center gap-3 p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/90 transition border-b border-zinc-200 dark:border-zinc-800/80 last:border-0">
+                            <img src="${item.image}" alt="${item.title}" class="w-11 h-11 rounded-lg object-cover bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 shrink-0" onerror="this.src='/wp-content/uploads/2016/10/st-pete-bjj.jpg'">
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-mono-tech uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#CE1E36]/20 text-[#FF4D64] border border-[#CE1E36]/30">${item.type}</span>
+                                    <span class="text-[10px] font-mono-tech uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#CE1E36]/15 text-[#CE1E36] dark:text-[#FF4D64] border border-[#CE1E36]/30">${item.type}</span>
                                 </div>
-                                <div class="text-sm font-bold text-white truncate mt-0.5">${item.title}</div>
-                                <div class="text-xs text-zinc-400 truncate">${item.subtitle || ''}</div>
+                                <div class="text-sm font-bold text-[#09090B] dark:text-white truncate mt-0.5">${item.title}</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400 truncate">${item.subtitle || ''}</div>
                             </div>
                         </a>
                     `).join("");

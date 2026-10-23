@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +20,20 @@
     <meta property="og:url" content="{{ settings.BASE_URL.rstrip('/') }}{{ current_path }}">
     <meta property="og:image" content="{{ settings.BASE_URL.rstrip('/') }}/wp-content/uploads/2016/10/high-res-bjj-st-pete.jpg">
     <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Theme Initialization (Defaults to Light Mode unless user explicitly toggled Dark Mode) -->
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('spbjj_theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- Google Fonts: Outfit, Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -97,10 +111,10 @@
     </script>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-[#09090B] text-[#FAFAFA] antialiased selection:bg-[#CE1E36] selection:text-white min-h-screen flex flex-col">
+<body class="bg-white dark:bg-[#09090B] text-[#09090B] dark:text-[#FAFAFA] antialiased selection:bg-[#CE1E36] selection:text-white min-h-screen flex flex-col transition-colors duration-200">
 
     <!-- Top Utility Bar -->
-    <div class="bg-[#111115] border-b border-white/10 text-xs text-zinc-300">
+    <div class="bg-[#09090B] border-b border-zinc-800 text-xs text-zinc-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-4 sm:gap-6">
                 <a href="https://maps.google.com/?q=5540+Haines+Rd+N+St+Petersburg+FL+33714" target="_blank" rel="noopener" class="flex items-center gap-1.5 hover:text-white transition">
@@ -113,105 +127,122 @@
                 </a>
             </div>
             <div class="flex items-center gap-4 ml-auto">
-                <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#CE1E36]/15 border border-[#CE1E36]/40 text-[#FF4D64] font-semibold">
+                <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#CE1E36]/20 border border-[#CE1E36]/40 text-[#FF4D64] font-semibold">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#CE1E36] animate-pulse"></span>
                     1st Intro Class FREE • Free Loaner Gi Provided
                 </span>
                 <a href="/wp-content/uploads/2017/01/Waiver.pdf" target="_blank" rel="noopener" class="hover:text-white underline decoration-[#CE1E36] underline-offset-4 font-medium">
                     Student Waiver (PDF)
                 </a>
-                <div class="flex items-center gap-2.5 border-l border-white/10 pl-3">
+                <div class="flex items-center gap-2.5 border-l border-white/15 pl-3">
                     <a href="https://www.facebook.com/StPeteBJJ/" target="_blank" rel="noopener" aria-label="St. Pete BJJ Facebook" class="text-zinc-400 hover:text-white transition">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
                     </a>
                     <a href="https://www.instagram.com/StPeteBJJ/" target="_blank" rel="noopener" aria-label="St. Pete BJJ Instagram" class="text-zinc-400 hover:text-white transition">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/></svg>
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207.1504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/></svg>
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Sticky Main Navigation Header -->
-    <header id="site-header" class="site-header sticky top-0 z-50 bg-[#09090B]/95 border-b border-white/10">
+    <!-- Sticky Main Navigation Header (Crisp White by Default so Original Uncropped Logo Blends Seamlessly) -->
+    <header id="site-header" class="site-header sticky top-0 z-50 bg-white dark:bg-[#09090B]/95 border-b border-zinc-200 dark:border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20 gap-4">
-                <!-- Authentic St. Pete BJJ Brand Logo -->
-                <a href="/" class="flex items-center gap-3.5 group shrink-0">
-                    <div class="relative w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-[#CE1E36] via-white/30 to-[#CE1E36] shadow-lg shadow-[#CE1E36]/20 group-hover:scale-105 transition duration-300">
-                        <img src="/static/images/logo-circle.png" alt="St. Pete Brazilian Jiu-Jitsu Logo" class="w-full h-full object-contain rounded-full">
+            <div class="flex items-center justify-between h-20 gap-3">
+                <!-- Authentic St. Pete BJJ Brand Logo (Uncropped Original Logo on Crisp White Surface) -->
+                <a href="/" class="flex items-center gap-3 group shrink-0">
+                    <div class="h-14 w-14 sm:h-16 sm:w-16 rounded-xl bg-white p-0.5 flex items-center justify-center shrink-0">
+                        <img src="/wp-content/uploads/2016/10/st-pete-bjj.jpg" alt="St. Pete Brazilian Jiu-Jitsu Logo" class="h-full w-full object-contain">
                     </div>
-                    <div>
-                        <span class="block font-display font-black text-lg sm:text-xl tracking-tight text-white leading-none">
+                    <div class="hidden sm:block">
+                        <span class="block font-display font-black text-lg tracking-tight text-[#09090B] dark:text-white leading-none">
                             ST. PETE <span class="text-[#CE1E36]">BJJ</span>
                         </span>
-                        <span class="block text-[11px] font-mono-tech uppercase tracking-widest text-zinc-400 mt-1">
+                        <span class="block text-[10px] font-mono-tech uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mt-1">
                             Brazilian Jiu-Jitsu
                         </span>
                     </div>
                 </a>
 
-                <!-- Desktop Navigation Links (100% Original Slugs) -->
-                <nav class="hidden xl:flex items-center gap-1 text-sm font-semibold">
-                    <a href="/" class="px-3 py-2 rounded-lg transition {{ 'text-white bg-white/10' if current_path == '/' else 'text-zinc-300 hover:text-white hover:bg-white/5' }}">Home</a>
-                    <a href="/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2" class="px-3 py-2 rounded-lg transition {{ 'text-white bg-white/10' if 'schedule' in current_path else 'text-zinc-300 hover:text-white hover:bg-white/5' }}">Schedule</a>
+                <!-- Desktop Navigation Links (Clean, Compact & 100% Original Slugs) -->
+                <nav class="hidden lg:flex items-center gap-0.5 xl:gap-1 text-sm font-semibold">
+                    <a href="/" class="px-2.5 xl:px-3 py-2 rounded-lg transition {{ 'text-[#CE1E36] bg-red-50 dark:text-white dark:bg-white/10 font-bold' if current_path == '/' else 'text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5' }}">Home</a>
+                    <a href="/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2" class="px-2.5 xl:px-3 py-2 rounded-lg transition {{ 'text-[#CE1E36] bg-red-50 dark:text-white dark:bg-white/10 font-bold' if 'schedule' in current_path else 'text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5' }}">Schedule</a>
 
                     <!-- Classes Dropdown -->
                     <div class="relative group">
-                        <button type="button" class="px-3 py-2 rounded-lg inline-flex items-center gap-1 transition {{ 'text-white bg-white/10' if current_path in ('/fundamentals-classes', '/advanced-classes') else 'text-zinc-300 hover:text-white hover:bg-white/5' }}">
+                        <button type="button" class="px-2.5 xl:px-3 py-2 rounded-lg inline-flex items-center gap-1 transition {{ 'text-[#CE1E36] bg-red-50 dark:text-white dark:bg-white/10 font-bold' if current_path in ('/fundamentals-classes', '/advanced-classes') else 'text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5' }}">
                             <span>Classes</span>
                             <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:rotate-180 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <div class="absolute left-0 mt-1 w-64 rounded-2xl bg-[#121216] border border-white/10 shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                            <a href="/fundamentals-classes" class="block px-4 py-2.5 hover:bg-white/5 transition">
-                                <div class="font-bold text-white text-sm">Fundamentals Classes</div>
-                                <div class="text-xs text-zinc-400">16-Week Core Self-Defense &amp; BJJ</div>
+                        <div class="absolute left-0 mt-1 w-64 rounded-2xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-white/10 shadow-2xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <a href="/fundamentals-classes" class="block px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-white/5 transition">
+                                <div class="font-bold text-[#09090B] dark:text-white text-sm">Fundamentals Classes</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">16-Week Core Self-Defense &amp; BJJ</div>
                             </a>
-                            <a href="/advanced-classes" class="block px-4 py-2.5 hover:bg-white/5 transition">
-                                <div class="font-bold text-white text-sm">Advanced Classes</div>
-                                <div class="text-xs text-zinc-400">3-Stripe White Belt &amp; Up • Sparring</div>
+                            <a href="/advanced-classes" class="block px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-white/5 transition">
+                                <div class="font-bold text-[#09090B] dark:text-white text-sm">Advanced Classes</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">3-Stripe White Belt &amp; Up • Sparring</div>
                             </a>
-                            <a href="/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2#programs" class="block px-4 py-2.5 hover:bg-white/5 transition">
-                                <div class="font-bold text-white text-sm">No-Gi &amp; Judo Takedowns</div>
-                                <div class="text-xs text-zinc-400">Submission Grappling &amp; Stand-Up</div>
+                            <a href="/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2#programs" class="block px-4 py-2.5 hover:bg-zinc-50 dark:hover:bg-white/5 transition">
+                                <div class="font-bold text-[#09090B] dark:text-white text-sm">No-Gi &amp; Judo Takedowns</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">Submission Grappling &amp; Stand-Up</div>
                             </a>
                         </div>
                     </div>
 
-                    <a href="/membership" class="px-3 py-2 rounded-lg transition {{ 'text-white bg-white/10' if 'membership' in current_path else 'text-zinc-300 hover:text-white hover:bg-white/5' }}">Membership</a>
-                    <a href="/st-pete-jiu-jitsu-professors" class="px-3 py-2 rounded-lg transition {{ 'text-white bg-white/10' if 'professor' in current_path or 'staff' in current_path or 'dt_team' in current_path else 'text-zinc-300 hover:text-white hover:bg-white/5' }}">Instructors</a>
-                    <a href="/st-pete-bjj-photo-galleries" class="px-3 py-2 rounded-lg transition {{ 'text-white bg-white/10' if 'galler' in current_path else 'text-zinc-300 hover:text-white hover:bg-white/5' }}">Photo Galleries</a>
-                    <a href="/news" class="px-3 py-2 rounded-lg transition {{ 'text-white bg-white/10' if current_path == '/news' else 'text-zinc-300 hover:text-white hover:bg-white/5' }}">Mat Corner</a>
-                    <a href="/contact" class="px-3 py-2 rounded-lg transition {{ 'text-white bg-white/10' if current_path == '/contact' else 'text-zinc-300 hover:text-white hover:bg-white/5' }}">Contact</a>
+                    <a href="/membership" class="px-2.5 xl:px-3 py-2 rounded-lg transition {{ 'text-[#CE1E36] bg-red-50 dark:text-white dark:bg-white/10 font-bold' if 'membership' in current_path else 'text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5' }}">Membership</a>
+                    <a href="/st-pete-jiu-jitsu-professors" class="px-2.5 xl:px-3 py-2 rounded-lg transition {{ 'text-[#CE1E36] bg-red-50 dark:text-white dark:bg-white/10 font-bold' if 'professor' in current_path or 'staff' in current_path or 'dt_team' in current_path else 'text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5' }}">Instructors</a>
+                    <a href="/st-pete-bjj-photo-galleries" class="px-2.5 xl:px-3 py-2 rounded-lg transition {{ 'text-[#CE1E36] bg-red-50 dark:text-white dark:bg-white/10 font-bold' if 'galler' in current_path else 'text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5' }}">Photos</a>
+                    <a href="/contact" class="px-2.5 xl:px-3 py-2 rounded-lg transition {{ 'text-[#CE1E36] bg-red-50 dark:text-white dark:bg-white/10 font-bold' if current_path == '/contact' else 'text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5' }}">Contact</a>
                 </nav>
 
-                <!-- Search Autocomplete + Free Class CTA -->
-                <div class="flex items-center gap-3">
+                <!-- Search Autocomplete + Light/Dark Mode Toggle + Free Intro Class CTA -->
+                <div class="flex items-center gap-2 shrink-0">
                     <!-- Live Autocomplete Search Box -->
-                    <div class="relative hidden md:block w-52 lg:w-60">
+                    <div class="relative hidden md:block w-36 xl:w-44">
                         <form action="/search" method="get" class="relative">
                             <input
                                 id="header-search-input"
                                 type="text"
                                 name="q"
                                 autocomplete="off"
-                                placeholder="Search classes, coaches..."
-                                class="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-900/90 border border-white/15 text-xs text-white placeholder-zinc-400 focus:outline-none focus:border-[#CE1E36] focus:ring-1 focus:ring-[#CE1E36] transition"
+                                placeholder="Search..."
+                                class="w-full pl-8 pr-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900/90 border border-zinc-300 dark:border-white/15 text-xs text-[#09090B] dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:border-[#CE1E36] focus:ring-1 focus:ring-[#CE1E36] transition"
                             >
-                            <svg class="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </form>
                         <!-- Autocomplete Results Dropdown -->
-                        <div id="header-search-dropdown" class="hidden absolute right-0 mt-2 w-80 rounded-2xl bg-[#121216] border border-white/15 shadow-2xl overflow-hidden z-50"></div>
+                        <div id="header-search-dropdown" class="hidden absolute right-0 mt-2 w-80 rounded-2xl bg-white dark:bg-[#121216] border border-zinc-200 dark:border-white/15 shadow-2xl overflow-hidden z-50"></div>
                     </div>
 
-                    <a href="/contact#free-trial" class="btn-crimson px-4 sm:px-5 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm tracking-wide uppercase whitespace-nowrap">
+                    <!-- Light / Dark Theme Toggle Button -->
+                    <button
+                        id="theme-toggle-btn"
+                        type="button"
+                        title="Toggle Light / Dark Mode"
+                        aria-label="Toggle Light / Dark Mode"
+                        class="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-white/15 text-zinc-700 dark:text-zinc-200 hover:border-[#CE1E36] transition shrink-0"
+                    >
+                        <!-- Moon Icon (shown in Light Mode to switch to Dark) -->
+                        <svg id="theme-icon-moon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                        <!-- Sun Icon (shown in Dark Mode to switch to Light) -->
+                        <svg id="theme-icon-sun" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </button>
+
+                    <a href="/contact#free-trial" class="btn-crimson px-3.5 sm:px-4 py-2.5 rounded-xl font-display font-extrabold text-xs tracking-wide uppercase whitespace-nowrap shrink-0">
                         Free Intro Class
                     </a>
 
                     <!-- Mobile Hamburger Button -->
-                    <button id="mobile-menu-btn" type="button" aria-label="Toggle Menu" class="xl:hidden p-2 rounded-xl bg-zinc-900 border border-white/10 text-zinc-200 hover:text-white">
+                    <button id="mobile-menu-btn" type="button" aria-label="Toggle Menu" class="lg:hidden p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-white/10 text-zinc-800 dark:text-zinc-200">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                 </div>
@@ -219,22 +250,21 @@
         </div>
 
         <!-- Mobile Navigation Drawer -->
-        <div id="mobile-menu" class="hidden xl:hidden bg-[#121216] border-t border-white/10 px-4 pt-4 pb-6 space-y-3">
+        <div id="mobile-menu" class="hidden lg:hidden bg-white dark:bg-[#121216] border-t border-zinc-200 dark:border-white/10 px-4 pt-4 pb-6 space-y-3">
             <form action="/search" method="get" class="relative mb-3">
-                <input type="text" name="q" placeholder="Search classes, schedule, instructors..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-sm text-white placeholder-zinc-400">
-                <svg class="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" name="q" placeholder="Search classes, schedule, instructors..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-white/15 text-sm text-[#09090B] dark:text-white placeholder-zinc-500">
+                <svg class="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </form>
             <div class="grid grid-cols-2 gap-2 text-sm font-semibold">
-                <a href="/" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">Home</a>
-                <a href="/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">Class Schedule</a>
-                <a href="/fundamentals-classes" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">Fundamentals BJJ</a>
-                <a href="/advanced-classes" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">Advanced BJJ</a>
-                <a href="/membership" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">Membership &amp; Rates</a>
-                <a href="/st-pete-jiu-jitsu-professors" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">Instructors</a>
-                <a href="/st-pete-bjj-photo-galleries" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">Photo Galleries</a>
-                <a href="/news" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">Mat Corner News</a>
-                <a href="/qa" class="px-3 py-2.5 rounded-xl bg-white/5 text-white">FAQ</a>
-                <a href="/contact" class="px-3 py-2.5 rounded-xl bg-[#CE1E36] text-white text-center font-bold">Book Free Class</a>
+                <a href="/" class="px-3 py-2.5 rounded-xl bg-zinc-100 dark:bg-white/5 text-[#09090B] dark:text-white">Home</a>
+                <a href="/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2" class="px-3 py-2.5 rounded-xl bg-zinc-100 dark:bg-white/5 text-[#09090B] dark:text-white">Class Schedule</a>
+                <a href="/fundamentals-classes" class="px-3 py-2.5 rounded-xl bg-zinc-100 dark:bg-white/5 text-[#09090B] dark:text-white">Fundamentals BJJ</a>
+                <a href="/advanced-classes" class="px-3 py-2.5 rounded-xl bg-zinc-100 dark:bg-white/5 text-[#09090B] dark:text-white">Advanced BJJ</a>
+                <a href="/membership" class="px-3 py-2.5 rounded-xl bg-zinc-100 dark:bg-white/5 text-[#09090B] dark:text-white">Membership &amp; Rates</a>
+                <a href="/st-pete-jiu-jitsu-professors" class="px-3 py-2.5 rounded-xl bg-zinc-100 dark:bg-white/5 text-[#09090B] dark:text-white">Instructors</a>
+                <a href="/st-pete-bjj-photo-galleries" class="px-3 py-2.5 rounded-xl bg-zinc-100 dark:bg-white/5 text-[#09090B] dark:text-white">Photos</a>
+                <a href="/qa" class="px-3 py-2.5 rounded-xl bg-zinc-100 dark:bg-white/5 text-[#09090B] dark:text-white">FAQ</a>
+                <a href="/contact" class="col-span-2 px-3 py-2.5 rounded-xl bg-[#CE1E36] text-white text-center font-bold">Book Free Intro Class</a>
             </div>
         </div>
     </header>
@@ -261,14 +291,16 @@
         </button>
     </div>
 
-    <!-- Academy Footer -->
-    <footer class="bg-[#060608] border-t border-white/10 pt-16 pb-12 text-zinc-400">
+    <!-- Academy Footer (Includes Mat Corner Blog Link) -->
+    <footer class="bg-[#09090B] border-t border-zinc-800 pt-16 pb-12 text-zinc-400">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
                 <!-- Col 1: Brand & Lineage -->
                 <div class="lg:col-span-4 space-y-4">
                     <a href="/" class="flex items-center gap-3.5">
-                        <img src="/static/images/logo-circle.png" alt="St. Pete Brazilian Jiu-Jitsu" class="w-16 h-16 rounded-full border border-[#CE1E36]/50">
+                        <div class="w-16 h-16 rounded-2xl bg-white p-1 flex items-center justify-center shrink-0">
+                            <img src="/wp-content/uploads/2016/10/st-pete-bjj.jpg" alt="St. Pete Brazilian Jiu-Jitsu" class="w-full h-full object-contain">
+                        </div>
                         <div>
                             <div class="font-display font-black text-xl text-white tracking-tight">ST. PETE <span class="text-[#CE1E36]">BJJ</span></div>
                             <div class="text-xs font-mono-tech uppercase tracking-widest text-zinc-400">St. Petersburg, Florida</div>
@@ -299,12 +331,12 @@
                     </ul>
                 </div>
 
-                <!-- Col 3: Resources & Galleries -->
+                <!-- Col 3: Resources & Mat Corner -->
                 <div class="lg:col-span-2 space-y-3">
                     <h3 class="font-display font-bold text-white text-sm uppercase tracking-wider">Resources</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="/st-pete-bjj-photo-galleries" class="hover:text-[#CE1E36] transition">Photo Galleries</a></li>
-                        <li><a href="/news" class="hover:text-[#CE1E36] transition">Mat Corner Blog</a></li>
+                        <li><a href="/st-pete-bjj-photo-galleries" class="hover:text-[#CE1E36] transition">Photos &amp; Galleries</a></li>
+                        <li><a href="/news" class="hover:text-[#CE1E36] transition">Mat Corner (News &amp; Promotions)</a></li>
                         <li><a href="/qa" class="hover:text-[#CE1E36] transition">FAQ / First Class Guide</a></li>
                         <li><a href="/contact" class="hover:text-[#CE1E36] transition">Contact &amp; Free Trial</a></li>
                         <li><a href="/wp-content/uploads/2017/01/Waiver.pdf" target="_blank" rel="noopener" class="hover:text-[#CE1E36] transition">Download Waiver (PDF)</a></li>
