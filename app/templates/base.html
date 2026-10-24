@@ -700,12 +700,12 @@
     </script>
     {% endif %}
 
-    <!-- Google reCAPTCHA v3 Configuration -->
+    <!-- Google reCAPTCHA v3 Configuration (Loaded from DB site_settings) -->
     <script>
-        window.RECAPTCHA_SITE_KEY = "{{ site.get('recaptcha_site_key') or settings.RECAPTCHA_SITE_KEY }}";
+        window.RECAPTCHA_SITE_KEY = "{{ site.get('recaptcha_site_key', '') }}";
     </script>
-    {% if site.get('recaptcha_site_key') or settings.RECAPTCHA_SITE_KEY %}
-    <script src="https://www.google.com/recaptcha/api.js?render={{ site.get('recaptcha_site_key') or settings.RECAPTCHA_SITE_KEY }}" async defer></script>
+    {% if site.get('recaptcha_site_key') %}
+    <script src="https://www.google.com/recaptcha/api.js?render={{ site.get('recaptcha_site_key') }}" async defer></script>
     {% endif %}
     <script src="/static/js/main.js?v=3"></script>
     {% block extra_scripts %}{% endblock %}

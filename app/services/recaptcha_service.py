@@ -10,7 +10,7 @@ async def verify_recaptcha(token: str, remote_ip: str = "") -> Tuple[bool, float
     Returns (is_valid: bool, score: float).
     """
     cfg = get_site_settings()
-    secret_key = cfg.get("recaptcha_secret_key") or settings.RECAPTCHA_SECRET_KEY
+    secret_key = (cfg.get("recaptcha_secret_key") or "").strip()
 
     if not secret_key:
         return True, 1.0

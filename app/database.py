@@ -224,6 +224,14 @@ def ensure_cms_schema():
             "ai_openrouter_key": "",
             "ai_deepseek_key": "",
             "ai_custom_instructions": "",
+            "smtp_host": "localhost",
+            "smtp_port": "587",
+            "smtp_encryption": "starttls",
+            "smtp_user": "",
+            "smtp_pass": "",
+            "smtp_from_email": "info@stpetebjj.com",
+            "smtp_from_name": "St. Pete Brazilian Jiu-Jitsu",
+            "email_auto_reply_enabled": "true",
         }
         for k, v in default_settings.items():
             cur.execute("INSERT OR IGNORE INTO site_settings (key, value) VALUES (?, ?)", (k, v))
@@ -249,5 +257,33 @@ def ensure_cms_schema():
             actions_json TEXT DEFAULT '[]',
             flagged INTEGER DEFAULT 0,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        # 5. Enhance quotes table with CRM columns & create email_logs table
+        cur.execute("PRAGMA table_info(quotes)")
+        quote_cols = {row["name"] for row in cur.fetchall()}
+        crm_extra_cols = [
+            ("source_page", "TEXT DEFAULT '/contact'"),
+            ("assigned_to", "TEXT DEFAULT ''"),
+            ("follow_up_date", "TEXT DEFAULT ''"),
+            ("last_emailed_at", "TEXT DEFAULT ''"),
+            ("updated_at", "TEXT DEFAULT ''"),
+        ]
+        for col_name, col_def in crm_extra_cols:
+            if col_name not in quote_cols:
+                cur.execute(f"ALTER TABLE quotes ADD COLUMN {col_name} {col_def}")
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS email_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            quote_id INTEGER DEFAULT 0,
+            recipient TEXT NOT NULL,
+            subject TEXT NOT NULL,
+            template_type TEXT NOT NULL,
+            delivery_status TEXT NOT NULL,
+            error_detail TEXT DEFAULT '',
+            html_body TEXT DEFAULT '',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)

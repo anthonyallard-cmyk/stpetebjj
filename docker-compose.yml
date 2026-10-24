@@ -13,8 +13,6 @@ services:
       LOCAL_DOMAIN: "www.stpetebrazilianjiujitsu.test"
       BASE_URL: "https://www.stpetebjj.com"
       ADMIN_PATH: "/admin-25263863535"
-      RECAPTCHA_SITE_KEY: "6LeUH_0tAAAAAJ8M_xd73QUHMo4Vc8lQ32oMcyey"
-      RECAPTCHA_SECRET_KEY: "6LeUH_0tAAAAAL7nwIF2-pNH6UVUe7Pl3j6RuZNK"
     volumes:
       - ./data:/app/data
       - ./backups:/app/backups

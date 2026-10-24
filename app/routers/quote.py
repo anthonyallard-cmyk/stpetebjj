@@ -21,6 +21,7 @@ class QuoteSubmission(BaseModel):
     state: Optional[str] = "FL"
     zipcode: Optional[str] = ""
     message: Optional[str] = ""
+    source_page: Optional[str] = "/contact"
     recaptcha_token: Optional[str] = ""
     website_url: Optional[str] = ""  # Honeypot field
 
@@ -47,14 +48,16 @@ async def submit_quote(payload: QuoteSubmission, request: Request):
             status_code=400,
         )
 
+    source_page = (payload.source_page or "/contact").strip()[:120]
+
     with db_cursor() as cur:
         cur.execute(
             """
             INSERT INTO quotes (
                 name, email, phone, program_interest, experience_level,
                 preferred_date, city, state, zipcode, message,
-                status, ip_address, recaptcha_score
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?)
+                status, ip_address, recaptcha_score, source_page, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, ?, CURRENT_TIMESTAMP)
             """,
             (
                 name,
@@ -69,16 +72,17 @@ async def submit_quote(payload: QuoteSubmission, request: Request):
                 (payload.message or "").strip(),
                 client_ip,
                 score,
+                source_page,
             ),
         )
         quote_id = cur.lastrowid
 
-    send_quote_notification(payload.model_dump())
+    send_quote_notification(payload.model_dump(), quote_id=quote_id or 0)
 
     return JSONResponse({
         "status": "ok",
         "quote_id": quote_id,
-        "message": "Your Free Class / Inquiry request has been received! Remember: a clean loaner Gi is provided free for your first class. You can also text us anytime at (727) 619-4255.",
+        "message": "Your Free Class / Inquiry request has been received and a confirmation email has been sent! Remember: a clean loaner Gi is provided free for your first class. You can also text us anytime at (727) 619-4255.",
     })
 
 

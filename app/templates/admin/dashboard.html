@@ -1034,9 +1034,46 @@
           {% endfor %}
         </div>
 
+        <!-- Google reCAPTCHA v3 & Plesk SMTP Settings (Stored in DB) -->
+        <div class="pt-6 border-t border-white/10 space-y-5">
+          <div>
+            <h2 class="font-display text-2xl text-white">GOOGLE RECAPTCHA V3 &amp; PLESK SMTP SETTINGS (DB STORED)</h2>
+            <p class="text-xs text-zinc-400">Stored directly in the SQLite database (`site_settings`) rather than hardcoded in Git.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Google reCAPTCHA v3 Site Key</label>
+              <input type="text" name="recaptcha_site_key" value="{{ site.recaptcha_site_key or '' }}" placeholder="6Le..." class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Google reCAPTCHA v3 Secret Key</label>
+              <input type="password" name="recaptcha_secret_key" value="{{ site.recaptcha_secret_key or '' }}" placeholder="6Le..." class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Plesk SMTP Host</label>
+              <input type="text" name="smtp_host" value="{{ site.smtp_host or 'localhost' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">SMTP Port</label>
+              <input type="text" name="smtp_port" value="{{ site.smtp_port or '587' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">SMTP User</label>
+              <input type="text" name="smtp_user" value="{{ site.smtp_user or '' }}" placeholder="info@stpetebjj.com" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">SMTP Password</label>
+              <input type="password" name="smtp_pass" value="{{ site.smtp_pass or '' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white" />
+            </div>
+          </div>
+        </div>
+
         <div class="flex justify-end pt-4 border-t border-white/10">
           <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-lg transition">
-            Save All Site &amp; Social Media Settings
+            Save All Site, Social Media, reCAPTCHA &amp; SMTP Settings
           </button>
         </div>
       </div>
@@ -1231,45 +1268,349 @@
     {% endif %}
 
     <!-- ================================================================= -->
-    <!-- TAB 8: STUDENT INQUIRIES                                          -->
+    <!-- TAB 8: CONTACTS & LEAD CRM + PLESK SMTP & BRANDED EMAILS          -->
     <!-- ================================================================= -->
     {% if active_tab == 'inquiries' %}
-    <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-4">
-      <h1 class="font-display text-3xl text-white">FREE INTRO CLASS INQUIRIES ({{ quotes|length }})</h1>
-      {% if not quotes %}
-      <p class="text-sm text-zinc-400">No inquiries submitted yet.</p>
-      {% else %}
-      <div class="space-y-4">
-        {% for q in quotes %}
-        <div class="bg-zinc-950 border border-white/10 rounded-xl p-5 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h3 class="font-bold text-base text-white">{{ q.name }} <span class="text-xs text-zinc-400 font-normal">({{ q.email }} • {{ q.phone }})</span></h3>
-              <p class="text-xs text-zinc-400">Program: <strong class="text-white">{{ q.program_interest }}</strong> • Experience: {{ q.experience_level }} • Submitted: {{ q.created_at }}</p>
-            </div>
-            <form action="{{ admin_path }}/quotes/delete" method="POST" onsubmit="return confirm('Delete this inquiry?');">
-              <input type="hidden" name="quote_id" value="{{ q.id }}" />
-              <button type="submit" class="text-xs text-red-400 hover:underline">Delete</button>
-            </form>
-          </div>
-          {% if q.message %}
-          <p class="text-xs text-zinc-200 bg-zinc-900 p-3 rounded-lg border border-white/5">{{ q.message }}</p>
-          {% endif %}
-          <form action="{{ admin_path }}/quotes/status" method="POST" class="flex flex-wrap items-center gap-3 pt-1">
-            <input type="hidden" name="quote_id" value="{{ q.id }}" />
-            <select name="status" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white">
-              <option value="new" {% if q.status == 'new' %}selected{% endif %}>New</option>
-              <option value="contacted" {% if q.status == 'contacted' %}selected{% endif %}>Contacted</option>
-              <option value="scheduled" {% if q.status == 'scheduled' %}selected{% endif %}>Intro Scheduled</option>
-              <option value="enrolled" {% if q.status == 'enrolled' %}selected{% endif %}>Enrolled</option>
-            </select>
-            <input type="text" name="internal_notes" value="{{ q.internal_notes or '' }}" placeholder="Staff notes..." class="flex-1 bg-zinc-900 border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white" />
-            <button type="submit" class="bg-[#CE1E36] text-white text-xs font-bold uppercase px-4 py-1.5 rounded-lg">Update</button>
-          </form>
+    <div class="space-y-8">
+      <!-- Top CRM Header & Action Buttons -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-zinc-900 border border-white/10 rounded-2xl p-6 shadow-xl">
+        <div>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#CE1E36]">Student Lead Pipeline &amp; Plesk SMTP Mailer</span>
+          <h1 class="font-display text-3xl sm:text-4xl text-white">CONTACTS, FREE CLASS LEADS &amp; BRANDED EMAILS</h1>
+          <p class="text-zinc-400 text-sm">Every form submission on the site is saved here, emails the admin, and sends a branded First-Class Confirmation to the student. Manage statuses (Followed Up, Free Class Scheduled, 30-Day Trial, Signed Up) and send branded follow-up emails.</p>
         </div>
+        <div class="flex flex-wrap items-center gap-3 shrink-0">
+          <button type="button" onclick="document.getElementById('smtp-settings-panel').classList.toggle('hidden')"
+            class="bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-xl border border-white/15 transition">
+            ⚙️ Plesk SMTP &amp; Email Settings
+          </button>
+          <button type="button" onclick="document.getElementById('add-contact-panel').classList.toggle('hidden')"
+            class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl shadow-lg transition">
+            + Add Contact / Walk-In
+          </button>
+        </div>
+      </div>
+
+      <!-- Pipeline Status Filter Bar -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="{{ admin_path }}?tab=inquiries&amp;status_filter=all"
+           class="px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if status_filter == 'all' else 'bg-zinc-900 text-zinc-300 border-white/10 hover:border-white/30' }}">
+          All Contacts ({{ crm_status_counts.get('all', 0) }})
+        </a>
+        {% for s_code, s_label, s_badge in crm_statuses %}
+        <a href="{{ admin_path }}?tab=inquiries&amp;status_filter={{ s_code }}"
+           class="px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition {{ 'bg-[#CE1E36] text-white border-[#CE1E36]' if status_filter == s_code else 'bg-zinc-900 text-zinc-300 border-white/10 hover:border-white/30' }}">
+          {{ s_label }} ({{ crm_status_counts.get(s_code, 0) }})
+        </a>
         {% endfor %}
       </div>
-      {% endif %}
+
+      <!-- Plesk SMTP & Branded Email Configuration Drawer -->
+      <div id="smtp-settings-panel" class="hidden bg-zinc-900 border-2 border-[#CE1E36]/50 rounded-2xl p-6 space-y-6 shadow-2xl">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <h2 class="font-display text-2xl text-white">PLESK SERVER SMTP &amp; BRANDED EMAIL CONFIGURATION</h2>
+            <p class="text-xs text-zinc-400">Configure your Plesk mail server (local Postfix `localhost:25/587` or authenticated `mail.stpetebjj.com:587/465`) for outbound branded emails.</p>
+          </div>
+          <!-- 1-Click Send Test Email -->
+          <form action="{{ admin_path }}/smtp/test" method="POST" class="flex items-center gap-2">
+            <input type="email" name="test_recipient" required value="{{ site.email_contact or 'info@stpetebjj.com' }}" placeholder="Test recipient email..." class="bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-xs text-white w-56" />
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-xl shadow transition">
+              ✉️ Send Branded Test Email
+            </button>
+          </form>
+        </div>
+
+        <form action="{{ admin_path }}/smtp/save" method="POST" class="space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Plesk SMTP Host</label>
+              <input type="text" name="smtp_host" value="{{ site.smtp_host or 'localhost' }}" placeholder="localhost or mail.stpetebjj.com" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">SMTP Port</label>
+              <input type="text" name="smtp_port" value="{{ site.smtp_port or '587' }}" placeholder="587, 465, or 25" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Encryption Mode</label>
+              <select name="smtp_encryption" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white">
+                <option value="starttls" {% if site.smtp_encryption == 'starttls' %}selected{% endif %}>STARTTLS (Port 587 / 25)</option>
+                <option value="ssl" {% if site.smtp_encryption == 'ssl' %}selected{% endif %}>SSL / TLS (Port 465)</option>
+                <option value="none" {% if site.smtp_encryption == 'none' %}selected{% endif %}>None (Local Plesk Relay Port 25)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Auto-Reply to Prospects</label>
+              <select name="email_auto_reply_enabled" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white">
+                <option value="true" {% if site.email_auto_reply_enabled != 'false' %}selected{% endif %}>✅ Send Welcome &amp; First-Class Guide</option>
+                <option value="false" {% if site.email_auto_reply_enabled == 'false' %}selected{% endif %}>⏸️ Admin Alert Only</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">SMTP Username (Optional on Localhost)</label>
+              <input type="text" name="smtp_user" value="{{ site.smtp_user or '' }}" placeholder="info@stpetebjj.com" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">SMTP Password</label>
+              <input type="password" name="smtp_pass" value="{{ site.smtp_pass or '' }}" placeholder="••••••••" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">From Email Address</label>
+              <input type="email" name="smtp_from_email" value="{{ site.smtp_from_email or 'info@stpetebjj.com' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">From Display Name</label>
+              <input type="text" name="smtp_from_name" value="{{ site.smtp_from_name or 'St. Pete Brazilian Jiu-Jitsu' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Admin Notification Recipients (Comma-separated)</label>
+            <input type="text" name="email_quotes" value="{{ site.email_quotes }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-xl shadow transition">
+              Save Plesk SMTP Settings
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Manually Add Contact / Walk-In Panel -->
+      <div id="add-contact-panel" class="hidden bg-zinc-900 border-2 border-[#CE1E36]/50 rounded-2xl p-6 space-y-4 shadow-2xl">
+        <h2 class="font-display text-2xl text-white">ADD NEW CONTACT / WALK-IN OR PHONE LEAD</h2>
+        <form action="{{ admin_path }}/quotes/add" method="POST" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Full Name *</label>
+              <input type="text" name="name" required placeholder="Student Name" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Email Address *</label>
+              <input type="email" name="email" required placeholder="student@example.com" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Phone / Text</label>
+              <input type="text" name="phone" placeholder="(727) 555-0199" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Initial CRM Status</label>
+              <select name="status" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white">
+                {% for s_code, s_label, _ in crm_statuses %}
+                <option value="{{ s_code }}">{{ s_label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Program Interest</label>
+              <input type="text" name="program_interest" value="Free Introductory Class (Fundamentals)" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Experience Level</label>
+              <input type="text" name="experience_level" value="Brand New Beginner" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Scheduled Class / Preferred Date</label>
+              <input type="text" name="preferred_date" placeholder="e.g. Monday 6:00 PM Fundamentals" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Assigned Staff</label>
+              <input type="text" name="assigned_to" value="Professor Sean" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Notes / Goals</label>
+            <textarea name="internal_notes" rows="2" placeholder="Walk-in / phone inquiry notes..." class="w-full bg-zinc-950 border border-white/15 rounded-xl p-3 text-xs text-white"></textarea>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <label class="flex items-center gap-2 text-xs font-bold text-emerald-300 cursor-pointer">
+              <input type="checkbox" name="send_welcome" value="1" checked class="rounded border-white/20" />
+              <span>✉️ Send Branded Welcome &amp; First-Class Guide Email to Student</span>
+            </label>
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-xl shadow">
+              Save Contact
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Contacts & Inquiries List -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-5 shadow-xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <h2 class="font-display text-2xl text-white">STUDENT CONTACTS &amp; INQUIRIES ({{ quotes|length }})</h2>
+          <span class="text-xs text-zinc-400">Select a status below and check <strong>"Send Branded Status Email"</strong> to notify the student automatically.</span>
+        </div>
+
+        {% if not quotes %}
+        <p class="text-sm text-zinc-400 py-4">No contacts match the selected filter.</p>
+        {% else %}
+        <div class="space-y-4">
+          {% for q in quotes %}
+          {% set badge_cls = 'bg-zinc-700/40 text-zinc-300 border-zinc-600/40' %}
+          {% for s_code, s_label, s_cls in crm_statuses %}
+            {% if q.status == s_code %}{% set badge_cls = s_cls %}{% endif %}
+          {% endfor %}
+          <div class="bg-zinc-950 border border-white/10 hover:border-white/20 rounded-2xl p-5 space-y-4 transition">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="space-y-1">
+                <div class="flex flex-wrap items-center gap-2.5">
+                  <span class="text-xs font-mono text-zinc-500">#{{ q.id }}</span>
+                  <h3 class="font-bold text-lg text-white">{{ q.name }}</h3>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold uppercase border {{ badge_cls }}">
+                    {{ crm_status_labels.get(q.status, q.status|upper) }}
+                  </span>
+                  {% if q.last_emailed_at %}
+                  <span class="text-[11px] text-emerald-400 font-medium">✉️ Last Emailed: {{ q.last_emailed_at }}</span>
+                  {% endif %}
+                </div>
+                <div class="flex flex-wrap items-center gap-4 text-xs text-zinc-300 pt-0.5">
+                  <a href="mailto:{{ q.email }}" class="text-white hover:text-[#FF4D64] underline font-medium">✉️ {{ q.email }}</a>
+                  {% if q.phone %}
+                  <a href="tel:{{ q.phone }}" class="text-[#FF4D64] font-bold hover:underline">📞 {{ q.phone }}</a>
+                  <a href="sms:{{ q.phone }}" class="text-cyan-400 font-semibold hover:underline">💬 Text Student</a>
+                  {% endif %}
+                  <span class="text-zinc-400">Program: <strong class="text-zinc-200">{{ q.program_interest }}</strong></span>
+                  <span class="text-zinc-400">Level: {{ q.experience_level }}</span>
+                  <span class="text-zinc-500">Submitted: {{ q.created_at }} ({{ q.source_page or '/contact' }})</span>
+                </div>
+              </div>
+
+              <form action="{{ admin_path }}/quotes/delete" method="POST" onsubmit="return confirm('Delete contact {{ q.name }}?');">
+                <input type="hidden" name="quote_id" value="{{ q.id }}" />
+                <button type="submit" class="text-xs font-bold text-red-400 hover:text-red-300 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20">Delete</button>
+              </form>
+            </div>
+
+            {% if q.message %}
+            <div class="text-xs text-zinc-200 bg-zinc-900/90 p-3.5 rounded-xl border border-white/5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Student Message / Inquiry:</span>
+              {{ q.message }}
+            </div>
+            {% endif %}
+
+            <!-- CRM Status, Assignment, Follow-Up & Branded Email Trigger Form -->
+            <form action="{{ admin_path }}/quotes/status" method="POST" class="bg-zinc-900/60 border border-white/10 rounded-xl p-4 space-y-3">
+              <input type="hidden" name="quote_id" value="{{ q.id }}" />
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">CRM Pipeline Status</label>
+                  <select name="status" class="w-full bg-zinc-950 border border-white/15 rounded-lg px-3 py-2 text-xs font-bold text-white focus:border-[#CE1E36]">
+                    {% for s_code, s_label, _ in crm_statuses %}
+                    <option value="{{ s_code }}" {% if q.status == s_code %}selected{% endif %}>{{ s_label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Scheduled Class / Preferred Day</label>
+                  <input type="text" name="preferred_date" value="{{ q.preferred_date or '' }}" placeholder="e.g. Mon 6:00 PM Fundamentals" class="w-full bg-zinc-950 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Assigned Staff</label>
+                  <input type="text" name="assigned_to" value="{{ q.assigned_to or '' }}" placeholder="Professor Sean / Staff" class="w-full bg-zinc-950 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Next Follow-Up Date</label>
+                  <input type="date" name="follow_up_date" value="{{ q.follow_up_date or '' }}" class="w-full bg-zinc-950 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Internal Staff Notes (Saved in DB)</label>
+                  <input type="text" name="internal_notes" value="{{ q.internal_notes or '' }}" placeholder="Called/texted student, loaner Gi size A2..." class="w-full bg-zinc-950 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Optional Personal Note to Include in Branded Email</label>
+                  <input type="text" name="custom_email_note" placeholder="e.g. Looking forward to meeting you Monday at 6 PM! Ask for Coach Kyle at the front desk." class="w-full bg-zinc-950 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <label class="flex items-center gap-2 text-xs font-bold text-emerald-300 cursor-pointer select-none">
+                  <input type="checkbox" name="send_status_email" value="1" class="rounded border-white/20 text-[#CE1E36]" />
+                  <span>✉️ Send Branded Status Email to {{ q.name }} (Matches chosen status: Followed Up / Free Class Confirmed / 30-Day Trial / Signed Up)</span>
+                </label>
+                <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider px-5 py-2 rounded-lg shadow transition">
+                  Save Contact &amp; Status
+                </button>
+              </div>
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Branded Email Outbox & Delivery Log with Live HTML Preview -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <div>
+            <h2 class="font-display text-2xl text-white">BRANDED EMAIL OUTBOX &amp; DELIVERY LOG ({{ email_logs|length }})</h2>
+            <p class="text-xs text-zinc-400">Every branded email sent to admins or students is logged here. Click <strong>"Preview Branded Email"</strong> to view the exact HTML design.</p>
+          </div>
+        </div>
+
+        {% if not email_logs %}
+        <p class="text-xs text-zinc-400">No outbound emails logged yet.</p>
+        {% else %}
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-white/10 text-zinc-400 uppercase text-[10px]">
+                <th class="py-2.5 px-3">Date / Time</th>
+                <th class="py-2.5 px-3">Template</th>
+                <th class="py-2.5 px-3">Recipient</th>
+                <th class="py-2.5 px-3">Subject</th>
+                <th class="py-2.5 px-3">SMTP Status</th>
+                <th class="py-2.5 px-3 text-right">Preview</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+              {% for el in email_logs %}
+              <tr class="hover:bg-white/5">
+                <td class="py-2.5 px-3 font-mono text-zinc-400 whitespace-nowrap">{{ el.created_at }}</td>
+                <td class="py-2.5 px-3">
+                  <span class="px-2 py-0.5 rounded bg-white/10 text-zinc-200 font-mono text-[10px]">{{ el.template_type }}</span>
+                </td>
+                <td class="py-2.5 px-3 text-white font-medium">{{ el.recipient }}</td>
+                <td class="py-2.5 px-3 text-zinc-200">{{ el.subject }}</td>
+                <td class="py-2.5 px-3">
+                  {% if el.delivery_status == 'sent' %}
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px] uppercase">✓ Delivered via SMTP</span>
+                  {% else %}
+                  <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] uppercase" title="{{ el.error_detail }}">Logged (Ready for Plesk SMTP)</span>
+                  {% endif %}
+                </td>
+                <td class="py-2.5 px-3 text-right whitespace-nowrap">
+                  <button type="button" onclick="openEmailPreviewModal('{{ admin_path }}/emails/{{ el.id }}/preview')"
+                    class="text-[#FF4D64] hover:text-white font-bold underline">
+                    👁️ Preview Branded Email
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Branded Email Live Preview Modal -->
+      <div id="email-preview-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-white/15 rounded-2xl w-full max-w-3xl h-[82vh] flex flex-col overflow-hidden shadow-2xl">
+          <div class="px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-zinc-950">
+            <span class="font-display text-xl text-white">ST. PETE BJJ — BRANDED HTML EMAIL PREVIEW</span>
+            <button type="button" onclick="document.getElementById('email-preview-modal').classList.add('hidden')" class="text-xs font-bold uppercase px-3 py-1.5 rounded-lg bg-white/10 hover:bg-[#CE1E36] text-white transition">Close ✕</button>
+          </div>
+          <iframe id="email-preview-iframe" src="about:blank" class="w-full flex-1 bg-[#09090B]"></iframe>
+        </div>
+      </div>
     </div>
     {% endif %}
 
@@ -1532,6 +1873,15 @@
           badge.className = 'text-[11px] text-red-400 mt-1.5';
         }
       }
+    }
+
+    // 5. Open Branded Email HTML Preview Modal
+    function openEmailPreviewModal(previewUrl) {
+      const modal = document.getElementById('email-preview-modal');
+      const iframe = document.getElementById('email-preview-iframe');
+      if (!modal || !iframe) return;
+      iframe.src = previewUrl;
+      modal.classList.remove('hidden');
     }
   </script>
 </body>

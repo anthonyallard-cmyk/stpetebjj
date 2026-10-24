@@ -243,6 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 experience_level: formData.get("experience_level") || "Brand New Beginner",
                 preferred_date: formData.get("preferred_date") || "",
                 message: formData.get("message") || "",
+                source_page: window.location.pathname || "/contact",
                 website_url: formData.get("website_url") || "",
                 recaptcha_token: recaptchaToken,
             };

@@ -11,6 +11,13 @@ from app.config import settings, TEMPLATES_DIR, BACKUPS_DIR, UPLOADS_DIR
 from app.database import db_cursor, get_site_settings, update_site_setting, get_social_links
 from app.services.backup_service import create_backup_archive, list_backups
 from app.services.ai_chat import fetch_compatible_models, PROVIDER_LABELS, PROVIDER_MODELS_CATALOG
+from app.services.email_service import (
+    CRM_STATUS_OPTIONS,
+    CRM_STATUS_LABELS,
+    send_contact_status_email,
+    send_quote_notification,
+    send_smtp_test_email,
+)
 
 router = APIRouter()
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
@@ -119,7 +126,7 @@ async def admin_upload_file(request: Request, file: UploadFile = File(...)):
 # MAIN ADMIN DASHBOARD
 # =====================================================================
 @router.get(ADMIN_BASE, response_class=HTMLResponse)
-async def admin_dashboard(request: Request, tab: str = "instructors", msg: str = ""):
+async def admin_dashboard(request: Request, tab: str = "instructors", msg: str = "", status_filter: str = "all"):
     if not is_authenticated(request):
         return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
 
@@ -132,8 +139,19 @@ async def admin_dashboard(request: Request, tab: str = "instructors", msg: str =
         extra_socials = []
 
     with db_cursor() as cur:
-        cur.execute("SELECT * FROM quotes ORDER BY created_at DESC LIMIT 100")
+        if status_filter and status_filter != "all":
+            cur.execute("SELECT * FROM quotes WHERE status = ? ORDER BY created_at DESC LIMIT 150", (status_filter,))
+        else:
+            cur.execute("SELECT * FROM quotes ORDER BY created_at DESC LIMIT 150")
         quotes = [dict(r) for r in cur.fetchall()]
+
+        cur.execute("SELECT status, COUNT(*) AS cnt FROM quotes GROUP BY status")
+        raw_counts = {r["status"]: r["cnt"] for r in cur.fetchall()}
+        crm_status_counts = {code: raw_counts.get(code, 0) for code, _, _ in CRM_STATUS_OPTIONS}
+        crm_status_counts["all"] = sum(raw_counts.values())
+
+        cur.execute("SELECT * FROM email_logs ORDER BY id DESC LIMIT 40")
+        email_logs = [dict(r) for r in cur.fetchall()]
 
         cur.execute("SELECT * FROM programs ORDER BY sort_order ASC, id ASC")
         programs = [dict(r) for r in cur.fetchall()]
@@ -197,6 +215,11 @@ async def admin_dashboard(request: Request, tab: str = "instructors", msg: str =
             "admin_path": ADMIN_BASE,
             "active_tab": tab,
             "msg": msg,
+            "status_filter": status_filter,
+            "crm_statuses": CRM_STATUS_OPTIONS,
+            "crm_status_labels": CRM_STATUS_LABELS,
+            "crm_status_counts": crm_status_counts,
+            "email_logs": email_logs,
             "site": site,
             "extra_socials": extra_socials,
             "social_links": get_social_links(site),
@@ -222,7 +245,7 @@ async def admin_dashboard(request: Request, tab: str = "instructors", msg: str =
 
 
 # =====================================================================
-# INQUIRIES CRUD
+# INQUIRIES & CRM LEAD PIPELINE CRUD + BRANDED EMAILS
 # =====================================================================
 @router.post(f"{ADMIN_BASE}/quotes/status")
 async def admin_update_quote(
@@ -230,15 +253,170 @@ async def admin_update_quote(
     quote_id: int = Form(...),
     status: str = Form(...),
     internal_notes: str = Form(""),
+    assigned_to: str = Form(""),
+    follow_up_date: str = Form(""),
+    preferred_date: str = Form(""),
+    send_status_email: str = Form("0"),
+    custom_email_note: str = Form(""),
 ):
     if not is_authenticated(request):
         return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
+
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    quote_row = None
     with db_cursor() as cur:
         cur.execute(
-            "UPDATE quotes SET status = ?, internal_notes = ? WHERE id = ?",
-            (status, internal_notes.strip(), quote_id),
+            """
+            UPDATE quotes
+            SET status = ?, internal_notes = ?, assigned_to = ?, follow_up_date = ?,
+                preferred_date = COALESCE(NULLIF(?, ''), preferred_date),
+                updated_at = ?
+            WHERE id = ?
+            """,
+            (
+                status.strip(),
+                internal_notes.strip(),
+                assigned_to.strip(),
+                follow_up_date.strip(),
+                preferred_date.strip(),
+                now_str,
+                quote_id,
+            ),
         )
-    return RedirectResponse(url=f"{ADMIN_BASE}?tab=inquiries&msg=Inquiry+Updated", status_code=302)
+        cur.execute("SELECT * FROM quotes WHERE id = ?", (quote_id,))
+        row = cur.fetchone()
+        if row:
+            quote_row = dict(row)
+
+    status_label = CRM_STATUS_LABELS.get(status, status)
+    msg_text = f"Contact+Updated+to+{status_label.replace(' ', '+')}"
+
+    if send_status_email == "1" and quote_row:
+        sent_ok, _ = send_contact_status_email(
+            quote_row=quote_row,
+            new_status=status.strip(),
+            custom_note=custom_email_note.strip(),
+        )
+        if sent_ok:
+            msg_text += "+%26+Branded+Email+Sent+via+SMTP"
+        else:
+            msg_text += "+%26+Branded+Email+Logged+to+Outbox"
+
+    return RedirectResponse(url=f"{ADMIN_BASE}?tab=inquiries&msg={msg_text}", status_code=302)
+
+
+@router.post(f"{ADMIN_BASE}/quotes/add")
+async def admin_add_quote(
+    request: Request,
+    name: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(""),
+    program_interest: str = Form("Free Introductory Class (Fundamentals)"),
+    experience_level: str = Form("Brand New Beginner"),
+    preferred_date: str = Form(""),
+    status: str = Form("new"),
+    assigned_to: str = Form("Professor Sean"),
+    internal_notes: str = Form(""),
+    send_welcome: str = Form("1"),
+):
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
+
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with db_cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO quotes (
+                name, email, phone, program_interest, experience_level,
+                preferred_date, status, assigned_to, internal_notes,
+                source_page, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Admin Walk-In / Phone', ?)
+            """,
+            (
+                name.strip(),
+                email.strip(),
+                phone.strip(),
+                program_interest.strip(),
+                experience_level.strip(),
+                preferred_date.strip(),
+                status.strip(),
+                assigned_to.strip(),
+                internal_notes.strip(),
+                now_str,
+            ),
+        )
+        quote_id = cur.lastrowid
+
+    if send_welcome == "1":
+        send_quote_notification(
+            {
+                "name": name.strip(),
+                "email": email.strip(),
+                "phone": phone.strip(),
+                "program_interest": program_interest.strip(),
+                "experience_level": experience_level.strip(),
+                "preferred_date": preferred_date.strip(),
+                "message": internal_notes.strip() or "Added via Admin CRM.",
+                "source_page": "Admin CRM",
+            },
+            quote_id=quote_id or 0,
+        )
+
+    return RedirectResponse(url=f"{ADMIN_BASE}?tab=inquiries&msg=New+Contact+Added+to+CRM", status_code=302)
+
+
+@router.post(f"{ADMIN_BASE}/smtp/save")
+async def admin_save_smtp_settings(
+    request: Request,
+    smtp_host: str = Form("localhost"),
+    smtp_port: str = Form("587"),
+    smtp_encryption: str = Form("starttls"),
+    smtp_user: str = Form(""),
+    smtp_pass: str = Form(""),
+    smtp_from_email: str = Form("info@stpetebjj.com"),
+    smtp_from_name: str = Form("St. Pete Brazilian Jiu-Jitsu"),
+    email_quotes: str = Form("info@stpetebjj.com, camaraogb@gmail.com"),
+    email_auto_reply_enabled: str = Form("true"),
+):
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
+
+    update_site_setting("smtp_host", smtp_host.strip() or "localhost")
+    update_site_setting("smtp_port", smtp_port.strip() or "587")
+    update_site_setting("smtp_encryption", smtp_encryption.strip().lower())
+    update_site_setting("smtp_user", smtp_user.strip())
+    if not smtp_pass.startswith("••••"):
+        update_site_setting("smtp_pass", smtp_pass.strip())
+    update_site_setting("smtp_from_email", smtp_from_email.strip() or "info@stpetebjj.com")
+    update_site_setting("smtp_from_name", smtp_from_name.strip() or "St. Pete Brazilian Jiu-Jitsu")
+    update_site_setting("email_quotes", email_quotes.strip())
+    update_site_setting("email_auto_reply_enabled", "true" if email_auto_reply_enabled == "true" else "false")
+
+    return RedirectResponse(url=f"{ADMIN_BASE}?tab=inquiries&msg=Plesk+SMTP+%26+Branded+Email+Settings+Saved", status_code=302)
+
+
+@router.post(f"{ADMIN_BASE}/smtp/test")
+async def admin_test_smtp(request: Request, test_recipient: str = Form(...)):
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
+    sent_ok, detail = send_smtp_test_email(test_recipient.strip())
+    if sent_ok:
+        msg = f"Branded+Test+Email+Delivered+to+{test_recipient.strip()}"
+    else:
+        msg = f"Branded+Test+Email+Generated+%26+Saved+in+Outbox+Log+(SMTP:+{detail[:50].replace(' ', '+')})"
+    return RedirectResponse(url=f"{ADMIN_BASE}?tab=inquiries&msg={msg}", status_code=302)
+
+
+@router.get(f"{ADMIN_BASE}/emails/{{email_id}}/preview", response_class=HTMLResponse)
+async def admin_preview_email(request: Request, email_id: int):
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
+    with db_cursor() as cur:
+        cur.execute("SELECT html_body FROM email_logs WHERE id = ?", (email_id,))
+        row = cur.fetchone()
+        if not row or not row["html_body"]:
+            return HTMLResponse("<p>Email preview not found.</p>", status_code=404)
+        return HTMLResponse(row["html_body"])
 
 
 @router.post(f"{ADMIN_BASE}/quotes/delete")
@@ -741,10 +919,23 @@ async def admin_save_site_settings(request: Request):
         "twitter_url",
         "yelp_url",
         "linkedin_url",
+        "recaptcha_site_key",
+        "recaptcha_secret_key",
+        "smtp_host",
+        "smtp_port",
+        "smtp_encryption",
+        "smtp_user",
+        "smtp_pass",
+        "smtp_from_email",
+        "smtp_from_name",
+        "email_auto_reply_enabled",
     ]
     for k in keys:
         if k in form:
-            update_site_setting(k, str(form.get(k) or "").strip())
+            val = str(form.get(k) or "").strip()
+            if k in ("smtp_pass", "recaptcha_secret_key") and val.startswith("••••"):
+                continue
+            update_site_setting(k, val)
 
     # Process dynamic custom social media links (custom_social_name[] and custom_social_url[])
     names = form.getlist("custom_social_name")

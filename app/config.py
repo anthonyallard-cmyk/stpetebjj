@@ -49,9 +49,7 @@ class Settings:
     SMTP_PASS: str = os.getenv("SMTP_PASS", "")
     SMTP_FROM: str = os.getenv("SMTP_FROM", "noreply@stpetebjj.com")
 
-    # Google reCAPTCHA v3
-    RECAPTCHA_SITE_KEY: str = os.getenv("RECAPTCHA_SITE_KEY", "6LeUH_0tAAAAAJ8M_xd73QUHMo4Vc8lQ32oMcyey")
-    RECAPTCHA_SECRET_KEY: str = os.getenv("RECAPTCHA_SECRET_KEY", "6LeUH_0tAAAAAL7nwIF2-pNH6UVUe7Pl3j6RuZNK")
+    # Google reCAPTCHA v3 (Keys stored in SQLite site_settings via Admin Console)
     RECAPTCHA_MIN_SCORE: float = float(os.getenv("RECAPTCHA_MIN_SCORE", "0.4"))
 
     # Stripe Integration Stub (Disabled by default; ready for future activation)
