@@ -24,121 +24,44 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <!-- Lineage Chain Overview -->
         <div class="p-6 rounded-2xl bg-[#131317] border border-white/10 flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-mono-tech font-bold">
-            <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">1. Mitsuyo Maeda</span>
-            <span class="text-[#CE1E36]">&rarr;</span>
-            <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">2. Carlos Gracie Sr.</span>
-            <span class="text-[#CE1E36]">&rarr;</span>
-            <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">3. Carlos Gracie Jr.</span>
-            <span class="text-[#CE1E36]">&rarr;</span>
-            <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">4. Eduardo "Veio" de Lima</span>
-            <span class="text-[#CE1E36]">&rarr;</span>
-            <span class="px-3.5 py-1.5 rounded-lg bg-[#CE1E36] text-white">5. Professor Sean Lynch (St. Pete BJJ)</span>
+            {% for entry in lineage_entries %}
+                {% if loop.last %}
+                <span class="px-3.5 py-1.5 rounded-lg bg-[#CE1E36] text-white">{{ loop.index }}. {{ entry.name }}</span>
+                {% else %}
+                <span class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-white/10">{{ loop.index }}. {{ entry.name }}</span>
+                <span class="text-[#CE1E36]">&rarr;</span>
+                {% endif %}
+            {% endfor %}
         </div>
 
-        <!-- Step 1: Mitsuyo Maeda -->
+        {% for entry in lineage_entries %}
         <div class="bezel-card">
             <div class="bezel-card-inner p-6 sm:p-8">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                     <div class="md:col-span-4">
-                        <img src="/static/images/lineage/mitsuyo-maeda.jpg" alt="Mitsuyo Count Koma Maeda" class="w-full h-64 object-cover object-top rounded-xl border border-white/10">
+                        <img src="{{ entry.image }}" alt="{{ entry.name }}" class="w-full h-64 object-cover object-top rounded-xl border border-white/10">
                     </div>
                     <div class="md:col-span-8 space-y-3">
-                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 01 • Kodokan Judo &amp; Jiu-Jitsu Pioneer (1878–1941)</div>
-                        <h2 class="font-display font-extrabold text-2xl text-white">Mitsuyo &ldquo;Count Koma&rdquo; Maeda</h2>
-                        <p class="text-sm sm:text-base text-zinc-300 leading-relaxed">
-                            Trained directly at the Kodokan in Tokyo under Judo founder Jigoro Kano, Mitsuyo Maeda traveled the world accepting challenge matches against wrestlers, boxers, and martial artists of every style. Arriving in Bel&eacute;m, Brazil in 1914, Maeda befriended Gast&atilde;o Gracie and began teaching the art of ground fighting and leverage-based submissions to Gast&atilde;o&rsquo;s eldest son, Carlos Gracie.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 2: Carlos Gracie Sr. -->
-        <div class="bezel-card">
-            <div class="bezel-card-inner p-6 sm:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    <div class="md:col-span-4">
-                        <img src="/static/images/lineage/carlos-gracie-sr.jpg" alt="Grandmaster Carlos Gracie Sr." class="w-full h-64 object-cover object-top rounded-xl border border-white/10">
-                    </div>
-                    <div class="md:col-span-8 space-y-3">
-                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 02 • Founder of Brazilian Jiu-Jitsu (1902–1994)</div>
-                        <h2 class="font-display font-extrabold text-2xl text-white">Grandmaster Carlos Gracie Sr.</h2>
-                        <p class="text-sm sm:text-base text-zinc-300 leading-relaxed">
-                            As Maeda&rsquo;s premier Brazilian student, Carlos Gracie Sr. opened the first Gracie Jiu-Jitsu Academy in Brazil in 1925 alongside his brothers, including H&eacute;lio Gracie. Together they refined traditional Japanese techniques into a leverage-and-timing system designed so a smaller defender could overcome a larger, stronger opponent.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 3: Carlos Gracie Jr. -->
-        <div class="bezel-card">
-            <div class="bezel-card-inner p-6 sm:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    <div class="md:col-span-4">
-                        <img src="/static/images/lineage/carlos-gracie-jr.jpg" alt="Master Carlos Carlinhos Gracie Jr." class="w-full h-64 object-cover object-top rounded-xl border border-white/10">
-                    </div>
-                    <div class="md:col-span-8 space-y-3">
-                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 03 • 8th Degree Coral Belt • Founder of IBJJF &amp; Gracie Barra</div>
-                        <h2 class="font-display font-extrabold text-2xl text-white">Master Carlos &ldquo;Carlinhos&rdquo; Gracie Jr.</h2>
-                        <p class="text-sm sm:text-base text-zinc-300 leading-relaxed">
-                            Son of Grandmaster Carlos Gracie Sr., Carlos &ldquo;Carlinhos&rdquo; Gracie Jr. dedicated his life to organizing and spreading Brazilian Jiu-Jitsu globally—founding the International Brazilian Jiu-Jitsu Federation (IBJJF), the Confederation of Brazilian Jiu-Jitsu (CBJJ), and the famed Gracie Barra team in Rio de Janeiro in 1986.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 4: Eduardo "Veio" de Lima (Historical Teacher Profile) -->
-        <div class="bezel-card">
-            <div class="bezel-card-inner p-6 sm:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    <div class="md:col-span-4">
-                        <img src="/wp-content/uploads/2015/09/eduardo.jpg" alt="Professor Eduardo Veio de Lima" class="w-full h-64 object-cover object-top rounded-xl border border-white/10">
-                    </div>
-                    <div class="md:col-span-8 space-y-3">
-                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 04 • Sean Lynch's Instructor (Retired)</div>
-                        <h2 class="font-display font-extrabold text-2xl text-white">Professor Eduardo &ldquo;Veio&rdquo; de Lima</h2>
-                        <div class="space-y-3 text-sm sm:text-base text-zinc-300 leading-relaxed">
-                            <p>
-                                A 6th degree black belt under Carlos &ldquo;Carlinhos&rdquo; Gracie Jr., Eduardo &ldquo;Veio&rdquo; de Lima began training at age nineteen in Rio de Janeiro at the original Gracie Barra Academy—studying for his first two years under Jean Jacques Machado (blue and purple belt) and thereafter under Carlos Gracie Jr. (brown and black belt, 1997), winning multiple gold medals at the IBJJF Pan American Championships.
-                            </p>
-                            <p>
-                                After serving as head instructor of Gracie Barra in Rio (where young Roger Gracie was in his kids&rsquo; class), Eduardo moved to Florida in 1999/2000. Sean Lynch became one of his earliest American students, earning his black belt from Eduardo in December 2009. <em>(Professor Eduardo is now retired and is not involved in the operation or instruction of St. Pete Brazilian Jiu-Jitsu.)</em>
-                            </p>
+                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">{{ entry.generation_badge }}</div>
+                        <h2 class="font-display font-extrabold text-2xl text-white">{{ entry.name }}</h2>
+                        <div class="prose prose-invert max-w-none space-y-3 text-sm sm:text-base text-zinc-300 leading-relaxed">
+                            {{ entry.bio | safe }}
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 5: Professor Sean Lynch -->
-        <div class="bezel-card">
-            <div class="bezel-card-inner p-6 sm:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    <div class="md:col-span-4">
-                        <img src="/wp-content/uploads/2015/11/seanweb.jpg" alt="Professor Sean Lynch" class="w-full h-64 object-cover object-top rounded-xl border border-white/10">
-                    </div>
-                    <div class="md:col-span-8 space-y-3">
-                        <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Generation 05 • 4th Degree Black Belt • Founder &amp; Head Instructor</div>
-                        <h2 class="font-display font-extrabold text-2xl text-white">Professor Sean Lynch — St. Pete Brazilian Jiu-Jitsu</h2>
-                        <div class="space-y-3 text-sm sm:text-base text-zinc-300 leading-relaxed">
-                            <p>
-                                Sean Lynch began training under Eduardo de Lima upon his arrival in the United States in 1999, began teaching in St. Petersburg in 2006, and opened <strong>St. Pete Brazilian Jiu-Jitsu</strong> as a 100% independent academy in 2013. Awarded his black belt in December 2009 and his <strong>4th degree in December 2023</strong>, Sean and our coaching staff carry this lineage forward in an open, ego-free environment.
-                            </p>
-                        </div>
+                        {% if loop.last %}
                         <div class="pt-2 flex flex-wrap gap-3">
                             <a href="/st-pete-jiu-jitsu-professors" class="btn-crimson px-5 py-2.5 rounded-xl font-display font-bold text-xs uppercase tracking-wider">
-                                Meet All 7 St. Pete BJJ Instructors &rarr;
+                                Meet Our Active St. Pete BJJ Instructors &rarr;
                             </a>
                             <a href="/contact#free-trial" class="px-5 py-2.5 rounded-xl bg-zinc-900 border border-white/15 text-xs font-display font-bold uppercase tracking-wider text-white">
                                 Book Free Intro Class
                             </a>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
 </section>
 {% endblock %}

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from app.config import settings, TEMPLATES_DIR
-from app.database import db_cursor, get_site_settings
+from app.database import db_cursor, get_site_settings, get_social_links
 from app.routers.sitemap import get_all_public_urls
 
 router = APIRouter()
@@ -17,9 +17,17 @@ def get_common_context(request: Request) -> dict:
         programs = [dict(r) for r in cur.fetchall()]
         cur.execute("SELECT * FROM faqs WHERE status = 1 ORDER BY sort_order ASC")
         faqs = [dict(r) for r in cur.fetchall()]
+    is_admin = False
+    try:
+        is_admin = request.session.get("admin_authenticated") is True
+    except Exception:
+        pass
     return {
         "request": request,
         "site": site,
+        "social_links": get_social_links(site),
+        "is_admin": is_admin,
+        "admin_path": settings.ADMIN_PATH,
         "settings": settings,
         "nav_programs": programs,
         "faqs": faqs,
@@ -125,6 +133,8 @@ async def instructors_page(request: Request, cat_slug: str = ""):
 async def lineage_page(request: Request):
     ctx = get_common_context(request)
     with db_cursor() as cur:
+        cur.execute("SELECT * FROM lineage_entries WHERE status = 1 ORDER BY sort_order ASC, id ASC")
+        lineage_entries = [dict(r) for r in cur.fetchall()]
         cur.execute("SELECT * FROM instructors WHERE slug = 'professor-eduardo-veio-de-lima'")
         row = cur.fetchone()
         eduardo = dict(row) if row else {}
@@ -133,6 +143,7 @@ async def lineage_page(request: Request):
         sean = dict(sean_row) if sean_row else {}
 
     ctx.update({
+        "lineage_entries": lineage_entries,
         "eduardo": eduardo,
         "sean": sean,
         "meta_title": 'Our Lineage: Mitsuyo Maeda → Carlos Gracie → Carlos Gracie Jr. → Eduardo "Veio" de Lima → Sean Lynch | St. Pete BJJ',
@@ -376,6 +387,33 @@ async def post_or_catchall_page(request: Request, post_slug: str):
                 "meta_description": post["excerpt"] or post["title"],
             })
             return templates.TemplateResponse(request, "post_detail.html", ctx)
+
+        # Check if it's a program slug accessed at root
+        cur.execute("SELECT * FROM programs WHERE slug = ? AND status = 1", (post_slug,))
+        prog_row = cur.fetchone()
+        if prog_row:
+            program = dict(prog_row)
+            cur.execute("SELECT * FROM instructors WHERE status = 1 AND featured = 1 ORDER BY sort_order ASC LIMIT 4")
+            instructors = [dict(r) for r in cur.fetchall()]
+            ctx.update({
+                "program": program,
+                "instructors": instructors,
+                "meta_title": f"{program['name']} | St. Pete Brazilian Jiu-Jitsu — St. Petersburg, FL",
+                "meta_description": program["short_desc"],
+            })
+            return templates.TemplateResponse(request, "program_detail.html", ctx)
+
+        # Check if it's a custom page in the pages table
+        cur.execute("SELECT * FROM pages WHERE slug = ? AND status = 1", (post_slug,))
+        page_row = cur.fetchone()
+        if page_row:
+            custom_page = dict(page_row)
+            ctx.update({
+                "custom_page": custom_page,
+                "meta_title": custom_page.get("meta_title") or f"{custom_page['title']} | St. Pete Brazilian Jiu-Jitsu",
+                "meta_description": custom_page.get("meta_description") or custom_page["title"],
+            })
+            return templates.TemplateResponse(request, "page_custom.html", ctx)
 
         # Check if it's a gallery slug accessed at root
         cur.execute("SELECT slug FROM galleries WHERE slug = ? AND status = 1", (post_slug,))

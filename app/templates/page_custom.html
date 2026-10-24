@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero-dark-keep relative py-16 bg-[#09090B] border-b border-white/10 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('{{ custom_page.hero_image or "/wp-content/uploads/2019/05/Slide-1.jpg" }}');"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-[#09090B]/85 via-[#09090B]/95 to-[#09090B]"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl space-y-4">
+            <div class="inline-flex items-center gap-2 text-xs font-mono-tech uppercase tracking-widest text-[#FF4D64]">
+                <span class="w-6 h-0.5 bg-[#CE1E36]"></span>
+                <span>{{ site.get('site_name', 'St. Pete Brazilian Jiu-Jitsu') }}</span>
+            </div>
+            <h1 class="font-display font-black text-4xl sm:text-6xl text-white tracking-tight">
+                {{ custom_page.title }}
+            </h1>
+            {% if custom_page.meta_description %}
+            <p class="text-lg text-zinc-300 leading-relaxed">
+                {{ custom_page.meta_description }}
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-white dark:bg-[#09090B]">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bezel-card">
+            <div class="bezel-card-inner p-6 sm:p-10">
+                <div class="prose prose-invert max-w-none space-y-4 text-zinc-700 dark:text-zinc-300 text-base sm:text-lg leading-relaxed">
+                    {{ custom_page.content | safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

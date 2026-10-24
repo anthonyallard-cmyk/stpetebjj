@@ -126,33 +126,34 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 md:pl-36 lg:pl-40 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
             <!-- Left Half: Address & Phone (mindful of the overhanging logo, pushed just to the right of it) -->
             <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <a href="https://maps.app.goo.gl/m6PtQRRiCUu4HEZQ7" target="_blank" rel="noopener" class="flex items-center gap-1.5 hover:text-white transition whitespace-nowrap">
+                <a href="{{ site.get('google_maps_url', 'https://maps.app.goo.gl/m6PtQRRiCUu4HEZQ7') }}" target="_blank" rel="noopener" class="flex items-center gap-1.5 hover:text-white transition whitespace-nowrap">
                     <svg class="w-3.5 h-3.5 text-[#CE1E36] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    <span>5540 Haines Rd N, St. Petersburg, FL 33714</span>
+                    <span>{{ site.get('address', '5540 Haines Rd N, St. Petersburg, FL 33714') }}</span>
                 </a>
                 <a href="tel:17276194255" class="flex items-center gap-1.5 font-mono-tech font-semibold text-white hover:text-[#FF4D64] transition whitespace-nowrap">
                     <svg class="w-3.5 h-3.5 text-[#CE1E36] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                    <span>Text/Call: (727) 619-4255 <span class="text-zinc-400 font-normal hidden xl:inline">(727.619.4BJJ)</span></span>
+                    <span>Text/Call: {{ site.get('phone', '(727) 619-4255') }} <span class="text-zinc-400 font-normal hidden xl:inline">({{ site.get('phone_vanity', '727.619.4BJJ') }})</span></span>
                 </a>
             </div>
 
-            <!-- Right Half: Free Intro Pill, Student Waiver PDF, Facebook & Instagram -->
+            <!-- Right Half: Free Intro Pill, Student Waiver PDF & Dynamic Social Media Links -->
             <div class="flex items-center gap-3 sm:gap-4 ml-auto">
                 <span class="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#CE1E36]/20 border border-[#CE1E36]/40 text-[#FF4D64] font-semibold whitespace-nowrap">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#CE1E36] animate-pulse"></span>
                     1st Intro Class FREE • Free Loaner Gi
                 </span>
-                <a href="/wp-content/uploads/2017/01/Waiver.pdf" target="_blank" rel="noopener" class="hover:text-white underline decoration-[#CE1E36] underline-offset-4 font-medium whitespace-nowrap">
+                <a href="{{ site.get('waiver_url', '/wp-content/uploads/2017/01/Waiver.pdf') }}" target="_blank" rel="noopener" class="hover:text-white underline decoration-[#CE1E36] underline-offset-4 font-medium whitespace-nowrap">
                     Student Waiver (PDF)
                 </a>
+                {% if social_links %}
                 <div class="flex items-center gap-2.5 border-l border-white/15 pl-3 shrink-0">
-                    <a href="https://www.facebook.com/StPeteBJJ/" target="_blank" rel="noopener" aria-label="St. Pete BJJ Facebook" class="text-zinc-300 hover:text-white transition">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                    {% for soc in social_links %}
+                    <a href="{{ soc.url }}" target="_blank" rel="noopener" title="{{ soc.name }}" aria-label="{{ soc.name }}" class="text-zinc-300 hover:text-white transition">
+                        {{ soc.icon_svg | safe }}
                     </a>
-                    <a href="https://www.instagram.com/StPeteBJJ/" target="_blank" rel="noopener" aria-label="St. Pete BJJ Instagram" class="text-zinc-300 hover:text-white transition">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207.1504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/></svg>
-                    </a>
+                    {% endfor %}
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -164,7 +165,7 @@
                 <!-- Authentic St. Pete BJJ Circular Medallion Logo (Big Overhanging Circle when Full-Size & Scrolled Up -> Minifies + Shows Text when Scrolled or Smaller) -->
                 <a href="/" aria-label="St. Pete Brazilian Jiu-Jitsu Home" class="header-logo-slot group">
                     <div id="header-logo-badge" class="header-logo-medallion flex items-center justify-center shrink-0">
-                        <img src="/static/images/logo-medallion.png?v=5" alt="St. Pete Brazilian Jiu-Jitsu Logo" class="w-full h-full object-contain rounded-full">
+                        <img src="{{ site.get('logo_url', '/static/images/logo-medallion.png') }}?v=5" alt="St. Pete Brazilian Jiu-Jitsu Logo" class="w-full h-full object-contain rounded-full">
                     </div>
                     <div class="header-logo-brand-text leading-tight">
                         <div class="font-display font-black text-base xl:text-lg tracking-tight text-[#09090B] dark:text-white group-hover:text-[#CE1E36] transition whitespace-nowrap">
@@ -377,15 +378,327 @@
             </div>
 
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-                <div>&copy; 2013–2026 St. Pete Brazilian Jiu-Jitsu. All rights reserved.</div>
-                <div class="flex items-center gap-4">
+                <div>&copy; 2013–2026 {{ site.get('site_name', 'St. Pete Brazilian Jiu-Jitsu') }}. All rights reserved.</div>
+                <div class="flex flex-wrap items-center gap-4">
                     <span>Protected by Geo-IP Firewall &amp; Google reCAPTCHA v3</span>
-                    <a href="https://www.facebook.com/StPeteBJJ/" target="_blank" rel="noopener" class="hover:text-white">Facebook</a>
-                    <a href="https://www.instagram.com/StPeteBJJ/" target="_blank" rel="noopener" class="hover:text-white">Instagram</a>
+                    {% for soc in social_links %}
+                    <a href="{{ soc.url }}" target="_blank" rel="noopener" class="hover:text-white inline-flex items-center gap-1.5">
+                        {{ soc.icon_svg | safe }}
+                        <span>{{ soc.name }}</span>
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </footer>
+
+    {% if is_admin %}
+    <!-- Floating Quick-Edit Bar for Logged-In Admin -->
+    <div class="fixed bottom-4 left-4 z-50 flex items-center gap-2 p-2 rounded-2xl bg-[#09090B]/95 border border-[#CE1E36] shadow-2xl text-xs font-semibold text-white">
+        <span class="px-2.5 py-1 rounded-lg bg-[#CE1E36] font-mono-tech uppercase text-[10px]">Admin Mode</span>
+        {% if 'professor' in current_path or 'staff' in current_path or 'dt_team' in current_path %}
+        <a href="{{ admin_path }}?tab=instructors" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition">&#9998; Edit Instructors</a>
+        {% elif 'news' in current_path or 'category' in current_path %}
+        <a href="{{ admin_path }}?tab=posts" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition">&#9998; Edit Blog Posts</a>
+        {% elif 'galler' in current_path %}
+        <a href="{{ admin_path }}?tab=galleries" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition">&#9998; Edit Galleries</a>
+        {% elif 'membership' in current_path %}
+        <a href="{{ admin_path }}?tab=memberships" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition">&#9998; Edit Memberships</a>
+        {% else %}
+        <a href="{{ admin_path }}?tab=pages" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition">&#9998; Edit Page Content &amp; Images</a>
+        {% endif %}
+        <a href="{{ admin_path }}?tab=settings" class="px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/15 hover:border-[#CE1E36] transition">Site Settings &amp; Socials</a>
+        <a href="{{ admin_path }}?tab=ai-agent" class="px-3 py-1.5 rounded-xl bg-[#CE1E36]/20 border border-[#CE1E36]/40 hover:bg-[#CE1E36] transition">✨ AI Config</a>
+    </div>
+    {% endif %}
+
+    {% if site.get('ai_enabled', 'true') == 'true' %}
+    <!-- =============================================================== -->
+    <!-- 24/7 AI ASSISTANT FLOATING WIDGET (BotPrints Look & Feel)       -->
+    <!-- =============================================================== -->
+    <aside id="spb-ai-launcher" aria-label="AI Assistant Floating Widget" class="fixed bottom-5 right-5 z-40">
+        <button type="button" onclick="window.spbToggleAIChat(true)" aria-label="Open 24/7 AI Assistant"
+            class="group flex items-center space-x-2.5 px-4 py-3 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 shadow-2xl border border-zinc-700 dark:border-zinc-300 hover:scale-105 active:scale-95 transition-all duration-200">
+            <div class="relative flex items-center justify-center w-7 h-7 rounded-full bg-[#CE1E36] text-white shadow-sm">
+                <!-- Generic AI Bot / Sparkle Icon -->
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                </svg>
+                <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-zinc-900 dark:ring-white animate-pulse"></span>
+            </div>
+            <div class="text-left hidden sm:block">
+                <p class="text-xs font-extrabold leading-none">AI Assistant</p>
+                <p class="text-[10px] text-[#FF4D64] dark:text-[#CE1E36] font-bold leading-none mt-1">24/7 Academy Info</p>
+            </div>
+            <svg class="w-4 h-4 text-[#FF4D64] dark:text-[#CE1E36] group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+        </button>
+    </aside>
+
+    <!-- AI Assistant Modal -->
+    <aside id="spb-ai-modal" aria-label="St. Pete BJJ 24/7 AI Assistant"
+        class="hidden fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[200] w-[380px] sm:w-[410px] max-w-[calc(100vw-24px)] h-[580px] max-h-[calc(100vh-80px)] rounded-3xl bg-white dark:bg-[#0e121b] border border-zinc-200/90 dark:border-zinc-800/90 shadow-2xl flex flex-col overflow-hidden transition-all duration-300">
+        <!-- Top Header -->
+        <div class="px-4 py-3.5 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/95 dark:bg-[#131824]/95 backdrop-blur-md flex items-center justify-between shrink-0 select-none">
+            <div class="flex items-center space-x-2.5">
+                <div class="relative flex items-center justify-center w-9 h-9 rounded-2xl bg-gradient-to-br from-[#CE1E36] to-red-800 text-white shadow-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                    </svg>
+                    <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-[#0e121b]"></span>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-1.5">
+                        <h3 class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white leading-none">
+                            St. Pete BJJ AI Assistant
+                        </h3>
+                        <span class="px-1.5 py-0.5 rounded-full text-[9px] font-extrabold bg-red-100 dark:bg-red-950 text-[#CE1E36] dark:text-red-300 leading-none">
+                            24/7 LIVE
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-none">
+                        Classes, schedule, instructors &amp; BJJ info
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-1">
+                <button type="button" onclick="window.spbToggleAIChat(false)"
+                    class="p-1.5 rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-200/60 dark:hover:bg-zinc-800 transition-colors"
+                    title="Minimize Assistant" aria-label="Minimize Assistant">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/></svg>
+                </button>
+                <button type="button" onclick="window.spbToggleAIChat(false)"
+                    class="p-1.5 rounded-xl text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-200/60 dark:hover:bg-zinc-800 transition-colors"
+                    title="Close Assistant" aria-label="Close Assistant">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Locked / Terminated Banner -->
+        <div id="spb-ai-locked-banner" class="hidden p-3 bg-red-50 dark:bg-red-950/50 border-b border-red-200 dark:border-red-900/50 flex items-center space-x-2 text-xs text-red-700 dark:text-red-300 shrink-0">
+            <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <span id="spb-ai-locked-text">This chat session has ended. Call or text (727) 619-4255 for assistance.</span>
+        </div>
+
+        <!-- Messages Stream -->
+        <div id="spb-ai-messages" class="flex-1 p-4 overflow-y-auto space-y-4 text-xs">
+            <!-- Initial Greeting & Starter Chips -->
+            <div id="spb-ai-welcome" class="space-y-4 pt-1">
+                <div class="flex items-start space-x-2.5">
+                    <div class="w-7 h-7 rounded-xl bg-[#CE1E36] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                        </svg>
+                    </div>
+                    <div class="max-w-[85%] p-3.5 rounded-2xl rounded-tl-sm bg-zinc-100 dark:bg-zinc-800/85 text-zinc-800 dark:text-zinc-200 text-xs leading-relaxed space-y-2 shadow-sm">
+                        <p>Welcome to <strong>St. Pete Brazilian Jiu-Jitsu</strong>! I can answer questions about our class schedule, memberships ($130/mo unlimited, no contracts), our 30-Day Free Intro Trial, our 7 active instructors, or Brazilian Jiu-Jitsu in general.</p>
+                        <p class="text-[11px] text-zinc-500 dark:text-zinc-400">What can I help you with today?</p>
+                    </div>
+                </div>
+
+                <!-- Starter Chips -->
+                <div id="spb-ai-starters" class="pl-9 flex flex-wrap gap-1.5">
+                    <button type="button" onclick="window.spbSendChat('What is the weekly class schedule?')" class="px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-[#CE1E36] bg-white dark:bg-[#131824] text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] transition text-left">
+                        What is the weekly class schedule?
+                    </button>
+                    <button type="button" onclick="window.spbSendChat('How much is membership?')" class="px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-[#CE1E36] bg-white dark:bg-[#131824] text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] transition text-left">
+                        How much is membership?
+                    </button>
+                    <button type="button" onclick="window.spbSendChat('Tell me about the 30-day free trial & what to wear')" class="px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-[#CE1E36] bg-white dark:bg-[#131824] text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] transition text-left">
+                        Tell me about the 30-day free trial
+                    </button>
+                    <button type="button" onclick="window.spbSendChat('Who are the instructors at St. Pete BJJ?')" class="px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-[#CE1E36] bg-white dark:bg-[#131824] text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] transition text-left">
+                        Who are the instructors?
+                    </button>
+                    <button type="button" onclick="window.spbSendChat('Tell me about your Gracie lineage')" class="px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-[#CE1E36] bg-white dark:bg-[#131824] text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:text-[#CE1E36] transition text-left">
+                        Tell me about your Gracie lineage
+                    </button>
+                </div>
+            </div>
+
+            <div id="spb-ai-thread" class="space-y-4"></div>
+
+            <!-- Typing Indicator -->
+            <div id="spb-ai-typing" class="hidden flex items-start space-x-2.5">
+                <div class="w-7 h-7 rounded-xl bg-[#CE1E36] text-white flex items-center justify-center shrink-0 mt-0.5 animate-pulse">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+                </div>
+                <div class="p-3.5 rounded-2xl rounded-tl-sm bg-zinc-100 dark:bg-zinc-800/85 flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-[#CE1E36] animate-bounce" style="animation-delay: 0ms;"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#CE1E36] animate-bounce" style="animation-delay: 150ms;"></span>
+                    <span class="w-2 h-2 rounded-full bg-[#CE1E36] animate-bounce" style="animation-delay: 300ms;"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Bar -->
+        <div class="p-3 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0e121b] shrink-0 space-y-1.5">
+            <form id="spb-ai-form" onsubmit="event.preventDefault(); window.spbSendChat();" class="flex items-center space-x-2">
+                <input id="spb-ai-input" type="text" maxlength="800"
+                    placeholder="Ask about classes, schedule, pricing, BJJ..."
+                    class="flex-1 px-4 py-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#CE1E36] disabled:opacity-50" />
+                <button id="spb-ai-send" type="submit" aria-label="Send message"
+                    class="p-2.5 rounded-2xl bg-[#CE1E36] hover:bg-red-700 text-white font-bold disabled:opacity-40 transition-all shadow-sm shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                </button>
+            </form>
+            <div class="flex items-center justify-between px-1 text-[10px] text-zinc-400 dark:text-zinc-500">
+                <span>St. Pete BJJ Academy Support Only</span>
+                <span id="spb-ai-remaining"></span>
+            </div>
+        </div>
+    </aside>
+
+    <script>
+    (function() {
+        const STORAGE_KEY = 'spb_ai_session_id';
+        let sessionId = localStorage.getItem(STORAGE_KEY) || '';
+        let isLocked = false;
+        let isSending = false;
+
+        const launcher = document.getElementById('spb-ai-launcher');
+        const modal = document.getElementById('spb-ai-modal');
+        const threadEl = document.getElementById('spb-ai-thread');
+        const messagesContainer = document.getElementById('spb-ai-messages');
+        const startersEl = document.getElementById('spb-ai-starters');
+        const typingEl = document.getElementById('spb-ai-typing');
+        const inputEl = document.getElementById('spb-ai-input');
+        const sendBtn = document.getElementById('spb-ai-send');
+        const lockedBanner = document.getElementById('spb-ai-locked-banner');
+        const remainingEl = document.getElementById('spb-ai-remaining');
+
+        function setLockedState(locked) {
+            isLocked = !!locked;
+            if (isLocked) {
+                lockedBanner.classList.remove('hidden');
+                inputEl.disabled = true;
+                inputEl.placeholder = 'Chat session ended — call/text (727) 619-4255';
+                sendBtn.disabled = true;
+                if (startersEl) startersEl.classList.add('hidden');
+            }
+        }
+
+        function renderMessage(role, content, actions) {
+            const isUser = role === 'user';
+            const row = document.createElement('div');
+            row.className = 'flex items-start space-x-2.5 ' + (isUser ? 'flex-row-reverse space-x-reverse' : 'flex-row');
+
+            if (!isUser) {
+                const avatar = document.createElement('div');
+                avatar.className = 'w-7 h-7 rounded-xl bg-[#CE1E36] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm';
+                avatar.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>';
+                row.appendChild(avatar);
+            }
+
+            const col = document.createElement('div');
+            col.className = 'max-w-[85%] space-y-1.5 ' + (isUser ? 'items-end' : 'items-start');
+
+            const bubble = document.createElement('div');
+            bubble.className = 'p-3.5 rounded-2xl text-xs leading-relaxed whitespace-pre-wrap ' + (
+                isUser
+                ? 'bg-[#CE1E36] text-white rounded-tr-sm shadow-sm'
+                : 'bg-zinc-100 dark:bg-zinc-800/85 text-zinc-800 dark:text-zinc-200 rounded-tl-sm shadow-sm'
+            );
+            bubble.textContent = content;
+            col.appendChild(bubble);
+
+            if (!isUser && Array.isArray(actions) && actions.length > 0) {
+                const actWrap = document.createElement('div');
+                actWrap.className = 'flex flex-wrap gap-1.5 pt-1';
+                actions.forEach((act) => {
+                    const a = document.createElement('a');
+                    a.href = act.url || '/contact';
+                    a.className = 'inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-[#CE1E36]/15 text-[#CE1E36] dark:text-[#FF4D64] border border-[#CE1E36]/30 hover:bg-[#CE1E36] hover:text-white transition-colors';
+                    a.innerHTML = '<span>' + (act.label || 'Learn More') + '</span><span>&rarr;</span>';
+                    actWrap.appendChild(a);
+                });
+                col.appendChild(actWrap);
+            }
+
+            row.appendChild(col);
+            threadEl.appendChild(row);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function loadSession() {
+            try {
+                const res = await fetch('/api/chat/session?session_id=' + encodeURIComponent(sessionId));
+                const data = await res.json();
+                if (data.session_id) {
+                    sessionId = data.session_id;
+                    localStorage.setItem(STORAGE_KEY, sessionId);
+                }
+                threadEl.innerHTML = '';
+                if (Array.isArray(data.messages) && data.messages.length > 0) {
+                    if (startersEl) startersEl.classList.add('hidden');
+                    data.messages.forEach((m) => renderMessage(m.role, m.content, m.actions));
+                }
+                if (typeof data.remaining_messages === 'number') {
+                    remainingEl.textContent = data.remaining_messages + ' msgs left';
+                }
+                if (data.terminated) {
+                    setLockedState(true);
+                }
+            } catch (e) {}
+        }
+
+        window.spbToggleAIChat = function(open) {
+            if (open) {
+                launcher.classList.add('hidden');
+                modal.classList.remove('hidden');
+                loadSession().then(() => {
+                    if (!isLocked) inputEl?.focus();
+                });
+            } else {
+                modal.classList.add('hidden');
+                launcher.classList.remove('hidden');
+            }
+        };
+
+        window.spbSendChat = async function(presetText) {
+            if (isLocked || isSending) return;
+            const text = (presetText || inputEl.value || '').trim();
+            if (!text) return;
+
+            inputEl.value = '';
+            if (startersEl) startersEl.classList.add('hidden');
+            renderMessage('user', text, []);
+            isSending = true;
+            typingEl.classList.remove('hidden');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                const res = await fetch('/api/chat/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_id: sessionId, message: text })
+                });
+                const data = await res.json();
+                typingEl.classList.add('hidden');
+                if (data.session_id) {
+                    sessionId = data.session_id;
+                    localStorage.setItem(STORAGE_KEY, sessionId);
+                }
+                renderMessage('assistant', data.reply || 'Please call or text (727) 619-4255 for assistance.', data.actions || []);
+                if (typeof data.remaining_messages === 'number') {
+                    remainingEl.textContent = data.remaining_messages + ' msgs left';
+                }
+                if (data.terminated) {
+                    setLockedState(true);
+                }
+            } catch (err) {
+                typingEl.classList.add('hidden');
+                renderMessage('assistant', 'Sorry, I had trouble connecting. Please try again or call/text (727) 619-4255.', []);
+            } finally {
+                isSending = false;
+            }
+        };
+    })();
+    </script>
+    {% endif %}
 
     <!-- Google reCAPTCHA v3 Configuration -->
     <script>

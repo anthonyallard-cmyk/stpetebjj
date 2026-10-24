@@ -3,8 +3,9 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 from app.config import settings, STATIC_DIR, UPLOADS_DIR, DB_PATH
+from app.database import ensure_cms_schema
 from app.middleware import CanonicalAndSecurityMiddleware
-from app.routers import sitemap, quote, admin, frontend
+from app.routers import sitemap, quote, admin, chat, frontend
 from app.services.geo_security import load_geo_db
 
 
@@ -13,6 +14,7 @@ async def lifespan(app: FastAPI):
     if not DB_PATH.exists():
         from scripts.build_db import init_db
         init_db()
+    ensure_cms_schema()
     load_geo_db()
     yield
 
@@ -41,4 +43,5 @@ app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY, max_age=86
 app.include_router(sitemap.router)
 app.include_router(quote.router)
 app.include_router(admin.router)
+app.include_router(chat.router)
 app.include_router(frontend.router)

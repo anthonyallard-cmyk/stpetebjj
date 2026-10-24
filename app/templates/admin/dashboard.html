@@ -1,222 +1,1538 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Admin Dashboard — St. Pete Brazilian Jiu-Jitsu</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visual CMS &amp; Admin Console | St. Pete Brazilian Jiu-Jitsu</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #09090B; color: #F4F4F5; }
+    .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
+    /* Dark mode Quill styling */
+    .ql-toolbar.ql-snow {
+      background: #18181B;
+      border-color: rgba(255,255,255,0.12) !important;
+      border-top-left-radius: 0.75rem;
+      border-top-right-radius: 0.75rem;
+    }
+    .ql-container.ql-snow {
+      background: #09090B;
+      border-color: rgba(255,255,255,0.12) !important;
+      border-bottom-left-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+      color: #F4F4F5;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.925rem;
+      min-height: 150px;
+    }
+    .ql-editor { min-height: 150px; line-height: 1.65; }
+    .ql-snow .ql-stroke { stroke: #D4D4D8 !important; }
+    .ql-snow .ql-fill { fill: #D4D4D8 !important; }
+    .ql-snow .ql-picker { color: #D4D4D8 !important; }
+    .ql-snow .ql-picker-options { background: #18181B !important; border-color: rgba(255,255,255,0.15) !important; }
+    .dropzone-active { border-color: #CE1E36 !important; background: rgba(206, 30, 54, 0.12) !important; }
+  </style>
 </head>
-<body class="bg-[#09090B] text-zinc-100 min-h-screen">
-    <!-- Top Admin Bar -->
-    <header class="bg-[#121216] border-b border-white/10 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <img src="/static/images/logo-circle.png" alt="St. Pete BJJ" class="w-10 h-10 rounded-full border border-[#CE1E36]">
+<body class="min-h-screen flex flex-col bg-[#09090B] text-zinc-100">
+
+  <!-- Top Header -->
+  <header class="border-b border-white/10 bg-zinc-950/95 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-white p-0.5 flex items-center justify-center shadow">
+          <img src="{{ site.logo_url or '/static/images/logo-medallion.png' }}" alt="Logo" class="w-full h-full object-contain rounded-full" />
+        </div>
+        <div>
+          <span class="font-display text-2xl tracking-wider text-white">ST. PETE BJJ <span class="text-[#CE1E36]">VISUAL CMS</span></span>
+          <span class="hidden md:inline-block ml-2 text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded bg-white/5 text-zinc-400 border border-white/10">Drag &amp; Drop + Rich Text + AI Agent</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/" target="_blank" class="text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white px-3.5 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition flex items-center gap-1.5">
+          <span>View Live Website</span>
+          <svg class="w-3.5 h-3.5 text-[#CE1E36]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+        <a href="{{ admin_path }}/logout" class="text-xs font-bold uppercase tracking-wider text-red-400 hover:text-red-300 px-3.5 py-2 rounded-lg bg-red-500/10 border border-red-500/20 transition">
+          Sign Out
+        </a>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto border-t border-white/5 bg-zinc-900/50">
+      {% set nav_tabs = [
+        ('instructors', '🥋 Instructors (' ~ instructors|length ~ ')'),
+        ('posts', '📝 Blog / Mat Corner (' ~ posts|length ~ ')'),
+        ('pages', '📄 Pages & Site Areas'),
+        ('galleries', '📸 Photo Galleries (' ~ galleries|length ~ ')'),
+        ('memberships', '💳 Memberships (' ~ memberships|length ~ ')'),
+        ('settings', '⚙️ Site & Social Media'),
+        ('ai-agent', '✨ AI Chat Agent'),
+        ('inquiries', '📬 Inquiries (' ~ new_quotes_count ~ ' new)'),
+        ('security', '🛡️ Security & Backups')
+      ] %}
+      {% for tid, tlabel in nav_tabs %}
+      <a href="{{ admin_path }}?tab={{ tid }}"
+         class="px-4 py-3 text-xs font-bold uppercase tracking-wider whitespace-nowrap border-b-2 transition {{ 'border-[#CE1E36] text-white bg-white/5' if active_tab == tid or (active_tab == 'backups' and tid == 'security') else 'border-transparent text-zinc-400 hover:text-white hover:bg-white/5' }}">
+        {{ tlabel }}
+      </a>
+      {% endfor %}
+    </div>
+  </header>
+
+  <main class="max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-8 flex-grow">
+
+    {% if msg %}
+    <div class="mb-6 p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-sm font-semibold flex items-center justify-between shadow-lg">
+      <div class="flex items-center gap-2.5">
+        <svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span>{{ msg }}</span>
+      </div>
+      <a href="{{ admin_path }}?tab={{ active_tab }}" class="text-xs text-emerald-400 hover:underline">Dismiss</a>
+    </div>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: INSTRUCTORS (Add, Edit, Remove, Drag & Drop Photo, RichBio) -->
+    <!-- ================================================================= -->
+    {% if active_tab == 'instructors' %}
+    <div class="space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900/90 border border-white/10 rounded-2xl p-6">
+        <div>
+          <h1 class="font-display text-3xl sm:text-4xl text-white">MANAGE INSTRUCTORS &amp; PROFESSORS</h1>
+          <p class="text-zinc-400 text-sm">Add new instructors, drag &amp; drop portraits, edit rich-text bios, or remove instructors from <a href="/st-pete-jiu-jitsu-professors" target="_blank" class="text-[#CE1E36] underline">/st-pete-jiu-jitsu-professors</a>.</p>
+        </div>
+        <button type="button" onclick="document.getElementById('new-instructor-panel').classList.toggle('hidden')"
+          class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl shadow-lg transition shrink-0">
+          + Add New Instructor
+        </button>
+      </div>
+
+      <!-- Add New Instructor Drawer -->
+      <div id="new-instructor-panel" class="hidden bg-zinc-900 border-2 border-[#CE1E36]/50 rounded-2xl p-6 shadow-2xl">
+        <h2 class="font-display text-2xl text-white mb-4">ADD NEW INSTRUCTOR</h2>
+        <form action="{{ admin_path }}/instructors/save" method="POST" class="space-y-5">
+          <input type="hidden" name="instructor_id" value="0" />
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <div class="font-bold text-white text-base">St. Pete Brazilian Jiu-Jitsu — Admin Console</div>
-                <div class="text-xs text-zinc-400">5540 Haines Rd N, St. Petersburg, FL 33714 • (727) 619-4255</div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Full Name *</label>
+              <input type="text" name="name" required placeholder="e.g. Professor John Doe" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
             </div>
-        </div>
-        <div class="flex items-center gap-3 text-xs">
-            <a href="/" target="_blank" class="px-3.5 py-2 rounded-xl bg-zinc-900 border border-white/15 hover:border-[#CE1E36] transition">View Live Site &nearr;</a>
-            <a href="{{ admin_path }}/logout" class="px-3.5 py-2 rounded-xl bg-red-950/60 border border-red-500/30 text-red-200 hover:bg-red-900/60 transition">Sign Out</a>
-        </div>
-    </header>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Belt Rank *</label>
+              <input type="text" name="rank" value="Black Belt" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Role / Title *</label>
+              <input type="text" name="role" value="Instructor" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Display Order</label>
+                <input type="number" name="sort_order" value="{{ instructors|length + 1 }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Status</label>
+                <select name="featured" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white">
+                  <option value="1" selected>Active on Site</option>
+                  <option value="0">Hidden / Retired</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {% if msg %}
-        <div class="p-4 rounded-2xl bg-emerald-950/90 border border-emerald-500/40 text-emerald-200 text-sm font-medium">
-            &#10003; {{ msg }}
-        </div>
-        {% endif %}
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1.5">Instructor Photo (Drag &amp; Drop or URL)</label>
+              <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-[#CE1E36] transition bg-zinc-950/60">
+                <img data-preview src="/static/images/logo-medallion.png" alt="Preview" class="w-24 h-24 object-cover rounded-xl mx-auto mb-2 border border-white/10" />
+                <p class="text-xs text-zinc-300 font-semibold">Drag &amp; drop photo here or <span class="text-[#CE1E36] underline">browse</span></p>
+                <p data-status class="text-[11px] text-zinc-500 mt-1">JPG, PNG, WEBP</p>
+                <input type="file" accept="image/*" class="hidden" />
+                <input type="text" name="image" data-url-input value="/static/images/logo-medallion.png" class="mt-2 w-full bg-zinc-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-zinc-300" />
+              </div>
+              <div class="mt-3">
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Lineage Note</label>
+                <input type="text" name="lineage" placeholder="Carlos Gracie Sr. → Carlos Gracie Jr. → Sean Lynch" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
+              </div>
+            </div>
+            <div class="lg:col-span-2">
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-bold uppercase text-zinc-400">Instructor Bio (Rich Text Editor)</label>
+                <button type="button" onclick="toggleHtmlSource(this)" class="text-[11px] font-bold text-zinc-400 hover:text-white px-2 py-0.5 rounded bg-white/5 border border-white/10">&lt;&gt; HTML Source</button>
+              </div>
+              <div class="richtext-wrapper">
+                <div data-quill-editor></div>
+                <textarea name="bio" data-richtext-input class="hidden w-full h-44 bg-zinc-950 border border-white/15 rounded-xl p-3 text-xs font-mono text-emerald-300"><p>Enter instructor biography and achievements here...</p></textarea>
+              </div>
+            </div>
+          </div>
 
-        <!-- Navigation Tabs -->
-        <div class="flex flex-wrap gap-2 border-b border-white/10 pb-4 text-xs sm:text-sm font-semibold">
-            <a href="{{ admin_path }}?tab=inquiries" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'inquiries' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
-                Free Class Inquiries ({{ quotes | length }})
-            </a>
-            <a href="{{ admin_path }}?tab=memberships" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'memberships' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
-                Memberships &amp; Rates ({{ memberships | length }})
-            </a>
-            <a href="{{ admin_path }}?tab=instructors" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'instructors' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
-                Instructors ({{ instructors | length }})
-            </a>
-            <a href="{{ admin_path }}?tab=security" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'security' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
-                Geo-IP Firewall &amp; reCAPTCHA ({{ security_events | length }})
-            </a>
-            <a href="{{ admin_path }}?tab=backups" class="px-4 py-2.5 rounded-xl transition {{ 'bg-[#CE1E36] text-white' if active_tab == 'backups' else 'bg-[#141418] text-zinc-300 hover:text-white' }}">
-                ZIP Backups ({{ backups | length }})
-            </a>
+          <div class="flex justify-end gap-3 pt-2">
+            <button type="button" onclick="document.getElementById('new-instructor-panel').classList.add('hidden')" class="px-4 py-2.5 rounded-xl border border-white/15 text-xs font-bold text-zinc-300">Cancel</button>
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-xl shadow-lg transition">Save New Instructor</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Existing Instructors List -->
+      <div class="space-y-6">
+        {% for inst in instructors %}
+        <div class="bg-zinc-900 border {{ 'border-white/15' if inst.featured else 'border-amber-500/30 opacity-75' }} rounded-2xl p-6 shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-5 border-b border-white/10">
+            <div class="flex items-center gap-3">
+              <img src="{{ inst.image }}" alt="{{ inst.name }}" class="w-12 h-12 rounded-xl object-cover border border-white/15" />
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-display text-2xl text-white">{{ inst.name }}</h3>
+                  {% if inst.featured %}
+                  <span class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Active on Instructors Page</span>
+                  {% else %}
+                  <span class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">Hidden / Historical Only</span>
+                  {% endif %}
+                </div>
+                <p class="text-xs text-zinc-400">{{ inst.rank }} • {{ inst.role }} (Order #{{ inst.sort_order }})</p>
+              </div>
+            </div>
+            <form action="{{ admin_path }}/instructors/delete" method="POST" onsubmit="return confirm('Remove {{ inst.name }} from instructors?');">
+              <input type="hidden" name="instructor_id" value="{{ inst.id }}" />
+              <button type="submit" class="text-xs font-bold uppercase tracking-wider px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition">
+                Delete Instructor
+              </button>
+            </form>
+          </div>
+
+          <form action="{{ admin_path }}/instructors/save" method="POST" class="space-y-5">
+            <input type="hidden" name="instructor_id" value="{{ inst.id }}" />
+            <input type="hidden" name="slug" value="{{ inst.slug }}" />
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Name</label>
+                <input type="text" name="name" value="{{ inst.name }}" required class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Belt Rank</label>
+                <input type="text" name="rank" value="{{ inst.rank }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Role / Title</label>
+                <input type="text" name="role" value="{{ inst.role }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Sort Order</label>
+                  <input type="number" name="sort_order" value="{{ inst.sort_order }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Visibility</label>
+                  <select name="featured" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-2.5 py-2 text-sm text-white">
+                    <option value="1" {% if inst.featured %}selected{% endif %}>Active</option>
+                    <option value="0" {% if not inst.featured %}selected{% endif %}>Hidden</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1.5">Photo (Drag &amp; Drop to Replace)</label>
+                <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-[#CE1E36] transition bg-zinc-950/60">
+                  <img data-preview src="{{ inst.image }}" alt="{{ inst.name }}" class="w-28 h-28 object-cover rounded-xl mx-auto mb-2 border border-white/10" />
+                  <p class="text-xs text-zinc-300 font-semibold">Drop new photo here or <span class="text-[#CE1E36] underline">browse</span></p>
+                  <p data-status class="text-[11px] text-zinc-500 mt-0.5">Instant upload</p>
+                  <input type="file" accept="image/*" class="hidden" />
+                  <input type="text" name="image" data-url-input value="{{ inst.image }}" class="mt-2 w-full bg-zinc-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-zinc-300" />
+                </div>
+                <div class="mt-3">
+                  <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Lineage Line</label>
+                  <input type="text" name="lineage" value="{{ inst.lineage or '' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
+                </div>
+              </div>
+
+              <div class="lg:col-span-2">
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-bold uppercase text-zinc-400">Biography (Rich Text)</label>
+                  <button type="button" onclick="toggleHtmlSource(this)" class="text-[11px] font-bold text-zinc-400 hover:text-white px-2 py-0.5 rounded bg-white/5 border border-white/10">&lt;&gt; HTML Source</button>
+                </div>
+                <div class="richtext-wrapper">
+                  <div data-quill-editor></div>
+                  <textarea name="bio" data-richtext-input class="hidden w-full h-44 bg-zinc-950 border border-white/15 rounded-xl p-3 text-xs font-mono text-emerald-300">{{ inst.bio }}</textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-xl shadow transition">
+                Save Changes to {{ inst.name }}
+              </button>
+            </div>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: BLOG / MAT CORNER POSTS (Add, Edit, Delete, Rich Text)     -->
+    <!-- ================================================================= -->
+    {% if active_tab == 'posts' %}
+    <div class="space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900/90 border border-white/10 rounded-2xl p-6">
+        <div>
+          <h1 class="font-display text-3xl sm:text-4xl text-white">BLOG &amp; MAT CORNER ARTICLES</h1>
+          <p class="text-zinc-400 text-sm">Publish new belt promotions, tournament recaps, and academy news or edit existing articles with drag &amp; drop images and rich text.</p>
+        </div>
+        <button type="button" onclick="document.getElementById('new-post-panel').classList.toggle('hidden')"
+          class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl shadow-lg transition shrink-0">
+          + Write New Blog Post
+        </button>
+      </div>
+
+      <!-- Create New Post Panel -->
+      <div id="new-post-panel" class="hidden bg-zinc-900 border-2 border-[#CE1E36]/50 rounded-2xl p-6 shadow-2xl">
+        <h2 class="font-display text-2xl text-white mb-4">PUBLISH NEW BLOG POST</h2>
+        <form action="{{ admin_path }}/posts/save" method="POST" class="space-y-5">
+          <input type="hidden" name="post_id" value="0" />
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Post Title *</label>
+              <input type="text" name="title" required placeholder="e.g. Summer Belt Promotions &amp; Academy Cookout" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Category</label>
+              <select name="category_slug" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white">
+                <option value="promotions">Belt Promotions</option>
+                <option value="eventsgatherings">Events &amp; Gatherings</option>
+                <option value="seminars">BJJ Seminars</option>
+                <option value="uncategorized">Academy News</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Publish Date</label>
+              <input type="text" name="published_at" placeholder="YYYY-MM-DD (blank = today)" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1.5">Featured Image (Drag &amp; Drop)</label>
+              <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-[#CE1E36] transition bg-zinc-950/60">
+                <img data-preview src="/wp-content/uploads/2019/02/BJJ_Promotions_2019-65.jpg" alt="Preview" class="w-full h-32 object-cover rounded-xl mx-auto mb-2 border border-white/10" />
+                <p class="text-xs text-zinc-300 font-semibold">Drop featured image or <span class="text-[#CE1E36] underline">browse</span></p>
+                <p data-status class="text-[11px] text-zinc-500 mt-0.5">JPG, PNG, WEBP</p>
+                <input type="file" accept="image/*" class="hidden" />
+                <input type="text" name="featured_image" data-url-input value="/wp-content/uploads/2019/02/BJJ_Promotions_2019-65.jpg" class="mt-2 w-full bg-zinc-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-zinc-300" />
+              </div>
+              <div class="mt-3">
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Short Excerpt (Optional)</label>
+                <textarea name="excerpt" rows="3" placeholder="Auto-generated from article if left blank..." class="w-full bg-zinc-950 border border-white/15 rounded-xl p-2.5 text-xs text-white"></textarea>
+              </div>
+              <input type="hidden" name="status" value="1" />
+            </div>
+            <div class="lg:col-span-2">
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-bold uppercase text-zinc-400">Article Content (Rich Text Editor)</label>
+                <button type="button" onclick="toggleHtmlSource(this)" class="text-[11px] font-bold text-zinc-400 hover:text-white px-2 py-0.5 rounded bg-white/5 border border-white/10">&lt;&gt; HTML Source</button>
+              </div>
+              <div class="richtext-wrapper">
+                <div data-quill-editor></div>
+                <textarea name="content" data-richtext-input class="hidden w-full h-56 bg-zinc-950 border border-white/15 rounded-xl p-3 text-xs font-mono text-emerald-300"><p>Write your article content here...</p></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3">
+            <button type="button" onclick="document.getElementById('new-post-panel').classList.add('hidden')" class="px-4 py-2.5 rounded-xl border border-white/15 text-xs font-bold text-zinc-300">Cancel</button>
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-xl shadow-lg transition">Publish Post</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Existing Blog Posts -->
+      <div class="space-y-6">
+        {% for post in posts %}
+        <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-white/10">
+            <div>
+              <h3 class="font-display text-2xl text-white">{{ post.title }}</h3>
+              <p class="text-xs text-zinc-400">{{ post.category_name }} • {{ post.published_at }} • <a href="/{{ post.slug }}" target="_blank" class="text-[#CE1E36] hover:underline">/{{ post.slug }}</a></p>
+            </div>
+            <form action="{{ admin_path }}/posts/delete" method="POST" onsubmit="return confirm('Delete blog post {{ post.title }}?');">
+              <input type="hidden" name="post_id" value="{{ post.id }}" />
+              <button type="submit" class="text-xs font-bold uppercase tracking-wider px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition">Delete Post</button>
+            </form>
+          </div>
+
+          <form action="{{ admin_path }}/posts/save" method="POST" class="space-y-4">
+            <input type="hidden" name="post_id" value="{{ post.id }}" />
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div class="md:col-span-2">
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Post Title</label>
+                <input type="text" name="title" value="{{ post.title }}" required class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">URL Slug</label>
+                <input type="text" name="slug" value="{{ post.slug }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Category</label>
+                <select name="category_slug" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white">
+                  <option value="promotions" {% if post.category_slug == 'promotions' %}selected{% endif %}>Belt Promotions</option>
+                  <option value="eventsgatherings" {% if post.category_slug == 'eventsgatherings' %}selected{% endif %}>Events &amp; Gatherings</option>
+                  <option value="seminars" {% if post.category_slug == 'seminars' %}selected{% endif %}>BJJ Seminars</option>
+                  <option value="uncategorized" {% if post.category_slug == 'uncategorized' %}selected{% endif %}>Academy News</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1.5">Featured Image (Drag &amp; Drop)</label>
+                <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-3 text-center cursor-pointer hover:border-[#CE1E36] transition bg-zinc-950/60">
+                  <img data-preview src="{{ post.featured_image or '/wp-content/uploads/2019/02/BJJ_Promotions_2019-65.jpg' }}" alt="Preview" class="w-full h-28 object-cover rounded-lg mx-auto mb-2 border border-white/10" />
+                  <p class="text-xs text-zinc-300 font-semibold">Drop replacement image or <span class="text-[#CE1E36] underline">browse</span></p>
+                  <p data-status class="text-[10px] text-zinc-500"></p>
+                  <input type="file" accept="image/*" class="hidden" />
+                  <input type="text" name="featured_image" data-url-input value="{{ post.featured_image or '' }}" class="mt-2 w-full bg-zinc-900 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-zinc-300" />
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Published Date</label>
+                    <input type="text" name="published_at" value="{{ post.published_at }}" class="w-full bg-zinc-950 border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-white" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Status</label>
+                    <select name="status" class="w-full bg-zinc-950 border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                      <option value="1" {% if post.status == 1 %}selected{% endif %}>Published</option>
+                      <option value="0" {% if post.status != 1 %}selected{% endif %}>Draft</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mt-2">
+                  <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Excerpt</label>
+                  <textarea name="excerpt" rows="2" class="w-full bg-zinc-950 border border-white/15 rounded-lg p-2 text-xs text-white">{{ post.excerpt }}</textarea>
+                </div>
+              </div>
+
+              <div class="lg:col-span-2">
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-bold uppercase text-zinc-400">Post Body (Rich Text)</label>
+                  <button type="button" onclick="toggleHtmlSource(this)" class="text-[11px] font-bold text-zinc-400 hover:text-white px-2 py-0.5 rounded bg-white/5 border border-white/10">&lt;&gt; HTML Source</button>
+                </div>
+                <div class="richtext-wrapper">
+                  <div data-quill-editor></div>
+                  <textarea name="content" data-richtext-input class="hidden w-full h-48 bg-zinc-950 border border-white/15 rounded-xl p-3 text-xs font-mono text-emerald-300">{{ post.content }}</textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-2.5 rounded-xl shadow transition">Save Post</button>
+            </div>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: PAGES & SITE AREAS (Homepage, Programs, Pages, Lineage, FAQ)-->
+    <!-- ================================================================= -->
+    {% if active_tab == 'pages' %}
+    <div class="space-y-10">
+      <!-- 3A. HOMEPAGE VISUAL EDITOR -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 shadow-xl">
+        <div class="border-b border-white/10 pb-4 mb-6">
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#CE1E36]">Homepage Areas</span>
+          <h2 class="font-display text-3xl text-white">HOMEPAGE HERO, SLIDES &amp; WELCOME TEXT</h2>
+          <p class="text-xs text-zinc-400">Edit the main homepage headlines, drag &amp; drop hero background photos, and edit the Welcome to Our Academy rich text section.</p>
         </div>
 
-        {% if active_tab == 'inquiries' %}
-        <div class="rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
-            <h2 class="font-bold text-xl text-white">Student Inquiries &amp; Free Intro Class Requests</h2>
-            {% if not quotes %}
-            <p class="text-sm text-zinc-400">No inquiries submitted yet.</p>
-            {% else %}
-            <div class="space-y-4">
-                {% for q in quotes %}
-                <form action="{{ admin_path }}/quotes/status" method="post" class="p-4 rounded-xl bg-zinc-900/90 border border-white/10 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-                    <input type="hidden" name="quote_id" value="{{ q.id }}">
-                    <div class="lg:col-span-4 space-y-1">
-                        <div class="font-bold text-white">{{ q.name }} <span class="text-xs text-zinc-500 font-normal">({{ q.created_at }})</span></div>
-                        <div class="text-xs text-[#FF4D64]">{{ q.program_interest }}</div>
-                        <div class="text-xs text-zinc-300">{{ q.email }} • {{ q.phone }}</div>
-                    </div>
-                    <div class="lg:col-span-4 text-xs text-zinc-300">
-                        {{ q.message or 'No additional message.' }}
-                    </div>
-                    <div class="lg:col-span-4 flex items-center gap-2">
-                        <select name="status" class="px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
-                            <option value="new" {{ 'selected' if q.status == 'new' else '' }}>New</option>
-                            <option value="contacted" {{ 'selected' if q.status == 'contacted' else '' }}>Contacted</option>
-                            <option value="scheduled" {{ 'selected' if q.status == 'scheduled' else '' }}>Free Class Scheduled</option>
-                            <option value="joined" {{ 'selected' if q.status == 'joined' else '' }}>Joined Member</option>
-                        </select>
-                        <input type="text" name="internal_notes" value="{{ q.internal_notes }}" placeholder="Notes..." class="flex-1 px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
-                        <button type="submit" class="px-3 py-2 rounded-lg bg-[#CE1E36] text-xs font-bold text-white">Save</button>
-                    </div>
-                </form>
+        <form action="{{ admin_path }}/homepage/save" method="POST" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Hero Top Kicker Badge</label>
+              <input type="text" name="hero_kicker" value="{{ site.hero_kicker }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Hero Main Headline (HTML allowed)</label>
+              <input type="text" name="hero_headline_html" value="{{ site.hero_headline_html }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Hero Subtitle Paragraph (HTML allowed)</label>
+            <textarea name="hero_subtitle_html" rows="2" class="w-full bg-zinc-950 border border-white/15 rounded-xl p-3 text-sm text-white">{{ site.hero_subtitle_html }}</textarea>
+          </div>
+
+          <!-- 4 Hero Background Slides with Drag & Drop -->
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-2">Hero Background Slideshow Images (Drag &amp; Drop to Replace)</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {% for slide_num, slide_key in [(1, 'hero_slide_1'), (2, 'hero_slide_2'), (3, 'hero_slide_3'), (4, 'hero_slide_4')] %}
+              <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-3 text-center cursor-pointer hover:border-[#CE1E36] transition bg-zinc-950/60">
+                <p class="text-[11px] font-bold uppercase text-zinc-400 mb-1.5">Hero Slide #{{ slide_num }}</p>
+                <img data-preview src="{{ site[slide_key] }}" alt="Slide {{ slide_num }}" class="w-full h-24 object-cover rounded-lg mb-2 border border-white/10" />
+                <p class="text-[11px] text-zinc-300">Drop image or <span class="text-[#CE1E36] underline">browse</span></p>
+                <p data-status class="text-[10px] text-zinc-500"></p>
+                <input type="file" accept="image/*" class="hidden" />
+                <input type="text" name="{{ slide_key }}" data-url-input value="{{ site[slide_key] }}" class="mt-1.5 w-full bg-zinc-900 border border-white/10 rounded px-2 py-1 text-[11px] text-zinc-300" />
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Welcome Section Rich Text & Graphic Boxes -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-white/10">
+            <div class="lg:col-span-2 space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Welcome Kicker</label>
+                  <input type="text" name="home_welcome_kicker" value="{{ site.home_welcome_kicker }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Welcome Section Heading</label>
+                  <input type="text" name="home_welcome_heading_html" value="{{ site.home_welcome_heading_html }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-bold uppercase text-zinc-400">Welcome Section Body (Rich Text Editor)</label>
+                  <button type="button" onclick="toggleHtmlSource(this)" class="text-[11px] font-bold text-zinc-400 hover:text-white px-2 py-0.5 rounded bg-white/5 border border-white/10">&lt;&gt; HTML Source</button>
+                </div>
+                <div class="richtext-wrapper">
+                  <div data-quill-editor></div>
+                  <textarea name="home_welcome_body_html" data-richtext-input class="hidden w-full h-56 bg-zinc-950 border border-white/15 rounded-xl p-3 text-xs font-mono text-emerald-300">{{ site.home_welcome_body_html }}</textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <label class="block text-xs font-bold uppercase text-zinc-400">Welcome Graphic Callout Images</label>
+              <div class="grid grid-cols-2 gap-3">
+                {% for b_label, b_key in [('Fundamentals Box', 'home_fundamentals_box_img'), ('Advanced Box', 'home_advanced_box_img'), ('Showcase Photo 1', 'home_showcase_img_1'), ('Showcase Photo 2', 'home_showcase_img_2')] %}
+                <div data-dropzone class="border border-dashed border-white/20 rounded-xl p-2.5 text-center cursor-pointer hover:border-[#CE1E36] transition bg-zinc-950/60">
+                  <p class="text-[10px] font-bold uppercase text-zinc-400 mb-1">{{ b_label }}</p>
+                  <img data-preview src="{{ site[b_key] }}" alt="{{ b_label }}" class="w-full h-20 object-cover rounded mb-1 border border-white/10" />
+                  <p class="text-[10px] text-[#CE1E36] underline">Drop / Browse</p>
+                  <p data-status class="text-[9px] text-zinc-500"></p>
+                  <input type="file" accept="image/*" class="hidden" />
+                  <input type="text" name="{{ b_key }}" data-url-input value="{{ site[b_key] }}" class="mt-1 w-full bg-zinc-900 border border-white/10 rounded px-1.5 py-1 text-[10px] text-zinc-300" />
+                </div>
                 {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl shadow-lg transition">
+              Save Homepage Text &amp; Images
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- 3B. TRAINING PROGRAMS (/fundamentals-classes, /advanced-classes, etc.) -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 shadow-xl space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#CE1E36]">Program Pages &amp; Cards</span>
+            <h2 class="font-display text-3xl text-white">TRAINING PROGRAMS</h2>
+          </div>
+          <button type="button" onclick="document.getElementById('new-program-form').classList.toggle('hidden')" class="bg-white/10 hover:bg-white/15 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-white/15">+ Add Program</button>
+        </div>
+
+        <form id="new-program-form" action="{{ admin_path }}/programs/save" method="POST" class="hidden bg-zinc-950 border border-[#CE1E36]/40 rounded-xl p-5 space-y-4">
+          <input type="hidden" name="program_id" value="0" />
+          <h3 class="font-display text-xl text-white">CREATE NEW PROGRAM</h3>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <input type="text" name="name" required placeholder="Program Name" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            <input type="text" name="badge" value="Core Curriculum" placeholder="Badge" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            <input type="text" name="level" value="All Levels" placeholder="Skill Level" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            <input type="number" name="sort_order" value="{{ programs|length + 1 }}" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+          </div>
+          <input type="text" name="short_desc" placeholder="Short card summary..." class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+          <textarea name="description" rows="4" placeholder="Full HTML description..." class="w-full bg-zinc-900 border border-white/15 rounded-lg p-3 text-sm text-white"></textarea>
+          <input type="text" name="image" value="/static/images/program-fundamentals.jpg" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+          <button type="submit" class="bg-[#CE1E36] text-white text-xs font-bold uppercase px-5 py-2.5 rounded-lg">Create Program</button>
+        </form>
+
+        {% for prog in programs %}
+        <form action="{{ admin_path }}/programs/save" method="POST" class="bg-zinc-950/70 border border-white/10 rounded-xl p-5 space-y-4">
+          <input type="hidden" name="program_id" value="{{ prog.id }}" />
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+            <div class="md:col-span-2">
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Program Title</label>
+              <input type="text" name="name" value="{{ prog.name }}" required class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">URL Slug</label>
+              <input type="text" name="slug" value="{{ prog.slug }}" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Badge</label>
+              <input type="text" name="badge" value="{{ prog.badge }}" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Level</label>
+              <input type="text" name="level" value="{{ prog.level }}" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Program Card Image (Drag &amp; Drop)</label>
+              <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-3 text-center cursor-pointer hover:border-[#CE1E36] transition bg-zinc-900/60">
+                <img data-preview src="{{ prog.image }}" alt="{{ prog.name }}" class="w-full h-28 object-cover rounded-lg mb-2 border border-white/10" />
+                <p class="text-xs text-zinc-300">Drop image or <span class="text-[#CE1E36] underline">browse</span></p>
+                <p data-status class="text-[10px] text-zinc-500"></p>
+                <input type="file" accept="image/*" class="hidden" />
+                <input type="text" name="image" data-url-input value="{{ prog.image }}" class="mt-1.5 w-full bg-zinc-950 border border-white/10 rounded px-2 py-1 text-xs text-zinc-300" />
+              </div>
+              <input type="hidden" name="banner_image" value="{{ prog.banner_image or '' }}" />
+              <input type="hidden" name="sort_order" value="{{ prog.sort_order }}" />
+              <div class="mt-2">
+                <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Homepage Card Summary</label>
+                <textarea name="short_desc" rows="2" class="w-full bg-zinc-900 border border-white/15 rounded-lg p-2 text-xs text-white">{{ prog.short_desc }}</textarea>
+              </div>
+            </div>
+            <div class="lg:col-span-2">
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-[11px] font-bold uppercase text-zinc-400">Program Page Curriculum Description (Rich Text)</label>
+                <button type="button" onclick="toggleHtmlSource(this)" class="text-[11px] font-bold text-zinc-400 hover:text-white px-2 py-0.5 rounded bg-white/5 border border-white/10">&lt;&gt; HTML Source</button>
+              </div>
+              <div class="richtext-wrapper">
+                <div data-quill-editor></div>
+                <textarea name="description" data-richtext-input class="hidden w-full h-44 bg-zinc-900 border border-white/15 rounded-xl p-3 text-xs font-mono text-emerald-300">{{ prog.description }}</textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-2 rounded-lg transition">Save {{ prog.name }}</button>
+          </div>
+        </form>
+        {% endfor %}
+      </div>
+
+      <!-- 3C. LINEAGE ENTRIES (/lineage) -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 shadow-xl space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#CE1E36]">Historical Tree (/lineage)</span>
+            <h2 class="font-display text-3xl text-white">GRACIE LINEAGE GENERATIONS</h2>
+          </div>
+          <button type="button" onclick="document.getElementById('new-lineage-form').classList.toggle('hidden')" class="bg-white/10 hover:bg-white/15 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-white/15">+ Add Lineage Entry</button>
+        </div>
+
+        <form id="new-lineage-form" action="{{ admin_path }}/lineage/save" method="POST" class="hidden bg-zinc-950 border border-[#CE1E36]/40 rounded-xl p-5 space-y-4">
+          <input type="hidden" name="entry_id" value="0" />
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <input type="text" name="generation_badge" required placeholder="Generation Badge (e.g. Generation 06)" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            <input type="text" name="name" required placeholder="Full Name" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            <input type="number" name="sort_order" value="{{ lineage_entries|length + 1 }}" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+          </div>
+          <input type="text" name="image" value="/static/images/logo-medallion.png" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+          <textarea name="bio" rows="3" placeholder="Biography HTML..." class="w-full bg-zinc-900 border border-white/15 rounded-lg p-3 text-sm text-white"></textarea>
+          <button type="submit" class="bg-[#CE1E36] text-white text-xs font-bold uppercase px-5 py-2 rounded-lg">Add Lineage Entry</button>
+        </form>
+
+        {% for item in lineage_entries %}
+        <div class="bg-zinc-950/70 border border-white/10 rounded-xl p-5">
+          <form action="{{ admin_path }}/lineage/save" method="POST" class="space-y-4">
+            <input type="hidden" name="entry_id" value="{{ item.id }}" />
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <div class="md:col-span-2">
+                <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Generation Badge</label>
+                <input type="text" name="generation_badge" value="{{ item.generation_badge }}" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Name</label>
+                <input type="text" name="name" value="{{ item.name }}" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Order</label>
+                <input type="number" name="sort_order" value="{{ item.sort_order }}" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+              </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-3 text-center cursor-pointer hover:border-[#CE1E36] transition bg-zinc-900/60">
+                <img data-preview src="{{ item.image }}" alt="{{ item.name }}" class="w-20 h-20 object-cover rounded-lg mx-auto mb-1.5 border border-white/10" />
+                <p class="text-[11px] text-zinc-300">Drop portrait or <span class="text-[#CE1E36] underline">browse</span></p>
+                <p data-status class="text-[10px] text-zinc-500"></p>
+                <input type="file" accept="image/*" class="hidden" />
+                <input type="text" name="image" data-url-input value="{{ item.image }}" class="mt-1 w-full bg-zinc-950 border border-white/10 rounded px-2 py-1 text-[11px] text-zinc-300" />
+              </div>
+              <div class="lg:col-span-2">
+                <div class="richtext-wrapper">
+                  <div data-quill-editor></div>
+                  <textarea name="bio" data-richtext-input class="hidden w-full h-32 bg-zinc-900 border border-white/15 rounded-lg p-2.5 text-xs font-mono text-emerald-300">{{ item.bio }}</textarea>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-between items-center">
+              <button type="submit" formaction="{{ admin_path }}/lineage/delete" onclick="return confirm('Delete lineage entry?');" class="text-xs text-red-400 hover:underline">Remove Entry</button>
+              <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-2 rounded-lg transition">Save Lineage Entry</button>
+            </div>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- 3D. CUSTOM PAGES & FAQS -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Custom Pages -->
+        <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-5">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <h2 class="font-display text-2xl text-white">CUSTOM SITE PAGES</h2>
+            <button type="button" onclick="document.getElementById('new-custom-page').classList.toggle('hidden')" class="text-xs font-bold text-[#CE1E36] hover:underline">+ Add Page</button>
+          </div>
+          <form id="new-custom-page" action="{{ admin_path }}/pages/save" method="POST" class="hidden bg-zinc-950 border border-white/15 rounded-xl p-4 space-y-3">
+            <input type="hidden" name="page_id" value="0" />
+            <input type="text" name="title" required placeholder="Page Title" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            <input type="text" name="slug" placeholder="url-slug (optional)" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs text-white" />
+            <div data-dropzone class="border border-dashed border-white/20 rounded-lg p-3 text-center cursor-pointer">
+              <img data-preview src="/wp-content/uploads/2019/05/Slide-1.jpg" class="h-16 mx-auto rounded mb-1 object-cover" />
+              <p class="text-[11px] text-zinc-400">Drop Hero Image or <span class="text-[#CE1E36] underline">browse</span></p>
+              <p data-status class="text-[10px] text-zinc-500"></p>
+              <input type="file" accept="image/*" class="hidden" />
+              <input type="text" name="hero_image" data-url-input value="/wp-content/uploads/2019/05/Slide-1.jpg" class="mt-1 w-full bg-zinc-900 border border-white/10 rounded px-2 py-1 text-[11px] text-zinc-300" />
+            </div>
+            <div class="richtext-wrapper">
+              <div data-quill-editor></div>
+              <textarea name="content" data-richtext-input class="hidden"><p>New page content...</p></textarea>
+            </div>
+            <button type="submit" class="bg-[#CE1E36] text-white text-xs font-bold uppercase px-4 py-2 rounded-lg">Create Page</button>
+          </form>
+
+          {% for pg in pages %}
+          <form action="{{ admin_path }}/pages/save" method="POST" class="bg-zinc-950/70 border border-white/10 rounded-xl p-4 space-y-3">
+            <input type="hidden" name="page_id" value="{{ pg.id }}" />
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-white">{{ pg.title }}</span>
+              <a href="/{{ pg.slug }}" target="_blank" class="text-xs text-[#CE1E36] hover:underline">/{{ pg.slug }} ↗</a>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" name="title" value="{{ pg.title }}" class="bg-zinc-900 border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-white" />
+              <input type="text" name="slug" value="{{ pg.slug }}" class="bg-zinc-900 border border-white/15 rounded-lg px-2.5 py-1.5 text-xs text-white" />
+            </div>
+            <input type="hidden" name="meta_title" value="{{ pg.meta_title or '' }}" />
+            <input type="hidden" name="meta_description" value="{{ pg.meta_description or '' }}" />
+            <input type="text" name="hero_image" value="{{ pg.hero_image or '/wp-content/uploads/2019/05/Slide-1.jpg' }}" class="w-full bg-zinc-900 border border-white/10 rounded px-2.5 py-1 text-xs text-zinc-300" />
+            <div class="richtext-wrapper">
+              <div data-quill-editor></div>
+              <textarea name="content" data-richtext-input class="hidden">{{ pg.content }}</textarea>
+            </div>
+            <div class="flex justify-end">
+              <button type="submit" class="bg-[#CE1E36] text-white text-xs font-bold uppercase px-4 py-1.5 rounded-lg">Save Page</button>
+            </div>
+          </form>
+          {% endfor %}
+        </div>
+
+        <!-- FAQs -->
+        <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-5">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <h2 class="font-display text-2xl text-white">FREQUENTLY ASKED QUESTIONS</h2>
+            <button type="button" onclick="document.getElementById('new-faq-form').classList.toggle('hidden')" class="text-xs font-bold text-[#CE1E36] hover:underline">+ Add FAQ</button>
+          </div>
+          <form id="new-faq-form" action="{{ admin_path }}/faqs/save" method="POST" class="hidden bg-zinc-950 border border-white/15 rounded-xl p-4 space-y-3">
+            <input type="hidden" name="faq_id" value="0" />
+            <input type="text" name="question" required placeholder="Question..." class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-sm text-white" />
+            <textarea name="answer" required rows="3" placeholder="Answer..." class="w-full bg-zinc-900 border border-white/15 rounded-lg p-2.5 text-xs text-white"></textarea>
+            <input type="number" name="sort_order" value="{{ faqs|length + 1 }}" class="w-24 bg-zinc-900 border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white" />
+            <button type="submit" class="bg-[#CE1E36] text-white text-xs font-bold uppercase px-4 py-2 rounded-lg">Add FAQ</button>
+          </form>
+
+          {% for f in faqs %}
+          <form action="{{ admin_path }}/faqs/save" method="POST" class="bg-zinc-950/70 border border-white/10 rounded-xl p-4 space-y-2.5">
+            <input type="hidden" name="faq_id" value="{{ f.id }}" />
+            <input type="hidden" name="sort_order" value="{{ f.sort_order }}" />
+            <input type="text" name="question" value="{{ f.question }}" class="w-full bg-zinc-900 border border-white/15 rounded-lg px-3 py-2 text-xs font-bold text-white" />
+            <textarea name="answer" rows="3" class="w-full bg-zinc-900 border border-white/15 rounded-lg p-2.5 text-xs text-zinc-200">{{ f.answer }}</textarea>
+            <div class="flex justify-between items-center">
+              <button type="submit" formaction="{{ admin_path }}/faqs/delete" onclick="return confirm('Delete FAQ?');" class="text-[11px] text-red-400 hover:underline">Delete</button>
+              <button type="submit" class="bg-white/10 hover:bg-[#CE1E36] text-white text-[11px] font-bold uppercase px-3.5 py-1.5 rounded-lg transition">Save FAQ</button>
+            </div>
+          </form>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 4: PHOTO GALLERIES (Drag & Drop Upload Photos)                -->
+    <!-- ================================================================= -->
+    {% if active_tab == 'galleries' %}
+    <div class="space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900 border border-white/10 rounded-2xl p-6">
+        <div>
+          <h1 class="font-display text-3xl sm:text-4xl text-white">PHOTO GALLERIES</h1>
+          <p class="text-zinc-400 text-sm">Drag and drop new photos into any gallery album or create new albums for <a href="/galleries" target="_blank" class="text-[#CE1E36] underline">/galleries</a>.</p>
+        </div>
+        <button type="button" onclick="document.getElementById('new-gallery-panel').classList.toggle('hidden')" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-3 rounded-xl shadow-lg transition">+ Create New Gallery</button>
+      </div>
+
+      <form id="new-gallery-panel" action="{{ admin_path }}/galleries/save" method="POST" class="hidden bg-zinc-900 border-2 border-[#CE1E36]/50 rounded-2xl p-6 space-y-4">
+        <input type="hidden" name="gallery_id" value="0" />
+        <h3 class="font-display text-2xl text-white">NEW PHOTO GALLERY ALBUM</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input type="text" name="title" required placeholder="Album Title" class="bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          <input type="text" name="description" placeholder="Short description" class="bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          <input type="text" name="cover_image" placeholder="Cover Image URL" value="/wp-content/uploads/2019/02/BJJ_Promotions_2019-65.jpg" class="bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+        </div>
+        <button type="submit" class="bg-[#CE1E36] text-white font-bold text-xs uppercase px-6 py-2.5 rounded-xl">Create Album</button>
+      </form>
+
+      {% for gal in galleries %}
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <h2 class="font-display text-2xl text-white">{{ gal.title }} <span class="text-sm text-zinc-400 font-sans">({{ gal.photos|length }} photos)</span></h2>
+            <a href="/gallery/{{ gal.slug }}" target="_blank" class="text-xs text-[#CE1E36] hover:underline">/gallery/{{ gal.slug }} ↗</a>
+          </div>
+          <!-- Drag and drop photo adder -->
+          <form action="{{ admin_path }}/galleries/photos/add" method="POST" class="flex flex-wrap items-center gap-3">
+            <input type="hidden" name="gallery_id" value="{{ gal.id }}" />
+            <div data-dropzone class="border border-dashed border-white/25 rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer hover:border-[#CE1E36] bg-zinc-950">
+              <img data-preview src="{{ gal.cover_image }}" class="w-8 h-8 rounded object-cover" />
+              <div class="text-left">
+                <p class="text-xs font-bold text-white">Drop Photo Here or <span class="text-[#CE1E36] underline">Browse</span></p>
+                <p data-status class="text-[10px] text-zinc-400">Uploads &amp; fills URL below</p>
+              </div>
+              <input type="file" accept="image/*" class="hidden" />
+              <input type="text" name="image_url" data-url-input required placeholder="/wp-content/uploads/..." class="bg-zinc-900 border border-white/10 rounded px-2 py-1 text-xs text-zinc-200 w-48" />
+            </div>
+            <input type="text" name="title" placeholder="Caption (optional)" class="bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase px-4 py-2.5 rounded-xl transition">+ Add Photo to Album</button>
+          </form>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+          {% for ph in gal.photos %}
+          <div class="group relative rounded-xl overflow-hidden border border-white/10 bg-zinc-950 aspect-square">
+            <img src="{{ ph.image_url }}" alt="{{ ph.title }}" loading="lazy" class="w-full h-full object-cover" />
+            <form action="{{ admin_path }}/galleries/photos/delete" method="POST" class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+              <input type="hidden" name="photo_id" value="{{ ph.id }}" />
+              <input type="hidden" name="gallery_id" value="{{ gal.id }}" />
+              <button type="submit" class="bg-red-600 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded shadow">Remove</button>
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 5: MEMBERSHIPS & RATES                                        -->
+    <!-- ================================================================= -->
+    {% if active_tab == 'memberships' %}
+    <div class="space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4 bg-zinc-900 border border-white/10 rounded-2xl p-6">
+        <div>
+          <h1 class="font-display text-3xl text-white">MEMBERSHIPS &amp; PRICING CARDS</h1>
+          <p class="text-zinc-400 text-sm">Edit pricing, billing period, badges, or add new membership cards shown on the homepage.</p>
+        </div>
+        <button type="button" onclick="document.getElementById('new-membership-form').classList.toggle('hidden')" class="bg-[#CE1E36] text-white font-bold text-xs uppercase px-5 py-3 rounded-xl">+ Add Rate Card</button>
+      </div>
+
+      <form id="new-membership-form" action="{{ admin_path }}/memberships/update" method="POST" class="hidden bg-zinc-900 border-2 border-[#CE1E36]/40 rounded-2xl p-6 space-y-4">
+        <input type="hidden" name="membership_id" value="0" />
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <input type="text" name="name" required placeholder="Plan Name (e.g. Unlimited Adult)" class="bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+          <input type="text" name="price_display" required placeholder="$130" class="bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+          <input type="text" name="billing_period" placeholder="per month" class="bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+          <input type="text" name="badge" placeholder="Badge (e.g. Most Popular)" class="bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+        </div>
+        <textarea name="description" rows="2" placeholder="Description..." class="w-full bg-zinc-950 border border-white/15 rounded-xl p-3 text-sm text-white"></textarea>
+        <input type="hidden" name="external_url" value="" />
+        <button type="submit" class="bg-[#CE1E36] text-white font-bold text-xs uppercase px-5 py-2.5 rounded-xl">Create Membership Card</button>
+      </form>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for m in memberships %}
+        <form action="{{ admin_path }}/memberships/update" method="POST" class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-4">
+          <input type="hidden" name="membership_id" value="{{ m.id }}" />
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Plan Name</label>
+              <input type="text" name="name" value="{{ m.name }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white font-bold" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Badge</label>
+              <input type="text" name="badge" value="{{ m.badge or '' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Price Display</label>
+              <input type="text" name="price_display" value="{{ m.price_display }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white font-bold" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Billing Period</label>
+              <input type="text" name="billing_period" value="{{ m.billing_period or '' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-sm text-white" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold uppercase text-zinc-400 mb-1">Description</label>
+            <textarea name="description" rows="2" class="w-full bg-zinc-950 border border-white/15 rounded-xl p-3 text-xs text-zinc-200">{{ m.description }}</textarea>
+          </div>
+          <input type="hidden" name="external_url" value="{{ m.external_url or '' }}" />
+          <div class="flex justify-between items-center pt-1">
+            <button type="submit" formaction="{{ admin_path }}/memberships/delete" onclick="return confirm('Delete this membership plan?');" class="text-xs text-red-400 hover:underline">Delete</button>
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-5 py-2 rounded-xl transition">Save Plan</button>
+          </div>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 6: SITE SETTINGS & SOCIAL MEDIA MANAGER                       -->
+    <!-- ================================================================= -->
+    {% if active_tab == 'settings' %}
+    <form action="{{ admin_path }}/site-settings/save" method="POST" class="space-y-8">
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-6">
+        <div class="border-b border-white/10 pb-4">
+          <h1 class="font-display text-3xl text-white">ACADEMY CONTACT INFO, BRANDING &amp; GOOGLE REVIEWS</h1>
+          <p class="text-zinc-400 text-sm">Changes immediately update the top utility bar, header, footer, and contact page across the entire site.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Academy Name</label>
+            <input type="text" name="site_name" value="{{ site.site_name }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Phone Number</label>
+            <input type="text" name="phone" value="{{ site.phone }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Vanity Phone</label>
+            <input type="text" name="phone_vanity" value="{{ site.phone_vanity }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Public Contact Email</label>
+            <input type="email" name="email_contact" value="{{ site.email_contact }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Lead Notification Emails</label>
+            <input type="text" name="email_quotes" value="{{ site.email_quotes }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Street Address</label>
+            <input type="text" name="address" value="{{ site.address }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4 border-t border-white/10">
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Google Maps Review Link</label>
+            <input type="url" name="google_maps_url" value="{{ site.google_maps_url }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Google Star Rating</label>
+            <input type="text" name="google_rating" value="{{ site.google_rating }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Google Review Count</label>
+            <input type="text" name="google_reviews_count" value="{{ site.google_reviews_count }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+        </div>
+
+        <!-- Logo, Favicon & Waiver Drag and Drop -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4 border-t border-white/10">
+          <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-[#CE1E36] bg-zinc-950/60">
+            <p class="text-xs font-bold uppercase text-zinc-400 mb-2">Academy Medallion Logo</p>
+            <img data-preview src="{{ site.logo_url }}" class="w-16 h-16 mx-auto rounded-full bg-white p-0.5 object-contain mb-2" />
+            <p class="text-xs text-zinc-300">Drop logo or <span class="text-[#CE1E36] underline">browse</span></p>
+            <p data-status class="text-[10px] text-zinc-500"></p>
+            <input type="file" accept="image/*" class="hidden" />
+            <input type="text" name="logo_url" data-url-input value="{{ site.logo_url }}" class="mt-2 w-full bg-zinc-900 border border-white/10 rounded px-2.5 py-1.5 text-xs text-zinc-300" />
+          </div>
+
+          <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-[#CE1E36] bg-zinc-950/60">
+            <p class="text-xs font-bold uppercase text-zinc-400 mb-2">Site Favicon</p>
+            <img data-preview src="{{ site.favicon_url }}" class="w-16 h-16 mx-auto rounded-full bg-white p-0.5 object-contain mb-2" />
+            <p class="text-xs text-zinc-300">Drop favicon or <span class="text-[#CE1E36] underline">browse</span></p>
+            <p data-status class="text-[10px] text-zinc-500"></p>
+            <input type="file" accept="image/*,.ico" class="hidden" />
+            <input type="text" name="favicon_url" data-url-input value="{{ site.favicon_url }}" class="mt-2 w-full bg-zinc-900 border border-white/10 rounded px-2.5 py-1.5 text-xs text-zinc-300" />
+          </div>
+
+          <div data-dropzone class="border-2 border-dashed border-white/20 rounded-xl p-4 text-center cursor-pointer hover:border-[#CE1E36] bg-zinc-950/60">
+            <p class="text-xs font-bold uppercase text-zinc-400 mb-2">Academy Waiver PDF</p>
+            <div class="w-16 h-16 mx-auto rounded-xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-[#CE1E36] font-display text-xl mb-2">PDF</div>
+            <p class="text-xs text-zinc-300">Drop PDF or <span class="text-[#CE1E36] underline">browse</span></p>
+            <p data-status class="text-[10px] text-zinc-500"></p>
+            <input type="file" accept=".pdf,image/*" class="hidden" />
+            <input type="text" name="waiver_url" data-url-input value="{{ site.waiver_url }}" class="mt-2 w-full bg-zinc-900 border border-white/10 rounded px-2.5 py-1.5 text-xs text-zinc-300" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Media Profiles Manager -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <h2 class="font-display text-3xl text-white">SOCIAL MEDIA PROFILES</h2>
+            <p class="text-zinc-400 text-sm">Any social media URL filled in below automatically displays its icon in the top utility bar, footer, and contact page. Leave blank to hide.</p>
+          </div>
+          <button type="button" onclick="addCustomSocialRow()" class="bg-white/10 hover:bg-white/15 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border border-white/15">
+            + Add Custom Social Link
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Facebook Page URL</label>
+            <input type="url" name="facebook_url" value="{{ site.facebook_url }}" placeholder="https://www.facebook.com/StPeteBJJ/" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Instagram Profile URL</label>
+            <input type="url" name="instagram_url" value="{{ site.instagram_url }}" placeholder="https://www.instagram.com/StPeteBJJ/" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">YouTube Channel URL</label>
+            <input type="url" name="youtube_url" value="{{ site.youtube_url }}" placeholder="https://www.youtube.com/@..." class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">TikTok Profile URL</label>
+            <input type="url" name="tiktok_url" value="{{ site.tiktok_url }}" placeholder="https://www.tiktok.com/@..." class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">X / Twitter Profile URL</label>
+            <input type="url" name="twitter_url" value="{{ site.twitter_url }}" placeholder="https://x.com/..." class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Yelp Business URL</label>
+            <input type="url" name="yelp_url" value="{{ site.yelp_url }}" placeholder="https://www.yelp.com/biz/..." class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">LinkedIn URL</label>
+            <input type="url" name="linkedin_url" value="{{ site.linkedin_url }}" placeholder="https://www.linkedin.com/company/..." class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+          </div>
+        </div>
+
+        <!-- Custom Social Links Container -->
+        <div id="custom-socials-container" class="space-y-3 pt-2">
+          {% for soc in extra_socials %}
+          <div class="flex items-center gap-3 custom-social-row">
+            <input type="text" name="custom_social_name" value="{{ soc.name }}" placeholder="Platform Name (e.g. Threads)" class="w-48 bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            <input type="url" name="custom_social_url" value="{{ soc.url }}" placeholder="https://..." class="flex-1 bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+            <button type="button" onclick="this.parentElement.remove()" class="text-xs font-bold text-red-400 hover:text-red-300 px-3 py-2 rounded-lg bg-red-500/10">Remove</button>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="flex justify-end pt-4 border-t border-white/10">
+          <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-lg transition">
+            Save All Site &amp; Social Media Settings
+          </button>
+        </div>
+      </div>
+    </form>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 7: AI CHAT SUPPORT AGENT (Provider, Live Model List, Limits)  -->
+    <!-- ================================================================= -->
+    {% if active_tab == 'ai-agent' %}
+    <div class="space-y-8">
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-6 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#CE1E36]">24/7 Front-End Support Bot</span>
+            <h1 class="font-display text-3xl sm:text-4xl text-white">AI CHAT SUPPORT AGENT CONFIGURATION</h1>
+            <p class="text-zinc-400 text-sm">Trained strictly on St. Pete BJJ public academy data (classes, schedule, 7 active instructors, Gracie lineage, memberships, and BJJ basics). Zero customer data access; automatically stops &amp; locks chats on coding or off-topic requests.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1.5 rounded-full text-xs font-bold {{ 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30' if site.ai_enabled == 'true' else 'bg-zinc-800 text-zinc-400' }}">
+              Active: {{ site.ai_provider|upper }} • {{ site.ai_model }}
+            </span>
+          </div>
+        </div>
+
+        <form action="{{ admin_path }}/ai/save" method="POST" class="space-y-6">
+          <!-- Provider, Dynamic Model Selector & Enable Toggle -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-zinc-950/90 border border-white/10 rounded-2xl p-5">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1.5">AI Chat Widget Status</label>
+              <select name="ai_enabled" class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white font-semibold">
+                <option value="true" {% if site.ai_enabled == 'true' %}selected{% endif %}>✅ Enabled on Website (24/7 Live)</option>
+                <option value="false" {% if site.ai_enabled != 'true' %}selected{% endif %}>⏸️ Disabled / Hidden</option>
+              </select>
+              <p class="text-[11px] text-zinc-500 mt-1.5">Even before an API key is added, the built-in St. Pete BJJ Knowledge Engine answers visitor questions accurately.</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1.5">AI Provider</label>
+              <select id="ai-provider-select" name="ai_provider" onchange="onProviderSwitch(this.value)"
+                class="w-full bg-zinc-900 border border-[#CE1E36]/60 rounded-xl px-3.5 py-2.5 text-sm text-white font-bold focus:outline-none focus:ring-2 focus:ring-[#CE1E36]">
+                {% for p_key, p_label in ai_providers.items() %}
+                <option value="{{ p_key }}" {% if site.ai_provider == p_key %}selected{% endif %}>{{ p_label }}</option>
+                {% endfor %}
+              </select>
+              <p class="text-[11px] text-zinc-400 mt-1.5">Switching provider automatically pulls compatible models.</p>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-bold uppercase text-zinc-400">Compatible Model (Saved in DB)</label>
+                <button type="button" onclick="onProviderSwitch(document.getElementById('ai-provider-select').value, true)"
+                  class="text-[11px] font-bold text-[#CE1E36] hover:underline flex items-center gap-1">
+                  <span>↻ Refresh Models</span>
+                </button>
+              </div>
+              <select id="ai-model-select" name="ai_model"
+                class="w-full bg-zinc-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white font-semibold">
+                {% set saved_model = site.ai_model or 'gemini-2.5-flash' %}
+                {% set ns = namespace(found=false) %}
+                {% for m in ai_initial_models %}
+                  {% if m.id == saved_model %}{% set ns.found = true %}{% endif %}
+                  <option value="{{ m.id }}" {% if m.id == saved_model %}selected{% endif %}>{{ m.name }}</option>
+                {% endfor %}
+                {% if not ns.found %}
+                  <option value="{{ saved_model }}" selected>{{ saved_model }} (Current Saved)</option>
+                {% endif %}
+              </select>
+              <p id="ai-model-source-badge" class="text-[11px] text-emerald-400 mt-1.5">Select any compatible model above and click Save to store in DB.</p>
+            </div>
+          </div>
+
+          <!-- Rate Limits & Guardrails -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Max Messages Per Chat Session (Stop Limit)</label>
+              <input type="number" name="ai_max_messages_per_session" value="{{ site.ai_max_messages_per_session or '15' }}" min="1" max="200"
+                class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+              <p class="text-[11px] text-zinc-500 mt-1">Once a visitor reaches this message count, the chat locks and invites them to call/text (727) 619-4255.</p>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Max Messages Per IP Address Per Day</label>
+              <input type="number" name="ai_max_messages_per_ip_day" value="{{ site.ai_max_messages_per_ip_day or '40' }}" min="5" max="1000"
+                class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white" />
+              <p class="text-[11px] text-zinc-500 mt-1">Daily spend &amp; abuse cap per visitor IP address across sessions.</p>
+            </div>
+          </div>
+
+          <!-- Provider API Keys -->
+          <div class="border-t border-white/10 pt-5">
+            <h3 class="font-display text-2xl text-white mb-1">PROVIDER API KEYS</h3>
+            <p class="text-xs text-zinc-400 mb-4">Enter an API key for your chosen provider. After typing a key, you can click <strong>"↻ Refresh Models"</strong> above to pull the live model list directly from that provider's API.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Google Gemini API Key</label>
+                <input type="password" id="key-gemini" name="ai_gemini_key" value="{{ site.ai_gemini_key or '' }}" placeholder="AIza..."
+                  class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">OpenAI API Key</label>
+                <input type="password" id="key-openai" name="ai_openai_key" value="{{ site.ai_openai_key or '' }}" placeholder="sk-..."
+                  class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Anthropic Claude API Key</label>
+                <input type="password" id="key-anthropic" name="ai_anthropic_key" value="{{ site.ai_anthropic_key or '' }}" placeholder="sk-ant-..."
+                  class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">xAI (Grok) API Key</label>
+                <input type="password" id="key-xai" name="ai_xai_key" value="{{ site.ai_xai_key or '' }}" placeholder="xai-..."
+                  class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">DeepSeek API Key</label>
+                <input type="password" id="key-deepseek" name="ai_deepseek_key" value="{{ site.ai_deepseek_key or '' }}" placeholder="sk-..."
+                  class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">OpenRouter API Key</label>
+                <input type="password" id="key-openrouter" name="ai_openrouter_key" value="{{ site.ai_openrouter_key or '' }}" placeholder="sk-or-..."
+                  class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Admin Instructions -->
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Additional Academy Notes / Custom Instructions for AI (Optional)</label>
+            <textarea name="ai_custom_instructions" rows="3" placeholder="e.g. Remind visitors about our upcoming Saturday seminar on November 15th..."
+              class="w-full bg-zinc-950 border border-white/15 rounded-xl p-3 text-sm text-white">{{ site.ai_custom_instructions or '' }}</textarea>
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-lg transition">
+              Save AI Provider, Model, Keys &amp; Limits to Database
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Recent Visitor AI Chat Sessions & Moderation Log -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-4">
+        <h2 class="font-display text-2xl text-white">RECENT AI CHAT SESSIONS ({{ ai_sessions|length }})</h2>
+        {% if not ai_sessions %}
+        <p class="text-xs text-zinc-400">No visitor chat sessions recorded yet.</p>
+        {% else %}
+        <div class="space-y-3">
+          {% for s in ai_sessions %}
+          <div class="bg-zinc-950 border {{ 'border-red-500/40' if s.terminated else 'border-white/10' }} rounded-xl p-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2.5">
+                <span class="text-xs font-mono text-zinc-300">{{ s.session_id }}</span>
+                <span class="text-[11px] text-zinc-500">IP: {{ s.ip_address }} • {{ s.messages_count }} msgs • {{ s.updated_at }}</span>
+                {% if s.terminated %}
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-red-500/20 text-red-300 border border-red-500/30">
+                  Locked ({{ s.termination_reason or 'violation' }})
+                </span>
+                {% else %}
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-300">Active</span>
+                {% endif %}
+              </div>
+              <div class="flex items-center gap-2">
+                {% if s.terminated %}
+                <form action="{{ admin_path }}/ai/sessions/unlock" method="POST">
+                  <input type="hidden" name="session_id" value="{{ s.session_id }}" />
+                  <button type="submit" class="text-[11px] font-bold text-emerald-400 hover:underline px-2.5 py-1 rounded bg-emerald-500/10">Unlock Session</button>
+                </form>
+                {% endif %}
+                <form action="{{ admin_path }}/ai/sessions/delete" method="POST">
+                  <input type="hidden" name="session_id" value="{{ s.session_id }}" />
+                  <button type="submit" class="text-[11px] font-bold text-red-400 hover:underline px-2.5 py-1 rounded bg-red-500/10">Delete</button>
+                </form>
+              </div>
+            </div>
+            {% if s.messages %}
+            <div class="max-h-40 overflow-y-auto space-y-1.5 pt-2 border-t border-white/5 text-xs">
+              {% for m in s.messages %}
+              <div class="{{ 'text-cyan-300' if m.role == 'user' else 'text-zinc-300' }}">
+                <strong class="uppercase text-[10px]">{{ m.role }}:</strong> {{ m.content }}
+                {% if m.flagged %}<span class="text-[10px] text-red-400 font-bold ml-1">[FLAGGED]</span>{% endif %}
+              </div>
+              {% endfor %}
             </div>
             {% endif %}
-        </div>
-
-        {% elif active_tab == 'memberships' %}
-        <div class="rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
-            <h2 class="font-bold text-xl text-white">Manage Membership &amp; Class Package Rates</h2>
-            <div class="space-y-4">
-                {% for m in memberships %}
-                <form action="{{ admin_path }}/memberships/update" method="post" class="p-4 rounded-xl bg-zinc-900 border border-white/10 grid grid-cols-1 md:grid-cols-6 gap-3 items-center">
-                    <input type="hidden" name="membership_id" value="{{ m.id }}">
-                    <input type="text" name="name" value="{{ m.name }}" class="md:col-span-2 px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
-                    <input type="text" name="price_display" value="{{ m.price_display }}" class="px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white font-mono">
-                    <input type="text" name="billing_period" value="{{ m.billing_period or '' }}" class="px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
-                    <input type="text" name="badge" value="{{ m.badge or '' }}" class="px-3 py-2 rounded-lg bg-zinc-800 border border-white/10 text-xs text-white">
-                    <input type="hidden" name="description" value="{{ m.description }}">
-                    <input type="hidden" name="external_url" value="{{ m.external_url }}">
-                    <button type="submit" class="px-4 py-2 rounded-lg bg-[#CE1E36] text-xs font-bold text-white">Update Rate</button>
-                </form>
-                {% endfor %}
-            </div>
-        </div>
-
-        {% elif active_tab == 'instructors' %}
-        <div class="rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
-            <h2 class="font-bold text-xl text-white">Academy Instructors &amp; Black Belt Professors</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% for inst in instructors %}
-                <div class="p-4 rounded-xl bg-zinc-900 border border-white/10 flex items-center gap-4">
-                    <img src="{{ inst.image }}" alt="{{ inst.name }}" class="w-16 h-16 rounded-xl object-cover">
-                    <div>
-                        <div class="font-bold text-white">{{ inst.name }}</div>
-                        <div class="text-xs text-[#FF4D64]">{{ inst.rank }} • {{ inst.role }}</div>
-                        <div class="text-xs text-zinc-400">{{ inst.lineage }}</div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        {% elif active_tab == 'security' %}
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-6 rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
-                <h2 class="font-bold text-xl text-white">Geo-IP Firewall, WAF &amp; reCAPTCHA v3 Settings</h2>
-                <form action="{{ admin_path }}/settings/update" method="post" class="space-y-4 text-xs">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-zinc-400 mb-1">Academy Phone</label>
-                            <input type="text" name="phone" value="{{ site.get('phone') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white">
-                        </div>
-                        <div>
-                            <label class="block text-zinc-400 mb-1">Contact Email</label>
-                            <input type="text" name="email_contact" value="{{ site.get('email_contact') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-zinc-400 mb-1">Allowed ISO Country Codes (Geo-IP Firewall)</label>
-                        <input type="text" name="geo_allowed_countries" value="{{ site.get('geo_allowed_countries', 'US, CA, MX, PR') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white font-mono">
-                    </div>
-                    <div class="flex flex-wrap gap-4 pt-1">
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" name="geo_block_enabled" value="1" {{ 'checked' if site.get('geo_block_enabled', '1') == '1' else '' }}>
-                            <span>Block Malicious Foreign IPs</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" name="geo_allow_search_bots" value="1" {{ 'checked' if site.get('geo_allow_search_bots', '1') == '1' else '' }}>
-                            <span>Allow Googlebot / Bingbot</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" name="waf_block_scanners" value="1" {{ 'checked' if site.get('waf_block_scanners', '1') == '1' else '' }}>
-                            <span>Block Exploit Scanners (/wp-admin, /.env)</span>
-                        </label>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-zinc-400 mb-1">reCAPTCHA v3 Site Key</label>
-                            <input type="text" name="recaptcha_site_key" value="{{ site.get('recaptcha_site_key') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-zinc-400 mb-1">reCAPTCHA v3 Secret Key</label>
-                            <input type="text" name="recaptcha_secret_key" value="{{ site.get('recaptcha_secret_key') }}" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white font-mono">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-zinc-400 mb-1">IP Blacklist (comma or newline separated)</label>
-                        <textarea name="geo_ip_blacklist" rows="2" class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/15 text-white font-mono">{{ site.get('geo_ip_blacklist', '') }}</textarea>
-                    </div>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#CE1E36] font-bold text-white">Save Security Settings</button>
-                </form>
-            </div>
-
-            <div class="lg:col-span-6 rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
-                <h2 class="font-bold text-xl text-white">Recent Blocked Security Events</h2>
-                {% if not security_events %}
-                <p class="text-xs text-zinc-400">No blocked threats logged yet.</p>
-                {% else %}
-                <div class="space-y-2 max-h-96 overflow-y-auto text-xs">
-                    {% for ev in security_events %}
-                    <div class="p-3 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-between">
-                        <div>
-                            <span class="font-mono font-bold text-red-400">{{ ev.ip_address }} ({{ ev.country_code }})</span>
-                            <span class="text-zinc-300 ml-2">{{ ev.reason }}</span>
-                            <div class="text-zinc-500 font-mono">{{ ev.request_path }}</div>
-                        </div>
-                        <span class="text-zinc-500">{{ ev.created_at }}</span>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        {% elif active_tab == 'backups' %}
-        <div class="rounded-2xl bg-[#131317] border border-white/10 p-6 space-y-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="font-bold text-xl text-white">Database &amp; Configuration ZIP Backups</h2>
-                    <p class="text-xs text-zinc-400">Create and download instant snapshot archives of the SQLite database and configuration.</p>
-                </div>
-                <form action="{{ admin_path }}/backups/create" method="post">
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#CE1E36] font-bold text-xs uppercase tracking-wider text-white">
-                        + Create New ZIP Backup
-                    </button>
-                </form>
-            </div>
-            <div class="space-y-2 text-xs">
-                {% for b in backups %}
-                <div class="p-3.5 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-between">
-                    <div>
-                        <span class="font-mono font-bold text-white">{{ b.filename }}</span>
-                        <span class="text-zinc-400 ml-3">{{ b.size_kb }} KB • {{ b.created_at }}</span>
-                    </div>
-                    <a href="{{ admin_path }}/backups/download/{{ b.filename }}" class="text-[#FF4D64] font-bold hover:underline">Download ZIP &darr;</a>
-                </div>
-                {% endfor %}
-            </div>
+          </div>
+          {% endfor %}
         </div>
         {% endif %}
+      </div>
     </div>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 8: STUDENT INQUIRIES                                          -->
+    <!-- ================================================================= -->
+    {% if active_tab == 'inquiries' %}
+    <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-4">
+      <h1 class="font-display text-3xl text-white">FREE INTRO CLASS INQUIRIES ({{ quotes|length }})</h1>
+      {% if not quotes %}
+      <p class="text-sm text-zinc-400">No inquiries submitted yet.</p>
+      {% else %}
+      <div class="space-y-4">
+        {% for q in quotes %}
+        <div class="bg-zinc-950 border border-white/10 rounded-xl p-5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-base text-white">{{ q.name }} <span class="text-xs text-zinc-400 font-normal">({{ q.email }} • {{ q.phone }})</span></h3>
+              <p class="text-xs text-zinc-400">Program: <strong class="text-white">{{ q.program_interest }}</strong> • Experience: {{ q.experience_level }} • Submitted: {{ q.created_at }}</p>
+            </div>
+            <form action="{{ admin_path }}/quotes/delete" method="POST" onsubmit="return confirm('Delete this inquiry?');">
+              <input type="hidden" name="quote_id" value="{{ q.id }}" />
+              <button type="submit" class="text-xs text-red-400 hover:underline">Delete</button>
+            </form>
+          </div>
+          {% if q.message %}
+          <p class="text-xs text-zinc-200 bg-zinc-900 p-3 rounded-lg border border-white/5">{{ q.message }}</p>
+          {% endif %}
+          <form action="{{ admin_path }}/quotes/status" method="POST" class="flex flex-wrap items-center gap-3 pt-1">
+            <input type="hidden" name="quote_id" value="{{ q.id }}" />
+            <select name="status" class="bg-zinc-900 border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white">
+              <option value="new" {% if q.status == 'new' %}selected{% endif %}>New</option>
+              <option value="contacted" {% if q.status == 'contacted' %}selected{% endif %}>Contacted</option>
+              <option value="scheduled" {% if q.status == 'scheduled' %}selected{% endif %}>Intro Scheduled</option>
+              <option value="enrolled" {% if q.status == 'enrolled' %}selected{% endif %}>Enrolled</option>
+            </select>
+            <input type="text" name="internal_notes" value="{{ q.internal_notes or '' }}" placeholder="Staff notes..." class="flex-1 bg-zinc-900 border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white" />
+            <button type="submit" class="bg-[#CE1E36] text-white text-xs font-bold uppercase px-4 py-1.5 rounded-lg">Update</button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ================================================================= -->
+    <!-- TAB 9: SECURITY & BACKUPS                                         -->
+    <!-- ================================================================= -->
+    {% if active_tab in ('security', 'backups') %}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-5">
+        <h2 class="font-display text-3xl text-white">GEO-IP FIREWALL, WAF &amp; RECAPTCHA</h2>
+        <form action="{{ admin_path }}/settings/update" method="POST" class="space-y-4">
+          <input type="hidden" name="phone" value="{{ site.phone }}" />
+          <input type="hidden" name="email_contact" value="{{ site.email_contact }}" />
+          <input type="hidden" name="email_quotes" value="{{ site.email_quotes }}" />
+          <input type="hidden" name="address" value="{{ site.address }}" />
+          <div class="grid grid-cols-2 gap-4">
+            <label class="flex items-center gap-2 text-xs font-bold text-zinc-200">
+              <input type="checkbox" name="geo_block_enabled" value="1" {% if site.geo_block_enabled == '1' %}checked{% endif %} />
+              Enable Geo-IP Country Filter
+            </label>
+            <label class="flex items-center gap-2 text-xs font-bold text-zinc-200">
+              <input type="checkbox" name="waf_block_scanners" value="1" {% if site.waf_block_scanners == '1' %}checked{% endif %} />
+              Block Vulnerability Scanners
+            </label>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Allowed Country Codes</label>
+            <input type="text" name="geo_allowed_countries" value="{{ site.geo_allowed_countries }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">reCAPTCHA v3 Site Key</label>
+              <input type="text" name="recaptcha_site_key" value="{{ site.recaptcha_site_key or '' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">reCAPTCHA v3 Secret Key</label>
+              <input type="password" name="recaptcha_secret_key" value="{{ site.recaptcha_secret_key or '' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3 py-2 text-xs text-white" />
+            </div>
+          </div>
+          <button type="submit" class="bg-[#CE1E36] text-white font-bold text-xs uppercase px-6 py-2.5 rounded-xl">Save Security Settings</button>
+        </form>
+      </div>
+
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display text-3xl text-white">FULL SITE &amp; DB BACKUPS</h2>
+            <p class="text-xs text-zinc-400">Create a downloadable ZIP archive of SQLite DB and uploads.</p>
+          </div>
+          <form action="{{ admin_path }}/backups/create" method="POST">
+            <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase px-5 py-2.5 rounded-xl shadow">+ Create Backup Now</button>
+          </form>
+        </div>
+        <div class="space-y-2">
+          {% for b in backups %}
+          <div class="flex items-center justify-between bg-zinc-950 border border-white/10 rounded-xl px-4 py-3 text-xs">
+            <span class="font-mono text-zinc-200">{{ b.filename }} ({{ b.size_mb }} MB)</span>
+            <a href="{{ admin_path }}/backups/download/{{ b.filename }}" class="text-[#CE1E36] font-bold hover:underline">Download ZIP ↓</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- SCRIPTS: Quill Rich Text, Drag & Drop Uploader, AI Model Fetcher   -->
+  <!-- ================================================================= -->
+  <script>
+    const ADMIN_PATH = {{ admin_path|tojson }};
+
+    // 1. Initialize Quill Rich Text Editors
+    document.querySelectorAll('.richtext-wrapper').forEach((wrapper) => {
+      const editorEl = wrapper.querySelector('[data-quill-editor]');
+      const textarea = wrapper.querySelector('[data-richtext-input]');
+      if (!editorEl || !textarea) return;
+
+      const quill = new Quill(editorEl, {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            [{ header: [2, 3, 4, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ color: [] }, { background: [] }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'blockquote', 'clean']
+          ]
+        }
+      });
+
+      quill.root.innerHTML = textarea.value || '';
+      quill.on('text-change', () => {
+        textarea.value = quill.root.innerHTML;
+      });
+
+      const form = wrapper.closest('form');
+      if (form) {
+        form.addEventListener('submit', () => {
+          if (textarea.classList.contains('hidden')) {
+            textarea.value = quill.root.innerHTML;
+          }
+        });
+      }
+      wrapper._quill = quill;
+    });
+
+    function toggleHtmlSource(btn) {
+      const card = btn.closest('div').parentElement;
+      const wrapper = card.querySelector('.richtext-wrapper');
+      if (!wrapper) return;
+      const toolbar = wrapper.querySelector('.ql-toolbar');
+      const container = wrapper.querySelector('.ql-container');
+      const textarea = wrapper.querySelector('[data-richtext-input]');
+      const quill = wrapper._quill;
+      if (!textarea || !quill) return;
+
+      if (textarea.classList.contains('hidden')) {
+        textarea.value = quill.root.innerHTML;
+        textarea.classList.remove('hidden');
+        if (toolbar) toolbar.classList.add('hidden');
+        if (container) container.classList.add('hidden');
+      } else {
+        quill.root.innerHTML = textarea.value;
+        textarea.classList.add('hidden');
+        if (toolbar) toolbar.classList.remove('hidden');
+        if (container) container.classList.remove('hidden');
+      }
+    }
+
+    // 2. Initialize Drag & Drop File Uploaders
+    document.querySelectorAll('[data-dropzone]').forEach((zone) => {
+      const fileInput = zone.querySelector('input[type="file"]');
+      const urlInput = zone.querySelector('[data-url-input]');
+      const previewImg = zone.querySelector('[data-preview]');
+      const statusEl = zone.querySelector('[data-status]');
+
+      zone.addEventListener('click', (e) => {
+        if (e.target === urlInput) return;
+        fileInput?.click();
+      });
+
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('dropzone-active');
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('dropzone-active');
+      });
+
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dropzone-active');
+        if (e.dataTransfer?.files?.length) {
+          uploadFile(e.dataTransfer.files[0], urlInput, previewImg, statusEl);
+        }
+      });
+
+      fileInput?.addEventListener('change', () => {
+        if (fileInput.files?.length) {
+          uploadFile(fileInput.files[0], urlInput, previewImg, statusEl);
+        }
+      });
+
+      urlInput?.addEventListener('input', () => {
+        if (previewImg && urlInput.value.trim()) {
+          previewImg.src = urlInput.value.trim();
+        }
+      });
+    });
+
+    async function uploadFile(file, urlInput, previewImg, statusEl) {
+      if (statusEl) {
+        statusEl.textContent = 'Uploading ' + file.name + '...';
+        statusEl.className = 'text-[11px] text-amber-400 font-bold mt-1';
+      }
+      const fd = new FormData();
+      fd.append('file', file);
+      try {
+        const res = await fetch(ADMIN_PATH + '/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.ok && data.url) {
+          if (urlInput) urlInput.value = data.url;
+          if (previewImg && !data.url.endsWith('.pdf')) previewImg.src = data.url;
+          if (statusEl) {
+            statusEl.textContent = '✓ Uploaded (' + data.size_kb + ' KB)';
+            statusEl.className = 'text-[11px] text-emerald-400 font-bold mt-1';
+          }
+        } else {
+          if (statusEl) {
+            statusEl.textContent = 'Upload error: ' + (data.error || 'Failed');
+            statusEl.className = 'text-[11px] text-red-400 font-bold mt-1';
+          }
+        }
+      } catch (err) {
+        if (statusEl) {
+          statusEl.textContent = 'Upload failed';
+          statusEl.className = 'text-[11px] text-red-400 font-bold mt-1';
+        }
+      }
+    }
+
+    // 3. Add Custom Social Media Link Row
+    function addCustomSocialRow() {
+      const container = document.getElementById('custom-socials-container');
+      if (!container) return;
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-3 custom-social-row';
+      row.innerHTML = `
+        <input type="text" name="custom_social_name" placeholder="Platform Name (e.g. Threads, Discord)" class="w-48 bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+        <input type="url" name="custom_social_url" placeholder="https://..." class="flex-1 bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+        <button type="button" onclick="this.parentElement.remove()" class="text-xs font-bold text-red-400 hover:text-red-300 px-3 py-2 rounded-lg bg-red-500/10">Remove</button>
+      `;
+      container.appendChild(row);
+    }
+
+    // 4. Dynamic AI Provider -> Compatible Model List Fetcher
+    async function onProviderSwitch(provider, forceRefresh = false) {
+      const modelSelect = document.getElementById('ai-model-select');
+      const badge = document.getElementById('ai-model-source-badge');
+      if (!modelSelect) return;
+
+      const keyInput = document.getElementById('key-' + provider);
+      const apiKey = keyInput ? keyInput.value.trim() : '';
+
+      if (badge) {
+        badge.textContent = 'Pulling compatible models for ' + provider.toUpperCase() + '...';
+        badge.className = 'text-[11px] text-amber-400 mt-1.5';
+      }
+
+      try {
+        const res = await fetch(ADMIN_PATH + '/ai/models', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider, api_key: apiKey })
+        });
+        const data = await res.json();
+        if (data.ok && Array.isArray(data.models)) {
+          modelSelect.innerHTML = '';
+          data.models.forEach((m, idx) => {
+            const opt = document.createElement('option');
+            opt.value = m.id;
+            opt.textContent = m.name;
+            if (idx === 0) opt.selected = true;
+            modelSelect.appendChild(opt);
+          });
+          if (badge) {
+            const srcLabel = data.source === 'live_api'
+              ? '✓ Pulled ' + data.models.length + ' live models from ' + data.provider_label + ' API'
+              : '✓ Loaded ' + data.models.length + ' compatible models for ' + data.provider_label;
+            badge.textContent = srcLabel + ' — click Save below to store in DB.';
+            badge.className = 'text-[11px] text-emerald-400 mt-1.5';
+          }
+        }
+      } catch (err) {
+        if (badge) {
+          badge.textContent = 'Could not fetch models list.';
+          badge.className = 'text-[11px] text-red-400 mt-1.5';
+        }
+      }
+    }
+  </script>
 </body>
 </html>

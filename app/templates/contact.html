@@ -88,9 +88,13 @@
                             <div class="space-y-2">
                                 <div class="text-xs font-mono-tech uppercase text-[#FF4D64]">Social Links &amp; Waiver:</div>
                                 <div class="flex flex-wrap gap-2">
-                                    <a href="https://www.facebook.com/StPeteBJJ/" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/10 text-xs font-semibold text-white hover:border-[#CE1E36] transition">Facebook</a>
-                                    <a href="https://www.instagram.com/StPeteBJJ/" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/10 text-xs font-semibold text-white hover:border-[#CE1E36] transition">Instagram</a>
-                                    <a href="/wp-content/uploads/2017/01/Waiver.pdf" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#CE1E36]/20 border border-[#CE1E36]/40 text-xs font-semibold text-[#FF4D64] hover:bg-[#CE1E36] hover:text-white transition">Waiver (PDF)</a>
+                                    {% for soc in social_links %}
+                                    <a href="{{ soc.url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 border border-white/10 text-xs font-semibold text-white hover:border-[#CE1E36] transition">
+                                        {{ soc.icon_svg | safe }}
+                                        <span>{{ soc.name }}</span>
+                                    </a>
+                                    {% endfor %}
+                                    <a href="{{ site.get('waiver_url', '/wp-content/uploads/2017/01/Waiver.pdf') }}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-[#CE1E36]/20 border border-[#CE1E36]/40 text-xs font-semibold text-[#FF4D64] hover:bg-[#CE1E36] hover:text-white transition">Waiver (PDF)</a>
                                 </div>
                             </div>
                         </div>

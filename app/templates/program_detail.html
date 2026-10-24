@@ -43,22 +43,7 @@
                 {% endif %}
 
                 <div class="prose prose-invert max-w-none space-y-5 text-zinc-200 text-base sm:text-lg leading-relaxed">
-                    {% if program.slug == 'fundamentals-classes' %}
-                    <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white">St. Pete BJJ Fundamentals Classes</h2>
-                    <p>
-                        At <strong>St. Pete BJJ</strong>, our Fundamentals Classes are designed to benefit students beginning their journey in Brazilian Jiu-Jitsu, while also offering valuable technical adjustments to more experienced students. Following a <strong>16-week curriculum</strong>, our Fundamentals Classes build a solid foundation in self-defense using the techniques that form the basics of Brazilian Jiu-Jitsu. Students in our fundamentals classes will learn everything from escapes and sweeps, to throws and takedowns, to chokes and joint locks, in a controlled and safe environment.
-                    </p>
-                    <p>
-                        Beginners are invited to join in any fundamentals class to begin their jiu-jitsu journey. Here they will be paired with a senior student who will help them work through the techniques being taught. Fundamentals class format begins with a short warm-up, followed by a self-defense technique before moving onto the basic principles of grappling. For your first class a clean gi (uniform) will be provided to you. You can wear shorts under the gi if you prefer, and a t-shirt, rash guard or sports bra will provide extra comfort.
-                    </p>
-                    {% elif program.slug == 'advanced-classes' %}
-                    <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white">St. Pete BJJ Advanced Classes</h2>
-                    <p>
-                        Once students have obtained a <strong>third stripe on their white belt</strong> (or above), they are able to attend our Advanced Classes. Our Advanced Classes follow a curriculum that combines self-defense and sport jiu-jitsu strategies and tactics. The Advanced curriculum builds upon the basics and dives deeper into the vast array of techniques available to the Jiu-Jitsu practitioner. Students wanting to expand their skill set or compete in tournaments will undoubtedly benefit from our Advanced curriculum. These classes also include full live sparring sessions.
-                    </p>
-                    {% else %}
                     {{ program.description | safe }}
-                    {% endif %}
                 </div>
 
                 <!-- Curriculum Pillars Grid -->
