@@ -23,6 +23,79 @@ CRM_STATUS_OPTIONS = [
 
 CRM_STATUS_LABELS = {code: label for code, label, _ in CRM_STATUS_OPTIONS}
 
+EMAIL_SCENARIO_CATALOG = [
+    {
+        "key": "prospect_welcome",
+        "title": "1. Prospect Welcome & First-Class Guide",
+        "recipient_role": "Prospective Student",
+        "trigger": "Auto-sent when a visitor submits the Contact / Free Intro Class form",
+        "badge": "Auto-Responder",
+    },
+    {
+        "key": "admin_new_inquiry",
+        "title": "2. Admin New Lead / Contact Alert",
+        "recipient_role": "Academy Admin / Staff",
+        "trigger": "Auto-sent to academy staff when any website form or AI Chat lead is submitted",
+        "badge": "Staff Alert",
+    },
+    {
+        "key": "private_or_dropin",
+        "title": "3. Private Lesson / Visitor Drop-In Confirmation",
+        "recipient_role": "Visiting Grappler / Private Student",
+        "trigger": "Auto-sent when someone requests Private Lessons, Seminars, or a Drop-In Visit",
+        "badge": "Special Request",
+    },
+    {
+        "key": "status_free_class_scheduled",
+        "title": "4. Free Intro Class Confirmed",
+        "recipient_role": "Prospective Student",
+        "trigger": "Sent when Admin sets lead status to 'Free Class Scheduled'",
+        "badge": "CRM Pipeline",
+    },
+    {
+        "key": "status_followed_up",
+        "title": "5. Personal Coaching Follow-Up",
+        "recipient_role": "Prospective Student",
+        "trigger": "Sent when Admin sets lead status to 'Followed Up' or sends a custom note",
+        "badge": "CRM Pipeline",
+    },
+    {
+        "key": "status_trial_active",
+        "title": "6. 30-Day Free Trial Activated",
+        "recipient_role": "Trial Student",
+        "trigger": "Sent when Admin sets lead status to '30-Day Free Trial'",
+        "badge": "CRM Pipeline",
+    },
+    {
+        "key": "status_signed_up",
+        "title": "7. Official Academy Member Welcome",
+        "recipient_role": "New Academy Member",
+        "trigger": "Sent when Admin sets lead status to 'Signed Up (Member)'",
+        "badge": "CRM Pipeline",
+    },
+    {
+        "key": "admin_password_reset",
+        "title": "8. Admin Password Reset Request",
+        "recipient_role": "Academy Admin",
+        "trigger": "Sent when Admin clicks 'Forgot Password?' on the Admin Login screen",
+        "badge": "Account Security",
+    },
+    {
+        "key": "admin_password_changed",
+        "title": "9. Admin Password Changed Confirmation",
+        "recipient_role": "Academy Admin",
+        "trigger": "Sent immediately after the Admin password is reset or updated",
+        "badge": "Account Security",
+    },
+    {
+        "key": "admin_security_alert",
+        "title": "10. Security & Failed Login Lockout Alert",
+        "recipient_role": "Academy Admin",
+        "trigger": "Sent when repeated failed login attempts occur on the Admin portal",
+        "badge": "Security Alert",
+    },
+]
+
 
 def _strip_tags(html_str: str) -> str:
     text = re.sub(r"<br\s*/?>", "\n", html_str, flags=re.IGNORECASE)
@@ -103,7 +176,7 @@ def render_branded_email(
                       ST. PETE <span style="color: #CE1E36;">BRAZILIAN JIU-JITSU</span>
                     </div>
                     <div style="font-size: 12px; color: #A1A1AA; margin-top: 3px;">
-                      4th Degree Black Belt Professor Sean Lynch • Est. 2006
+                      4th Degree Black Belt Professor Sean Lynch &bull; Est. 2006
                     </div>
                   </td>
                 </tr>
@@ -136,14 +209,14 @@ def render_branded_email(
                 </div>
                 <div style="font-size: 13px; color: #D4D4D8; line-height: 1.6;">
                   <strong style="color: #FFFFFF;">{site_name}</strong><br />
-                  📍 <a href="{maps_url}" style="color: #F4F4F5; text-decoration: underline;">{address}</a><br />
-                  📱 Text or Call: <a href="tel:17276194255" style="color: #FF4D64; font-weight: 700; text-decoration: none;">{phone}</a> ({phone_vanity})<br />
-                  ✉️ Email: <a href="mailto:{email_contact}" style="color: #F4F4F5; text-decoration: underline;">{email_contact}</a>
+                  &#128205; <a href="{maps_url}" style="color: #F4F4F5; text-decoration: underline;">{address}</a><br />
+                  &#128241; Text or Call: <a href="tel:17276194255" style="color: #FF4D64; font-weight: 700; text-decoration: none;">{phone}</a> ({phone_vanity})<br />
+                  &#9993; Email: <a href="mailto:{email_contact}" style="color: #F4F4F5; text-decoration: underline;">{email_contact}</a>
                 </div>
                 <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #27272A; font-size: 12px;">
                   <a href="{schedule_url}" style="color: #FF4D64; font-weight: 700; text-decoration: none; margin-right: 14px;">Class Schedule &rarr;</a>
                   <a href="{waiver_url}" style="color: #F4F4F5; font-weight: 600; text-decoration: none; margin-right: 14px;">Download Waiver (PDF) &rarr;</a>
-                  <a href="{maps_url}" style="color: #FBBF24; font-weight: 700; text-decoration: none;">★ 5.0 Google Reviews &rarr;</a>
+                  <a href="{maps_url}" style="color: #FBBF24; font-weight: 700; text-decoration: none;">&#9733; 5.0 Google Reviews &rarr;</a>
                 </div>
               </div>
             </td>
@@ -152,7 +225,7 @@ def render_branded_email(
           <!-- Bottom Copyright Bar -->
           <tr>
             <td style="background-color: #09090B; padding: 16px 30px; border-top: 1px solid #27272A; text-align: center; font-size: 11px; color: #71717A;">
-              &copy; {datetime.now().year} {site_name} • {address}<br />
+              &copy; {datetime.now().year} {site_name} &bull; {address}<br />
               Carlos Gracie Sr. &rarr; Carlos Gracie Jr. &rarr; Eduardo "Veio" de Lima &rarr; Professor Sean Lynch
             </td>
           </tr>
@@ -257,12 +330,13 @@ def dispatch_email(
     return sent_ok, (error_detail or f"Delivered via {smtp_host}:{smtp_port}")
 
 
-def send_quote_notification(quote_data: dict, quote_id: int = 0) -> bool:
-    """Sends:
-    1) Branded Admin New Contact/Lead Notification to academy staff (`email_quotes`).
-    2) Branded Prospect Welcome & First-Class Guide Email to the person who submitted the form.
-    """
-    site = get_site_settings()
+# =====================================================================
+# HTML BUILDERS FOR ALL 10 SYSTEM EMAIL SCENARIOS
+# =====================================================================
+
+def build_admin_new_inquiry_email(quote_data: dict, quote_id: int = 0, site: dict | None = None) -> tuple[str, str]:
+    if site is None:
+        site = get_site_settings()
     base_url = settings.BASE_URL.rstrip("/")
     admin_url = f"{base_url}{settings.ADMIN_PATH}?tab=inquiries"
 
@@ -275,14 +349,8 @@ def send_quote_notification(quote_data: dict, quote_id: int = 0) -> bool:
     message = html.escape(str(quote_data.get("message") or "No additional message provided."))
     source_page = html.escape(str(quote_data.get("source_page") or "/contact"))
 
-    # ------------------------------------------------------------------
-    # 1. ADMIN NOTIFICATION EMAIL
-    # ------------------------------------------------------------------
-    recipients_str = site.get("email_quotes") or settings.EMAIL_QUOTES
-    admin_recipients = [r.strip() for r in recipients_str.split(",") if r.strip()]
-
-    admin_subject = f"🥋 New Lead #{quote_id or 'New'}: {quote_data.get('name')} — {quote_data.get('program_interest') or 'Free Intro Class'}"
-    admin_body_html = f"""
+    subject = f"🥋 New Lead #{quote_id or 'New'}: {quote_data.get('name')} — {quote_data.get('program_interest') or 'Free Intro Class'}"
+    body_html = f"""
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #18181B; border: 1px solid #27272A; border-radius: 12px; padding: 16px 20px; margin-bottom: 18px;">
       <tr>
         <td style="padding: 6px 0; color: #A1A1AA; width: 150px; font-size: 13px;">Student Name:</td>
@@ -292,7 +360,7 @@ def send_quote_notification(quote_data: dict, quote_id: int = 0) -> bool:
         <td style="padding: 6px 0; color: #A1A1AA; font-size: 13px;">Phone / Text:</td>
         <td style="padding: 6px 0; color: #FF4D64; font-weight: 800; font-size: 14px;">
           <a href="tel:{phone}" style="color: #FF4D64; text-decoration: none;">{phone}</a>
-          &nbsp;•&nbsp;
+          &nbsp;&bull;&nbsp;
           <a href="sms:{phone}" style="color: #38BDF8; text-decoration: underline; font-size: 12px;">Send Text</a>
         </td>
       </tr>
@@ -328,90 +396,121 @@ def send_quote_notification(quote_data: dict, quote_id: int = 0) -> bool:
     </div>
     """
 
-    admin_email_html = render_branded_email(
+    html_body = render_branded_email(
         kicker="New Website Lead Alert",
         headline=f"New Contact / Free Class Request from {name}",
         intro_html="A prospective student just submitted an inquiry on <strong>stpetebjj.com</strong>. You can reply directly to this email or manage their status (Followed Up, Free Class Scheduled, 30-Day Trial, Signed Up) in the Admin CRM.",
-        body_html=admin_body_html,
+        body_html=body_html,
         cta_label="Manage Lead in Admin CRM",
         cta_url=admin_url,
         site=site,
     )
+    return subject, html_body
 
-    sent_admin, _ = dispatch_email(
-        recipients=admin_recipients,
-        subject=admin_subject,
-        html_body=admin_email_html,
-        template_type="admin_new_inquiry",
-        quote_id=quote_id,
-        reply_to=str(quote_data.get("email") or ""),
-    )
 
-    # ------------------------------------------------------------------
-    # 2. PROSPECT AUTO-CONFIRMATION & FIRST-CLASS GUIDE EMAIL
-    # ------------------------------------------------------------------
-    if site.get("email_auto_reply_enabled", "true").lower() == "true" and quote_data.get("email"):
-        student_subject = f"Welcome to St. Pete Brazilian Jiu-Jitsu! Your Free Class & Inquiry Confirmation"
-        waiver_url = f"{base_url}{site.get('waiver_url') or '/wp-content/uploads/2017/01/Waiver.pdf'}"
-        student_body_html = f"""
+def build_prospect_welcome_email(quote_data: dict, site: dict | None = None) -> tuple[str, str, str]:
+    """Returns (subject, html_body, template_type). Automatically detects Private Lesson / Visitor Drop-In vs Free Class."""
+    if site is None:
+        site = get_site_settings()
+    base_url = settings.BASE_URL.rstrip("/")
+    waiver_url = f"{base_url}{site.get('waiver_url') or '/wp-content/uploads/2017/01/Waiver.pdf'}"
+
+    name = html.escape(str(quote_data.get("name") or "Student"))
+    program = html.escape(str(quote_data.get("program_interest") or "Free Introductory Class (Fundamentals)"))
+    experience = html.escape(str(quote_data.get("experience_level") or "Brand New Beginner"))
+    pref_date = html.escape(str(quote_data.get("preferred_date") or "Flexible / Next Available"))
+
+    prog_lower = program.lower()
+    is_special = any(w in prog_lower for w in ("private", "visit", "drop-in", "drop in", "open mat", "seminar"))
+
+    if is_special:
+        subject = f"🥋 St. Pete BJJ — Your {quote_data.get('program_interest') or 'Private Lesson / Visitor'} Request"
+        body_html = f"""
         <div style="background-color: #18181B; border: 1px solid #27272A; border-radius: 12px; padding: 18px 20px; margin-bottom: 18px;">
           <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #FF4D64; margin-bottom: 10px;">
-            🥋 What to Know For Your First Class
+            &#129355; Visiting Grapplers &amp; Private Training Info
           </div>
           <ul style="margin: 0; padding-left: 18px; color: #E4E4E7; font-size: 14px; line-height: 1.7;">
-            <li><strong>100% Free Loaner Gi Provided:</strong> Just wear comfortable athletic clothes (a t-shirt or rashguard and athletic shorts/sweatpants without zippers). We provide a clean loaner Gi uniform at no charge!</li>
-            <li><strong>What to Bring:</strong> Flip-flops or sandals for walking off the mats and a water bottle.</li>
-            <li><strong>Arrive 10–15 Minutes Early:</strong> We'll give you a quick tour of the academy, introduce you to Professor Sean Lynch and our coaches, and get you fitted for your loaner Gi.</li>
-            <li><strong>Zero Pressure, Ego-Free:</strong> We have no long-term contracts and welcome complete beginners every week.</li>
+            <li><strong>100% Open &amp; Affiliation-Friendly:</strong> We welcome visiting students and travelers from all Brazilian Jiu-Jitsu academies and affiliations.</li>
+            <li><strong>Private 1-on-1 Coaching:</strong> Professor Sean Lynch and our black belt instructors offer customized Gi, No-Gi, and Self-Defense private sessions tailored to your schedule.</li>
+            <li><strong>Clean Loaner Gi Available:</strong> Traveling without a Gi? Let us know your height/weight and we will have a clean loaner Gi ready for you.</li>
+            <li><strong>Academy Waiver:</strong> You can save time by reviewing our <a href="{waiver_url}" style="color: #FF4D64; font-weight: 700;">Academy Waiver PDF</a> prior to arriving.</li>
           </ul>
         </div>
 
         <div style="background-color: #09090B; border: 1px solid #27272A; border-radius: 12px; padding: 16px 20px;">
           <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #A1A1AA; margin-bottom: 6px;">
-            Your Request Summary
+            Your Request Details
           </div>
           <div style="font-size: 13px; color: #D4D4D8; line-height: 1.6;">
-            <strong>Program Interest:</strong> {program}<br />
-            <strong>Experience Level:</strong> {experience}<br />
-            <strong>Preferred Day/Time:</strong> {pref_date}<br />
-            <strong>Academy Waiver:</strong> <a href="{waiver_url}" style="color: #FF4D64; font-weight: 700;">Download Waiver PDF</a>
+            <strong>Request Type:</strong> {program}<br />
+            <strong>Current Rank / Experience:</strong> {experience}<br />
+            <strong>Requested Day/Time:</strong> {pref_date}
           </div>
         </div>
         """
-
-        student_email_html = render_branded_email(
-            kicker="Inquiry & Free Intro Class Confirmation",
-            headline=f"Welcome to St. Pete BJJ, {name}!",
+        html_body = render_branded_email(
+            kicker="Private Lesson & Visitor Request",
+            headline=f"We've Received Your Request, {name}!",
             intro_html=(
-                "Thank you for reaching out to <strong>St. Pete Brazilian Jiu-Jitsu</strong>! We have received your request "
-                "and a member of our team will follow up with you shortly. For the fastest response, you can also text or call us "
-                "anytime at <strong style='color:#FF4D64;'>(727) 619-4255</strong>."
+                "Thank you for contacting <strong>St. Pete Brazilian Jiu-Jitsu</strong>! Professor Sean Lynch or one of our coaches "
+                "will reach out shortly to confirm your session or drop-in time. For immediate scheduling, text or call us at "
+                "<strong style='color:#FF4D64;'>(727) 619-4255</strong>."
             ),
-            body_html=student_body_html,
-            cta_label="View Live Class Schedule",
+            body_html=body_html,
+            cta_label="View Weekly Class Schedule",
             cta_url=f"{base_url}/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2",
             site=site,
         )
+        return subject, html_body, "private_or_dropin"
 
-        dispatch_email(
-            recipients=[str(quote_data.get("email")).strip()],
-            subject=student_subject,
-            html_body=student_email_html,
-            template_type="prospect_welcome",
-            quote_id=quote_id,
-            reply_to=site.get("email_contact") or "info@stpetebjj.com",
-        )
+    subject = "Welcome to St. Pete Brazilian Jiu-Jitsu! Your Free Class & Inquiry Confirmation"
+    body_html = f"""
+    <div style="background-color: #18181B; border: 1px solid #27272A; border-radius: 12px; padding: 18px 20px; margin-bottom: 18px;">
+      <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #FF4D64; margin-bottom: 10px;">
+        &#129355; What to Know For Your First Class
+      </div>
+      <ul style="margin: 0; padding-left: 18px; color: #E4E4E7; font-size: 14px; line-height: 1.7;">
+        <li><strong>100% Free Loaner Gi Provided:</strong> Just wear comfortable athletic clothes (a t-shirt or rashguard and athletic shorts/sweatpants without zippers). We provide a clean loaner Gi uniform at no charge!</li>
+        <li><strong>What to Bring:</strong> Flip-flops or sandals for walking off the mats and a water bottle.</li>
+        <li><strong>Arrive 10&ndash;15 Minutes Early:</strong> We'll give you a quick tour of the academy, introduce you to Professor Sean Lynch and our coaches, and get you fitted for your loaner Gi.</li>
+        <li><strong>Zero Pressure, Ego-Free:</strong> We have no long-term contracts and welcome complete beginners every week.</li>
+      </ul>
+    </div>
 
-    return sent_admin
+    <div style="background-color: #09090B; border: 1px solid #27272A; border-radius: 12px; padding: 16px 20px;">
+      <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #A1A1AA; margin-bottom: 6px;">
+        Your Request Summary
+      </div>
+      <div style="font-size: 13px; color: #D4D4D8; line-height: 1.6;">
+        <strong>Program Interest:</strong> {program}<br />
+        <strong>Experience Level:</strong> {experience}<br />
+        <strong>Preferred Day/Time:</strong> {pref_date}<br />
+        <strong>Academy Waiver:</strong> <a href="{waiver_url}" style="color: #FF4D64; font-weight: 700;">Download Waiver PDF</a>
+      </div>
+    </div>
+    """
+
+    html_body = render_branded_email(
+        kicker="Inquiry & Free Intro Class Confirmation",
+        headline=f"Welcome to St. Pete BJJ, {name}!",
+        intro_html=(
+            "Thank you for reaching out to <strong>St. Pete Brazilian Jiu-Jitsu</strong>! We have received your request "
+            "and a member of our team will follow up with you shortly. For the fastest response, you can also text or call us "
+            "anytime at <strong style='color:#FF4D64;'>(727) 619-4255</strong>."
+        ),
+        body_html=body_html,
+        cta_label="View Live Class Schedule",
+        cta_url=f"{base_url}/brazilian-jiu-jitsu-class-schedule-saint-petersburg-florida-2",
+        site=site,
+    )
+    return subject, html_body, "prospect_welcome"
 
 
-def send_contact_status_email(quote_row: dict, new_status: str, custom_note: str = "") -> tuple[bool, str]:
-    """Sends a branded lifecycle email to the student when the Admin updates their status or sends a follow-up."""
-    site = get_site_settings()
+def build_contact_status_email(quote_row: dict, new_status: str, custom_note: str = "", site: dict | None = None) -> tuple[str, str]:
+    if site is None:
+        site = get_site_settings()
     base_url = settings.BASE_URL.rstrip("/")
-    recipient = (quote_row.get("email") or "").strip()
-    if not recipient or "@" not in recipient:
-        return False, "Contact does not have a valid email address."
 
     name = html.escape(str(quote_row.get("name") or "Student"))
     program = html.escape(str(quote_row.get("program_interest") or "Fundamentals Brazilian Jiu-Jitsu"))
@@ -422,24 +521,24 @@ def send_contact_status_email(quote_row: dict, new_status: str, custom_note: str
         note_html = f"""
         <div style="background-color: #09090B; border-left: 4px solid #CE1E36; padding: 14px 18px; border-radius: 8px; margin: 16px 0;">
           <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #FF4D64; margin-bottom: 4px;">
-            Note from St. Pete BJJ:
+            Personal Note from St. Pete BJJ:
           </div>
           <div style="color: #FFFFFF; font-size: 14px; white-space: pre-wrap;">{escaped_note}</div>
         </div>
         """
 
     if new_status == "free_class_scheduled":
-        subject = f"🥋 Your Free Intro Class at St. Pete BJJ is Scheduled!"
+        subject = "🥋 Your Free Intro Class at St. Pete BJJ is Scheduled!"
         kicker = "Free Introductory Class Confirmed"
         headline = f"See You on the Mats, {name}!"
-        intro = f"We're excited to welcome you to <strong>St. Pete Brazilian Jiu-Jitsu</strong> for your Free Introductory Class ({program})!"
+        intro = f"We're excited to welcome you to <strong>St. Pete Brazilian Jiu-Jitsu</strong> for your Free Introductory Class ({program} &mdash; <strong>{pref_date}</strong>)!"
         body = f"""
         {note_html}
         <div style="background-color: #18181B; border: 1px solid #27272A; border-radius: 12px; padding: 18px 20px;">
           <div style="font-size: 13px; color: #E4E4E7; line-height: 1.7;">
-            ✅ <strong>Free Loaner Gi Waiting for You:</strong> Wear a comfortable t-shirt/rashguard and athletic shorts/sweatpants.<br />
-            ✅ <strong>Arrival:</strong> Please arrive 10–15 minutes early at <strong>5540 Haines Rd N, St. Petersburg, FL 33714</strong>.<br />
-            ✅ <strong>Questions or Rescheduling?</strong> Just reply to this email or text us at <strong>(727) 619-4255</strong>.
+            &#9989; <strong>Free Loaner Gi Waiting for You:</strong> Wear a comfortable t-shirt/rashguard and athletic shorts/sweatpants.<br />
+            &#9989; <strong>Arrival:</strong> Please arrive 10&ndash;15 minutes early at <strong>5540 Haines Rd N, St. Petersburg, FL 33714</strong>.<br />
+            &#9989; <strong>Questions or Rescheduling?</strong> Just reply to this email or text us at <strong>(727) 619-4255</strong>.
           </div>
         </div>
         """
@@ -447,7 +546,7 @@ def send_contact_status_email(quote_row: dict, new_status: str, custom_note: str
         cta_url = f"{base_url}{site.get('waiver_url') or '/wp-content/uploads/2017/01/Waiver.pdf'}"
 
     elif new_status == "trial_active":
-        subject = f"🥋 Welcome to Your 30-Day Free Trial at St. Pete BJJ!"
+        subject = "🥋 Welcome to Your 30-Day Free Trial at St. Pete BJJ!"
         kicker = "30-Day Free Trial Active"
         headline = f"Great Job on the Mats, {name}!"
         intro = "Welcome to your <strong>30-Day Free Trial</strong> at St. Pete Brazilian Jiu-Jitsu! Our goal over the next 30 days is to help you build confidence, learn core self-defense fundamentals, and feel right at home in our academy."
@@ -456,9 +555,9 @@ def send_contact_status_email(quote_row: dict, new_status: str, custom_note: str
         <div style="background-color: #18181B; border: 1px solid #27272A; border-radius: 12px; padding: 18px 20px;">
           <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #FF4D64; margin-bottom: 8px;">Recommended Classes During Your Trial</div>
           <div style="font-size: 13px; color: #E4E4E7; line-height: 1.7;">
-            • <strong>Fundamentals Gi BJJ:</strong> Mon, Wed, Thu at 6:00 PM &amp; Sat at 10:00 AM<br />
-            • <strong>Daytime All-Levels Gi:</strong> Mon, Wed, Thu at 11:00 AM<br />
-            • <strong>Judo &amp; Takedowns / No-Gi:</strong> Tuesdays starting at 6:00 PM
+            &bull; <strong>Fundamentals Gi BJJ:</strong> Mon, Wed, Thu at 6:00 PM &amp; Sat at 10:00 AM<br />
+            &bull; <strong>Daytime All-Levels Gi:</strong> Mon, Wed, Thu at 11:00 AM<br />
+            &bull; <strong>Judo &amp; Takedowns / No-Gi:</strong> Tuesdays starting at 6:00 PM
           </div>
         </div>
         """
@@ -482,8 +581,7 @@ def send_contact_status_email(quote_row: dict, new_status: str, custom_note: str
         cta_url = f"{base_url}/st-pete-jiu-jitsu-professors"
 
     else:
-        # Default: followed_up or general custom message
-        subject = f"Following Up from St. Pete Brazilian Jiu-Jitsu"
+        subject = "Following Up from St. Pete Brazilian Jiu-Jitsu"
         kicker = "Personal Follow-Up"
         headline = f"Hi {name}, Checking In from St. Pete BJJ!"
         intro = f"We wanted to follow up on your interest in <strong>{program}</strong> at St. Pete Brazilian Jiu-Jitsu."
@@ -507,6 +605,172 @@ def send_contact_status_email(quote_row: dict, new_status: str, custom_note: str
         cta_url=cta_url,
         site=site,
     )
+    return subject, html_body
+
+
+def build_admin_password_reset_email(username: str, reset_url: str, ip_address: str = "127.0.0.1", site: dict | None = None) -> tuple[str, str]:
+    if site is None:
+        site = get_site_settings()
+    now_str = datetime.now().strftime("%b %d, %Y at %I:%M %p")
+    safe_user = html.escape(username)
+    safe_ip = html.escape(ip_address)
+    safe_url = html.escape(reset_url)
+
+    subject = "🔐 Admin Password Reset Request — St. Pete Brazilian Jiu-Jitsu"
+    body_html = f"""
+    <div style="background-color: #18181B; border: 1px solid #27272A; border-radius: 12px; padding: 18px 20px; margin-bottom: 18px;">
+      <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #FF4D64; margin-bottom: 8px;">
+        Password Reset Request Details
+      </div>
+      <div style="font-size: 13px; color: #E4E4E7; line-height: 1.7;">
+        <strong>Admin Account:</strong> {safe_user}<br />
+        <strong>Requested At:</strong> {now_str}<br />
+        <strong>Requesting IP Address:</strong> <code style="color: #FBBF24;">{safe_ip}</code><br />
+        <strong>Link Expiration:</strong> 60 minutes (Single-Use Token)
+      </div>
+    </div>
+
+    <div style="background-color: #09090B; border-left: 4px solid #F59E0B; padding: 14px 18px; border-radius: 8px; font-size: 13px; color: #D4D4D8;">
+      <strong>Did not request this reset?</strong> You can safely ignore this email. Your current admin password will remain unchanged and nobody can access your account without clicking the secure link below.
+      <div style="margin-top: 8px; font-size: 11px; color: #71717A; word-break: break-all;">
+        Direct URL: {safe_url}
+      </div>
+    </div>
+    """
+
+    html_body = render_branded_email(
+        kicker="Admin Account Security",
+        headline="Reset Your Admin Console Password",
+        intro_html=f"We received a request to reset the password for the <strong>{safe_user}</strong> administrator account on <strong>stpetebjj.com</strong>. Click the button below within the next 60 minutes to choose a new password:",
+        body_html=body_html,
+        cta_label="Reset Admin Password Now",
+        cta_url=reset_url,
+        site=site,
+    )
+    return subject, html_body
+
+
+def build_admin_password_changed_email(username: str, ip_address: str = "127.0.0.1", site: dict | None = None) -> tuple[str, str]:
+    if site is None:
+        site = get_site_settings()
+    base_url = settings.BASE_URL.rstrip("/")
+    now_str = datetime.now().strftime("%b %d, %Y at %I:%M %p")
+    safe_user = html.escape(username)
+    safe_ip = html.escape(ip_address)
+
+    subject = "✅ Admin Password Updated — St. Pete Brazilian Jiu-Jitsu"
+    body_html = f"""
+    <div style="background-color: #18181B; border: 1px solid #27272A; border-radius: 12px; padding: 18px 20px;">
+      <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #34D399; margin-bottom: 8px;">
+        Security Audit Confirmation
+      </div>
+      <div style="font-size: 13px; color: #E4E4E7; line-height: 1.7;">
+        <strong>Admin Account:</strong> {safe_user}<br />
+        <strong>Action:</strong> Password Successfully Changed<br />
+        <strong>Timestamp:</strong> {now_str}<br />
+        <strong>IP Address:</strong> <code style="color: #34D399;">{safe_ip}</code>
+      </div>
+    </div>
+    """
+
+    html_body = render_branded_email(
+        kicker="Security Audit Notification",
+        headline="Your Admin Password Was Updated",
+        intro_html=f"This is an automated security confirmation that the password for administrator account <strong>{safe_user}</strong> on <strong>stpetebjj.com</strong> has been changed.",
+        body_html=body_html,
+        cta_label="Sign In to Admin Console",
+        cta_url=f"{base_url}{settings.ADMIN_PATH}/login",
+        site=site,
+    )
+    return subject, html_body
+
+
+def build_admin_security_alert_email(event_title: str, ip_address: str, details: str, site: dict | None = None) -> tuple[str, str]:
+    if site is None:
+        site = get_site_settings()
+    base_url = settings.BASE_URL.rstrip("/")
+    now_str = datetime.now().strftime("%b %d, %Y at %I:%M %p")
+    safe_title = html.escape(event_title)
+    safe_ip = html.escape(ip_address)
+    safe_details = html.escape(details)
+
+    subject = f"🚨 Security Alert: {event_title} ({ip_address})"
+    body_html = f"""
+    <div style="background-color: #18181B; border: 1px solid #EF4444; border-radius: 12px; padding: 18px 20px;">
+      <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #F87171; margin-bottom: 8px;">
+        &#128680; Security &amp; Firewall Event Logged
+      </div>
+      <div style="font-size: 13px; color: #E4E4E7; line-height: 1.7;">
+        <strong>Event Type:</strong> {safe_title}<br />
+        <strong>Source IP Address:</strong> <code style="color: #F87171;">{safe_ip}</code><br />
+        <strong>Timestamp:</strong> {now_str}<br />
+        <strong>Details:</strong> {safe_details}
+      </div>
+    </div>
+    """
+
+    html_body = render_branded_email(
+        kicker="Automated Security Shield",
+        headline=f"Security Event Detected: {safe_title}",
+        intro_html="Our automated security shield detected repeated failed login attempts or suspicious activity on <strong>stpetebjj.com</strong> and logged the IP address below:",
+        body_html=body_html,
+        cta_label="Review Security & IP Blacklist",
+        cta_url=f"{base_url}{settings.ADMIN_PATH}?tab=security",
+        site=site,
+    )
+    return subject, html_body
+
+
+# =====================================================================
+# HIGH-LEVEL DISPATCH FUNCTIONS
+# =====================================================================
+
+def send_quote_notification(quote_data: dict, quote_id: int = 0) -> bool:
+    """Sends:
+    1) Branded Admin New Contact/Lead Notification to academy staff (`email_quotes`).
+    2) Branded Prospect Welcome & First-Class Guide (or Private/Visitor Info) Email to the student.
+    """
+    site = get_site_settings()
+    recipients_str = site.get("email_quotes") or settings.EMAIL_QUOTES
+    admin_recipients = [r.strip() for r in recipients_str.split(",") if r.strip()]
+
+    admin_subject, admin_email_html = build_admin_new_inquiry_email(quote_data, quote_id=quote_id, site=site)
+    sent_admin, _ = dispatch_email(
+        recipients=admin_recipients,
+        subject=admin_subject,
+        html_body=admin_email_html,
+        template_type="admin_new_inquiry",
+        quote_id=quote_id,
+        reply_to=str(quote_data.get("email") or ""),
+    )
+
+    if site.get("email_auto_reply_enabled", "true").lower() == "true" and quote_data.get("email"):
+        student_subject, student_email_html, tpl_type = build_prospect_welcome_email(quote_data, site=site)
+        dispatch_email(
+            recipients=[str(quote_data.get("email")).strip()],
+            subject=student_subject,
+            html_body=student_email_html,
+            template_type=tpl_type,
+            quote_id=quote_id,
+            reply_to=site.get("email_contact") or "info@stpetebjj.com",
+        )
+
+    return sent_admin
+
+
+def send_contact_status_email(quote_row: dict, new_status: str, custom_note: str = "") -> tuple[bool, str]:
+    """Sends a branded lifecycle email to the student when the Admin updates their status or sends a follow-up."""
+    site = get_site_settings()
+    recipient = (quote_row.get("email") or "").strip()
+    if not recipient or "@" not in recipient:
+        return False, "Contact does not have a valid email address."
+
+    subject, html_body = build_contact_status_email(
+        quote_row=quote_row,
+        new_status=new_status,
+        custom_note=custom_note,
+        site=site,
+    )
 
     return dispatch_email(
         recipients=[recipient],
@@ -515,6 +779,44 @@ def send_contact_status_email(quote_row: dict, new_status: str, custom_note: str
         template_type=f"status_{new_status}",
         quote_id=int(quote_row.get("id") or 0),
         reply_to=site.get("email_contact") or "info@stpetebjj.com",
+    )
+
+
+def send_admin_password_reset_email(username: str, recipient_email: str, reset_url: str, ip_address: str = "127.0.0.1") -> tuple[bool, str]:
+    site = get_site_settings()
+    subject, html_body = build_admin_password_reset_email(username, reset_url, ip_address, site=site)
+    return dispatch_email(
+        recipients=[recipient_email],
+        subject=subject,
+        html_body=html_body,
+        template_type="admin_password_reset",
+        quote_id=0,
+    )
+
+
+def send_admin_password_changed_email(username: str, recipient_email: str, ip_address: str = "127.0.0.1") -> tuple[bool, str]:
+    site = get_site_settings()
+    subject, html_body = build_admin_password_changed_email(username, ip_address, site=site)
+    return dispatch_email(
+        recipients=[recipient_email],
+        subject=subject,
+        html_body=html_body,
+        template_type="admin_password_changed",
+        quote_id=0,
+    )
+
+
+def send_admin_security_alert_email(event_title: str, ip_address: str, details: str) -> tuple[bool, str]:
+    site = get_site_settings()
+    recipients_str = site.get("email_quotes") or site.get("email_contact") or settings.EMAIL_QUOTES
+    admin_recipients = [r.strip() for r in recipients_str.split(",") if r.strip()]
+    subject, html_body = build_admin_security_alert_email(event_title, ip_address, details, site=site)
+    return dispatch_email(
+        recipients=admin_recipients,
+        subject=subject,
+        html_body=html_body,
+        template_type="admin_security_alert",
+        quote_id=0,
     )
 
 
@@ -548,3 +850,86 @@ def send_smtp_test_email(recipient_email: str) -> tuple[bool, str]:
         template_type="smtp_test",
         quote_id=0,
     )
+
+
+def render_scenario_preview(scenario_key: str) -> tuple[str, str]:
+    """Generates a realistic preview (subject, html_body) for any of the 10 system email scenarios."""
+    site = get_site_settings()
+    base_url = settings.BASE_URL.rstrip("/")
+    sample_quote = {
+        "id": 108,
+        "name": "Marcus Rivera",
+        "email": "marcus.rivera@example.com",
+        "phone": "(727) 555-0194",
+        "program_interest": "Free Introductory Class (Fundamentals)",
+        "experience_level": "Brand New Beginner",
+        "preferred_date": "Monday 6:00 PM Fundamentals",
+        "message": "Looking to start Brazilian Jiu-Jitsu for self-defense and fitness. Do I need to buy a Gi before my first class?",
+        "source_page": "/contact",
+    }
+
+    if scenario_key == "prospect_welcome":
+        subj, html_body, _ = build_prospect_welcome_email(sample_quote, site=site)
+        return subj, html_body
+
+    if scenario_key == "admin_new_inquiry":
+        return build_admin_new_inquiry_email(sample_quote, quote_id=108, site=site)
+
+    if scenario_key == "private_or_dropin":
+        special_quote = dict(sample_quote)
+        special_quote["program_interest"] = "Private Lessons (Gi or No-Gi) & Visiting Drop-In"
+        special_quote["experience_level"] = "Blue Belt (Visiting from Out of Town)"
+        special_quote["preferred_date"] = "Thursday 11:00 AM or Private 1-on-1 Session"
+        subj, html_body, _ = build_prospect_welcome_email(special_quote, site=site)
+        return subj, html_body
+
+    if scenario_key == "status_free_class_scheduled":
+        return build_contact_status_email(
+            sample_quote,
+            "free_class_scheduled",
+            custom_note="Hi Marcus! We have you confirmed for Monday at 6:00 PM. Ask for Coach Sean or Coach AJ when you walk in — we'll have an A2 loaner Gi ready for you!",
+            site=site,
+        )
+
+    if scenario_key == "status_followed_up":
+        return build_contact_status_email(
+            sample_quote,
+            "followed_up",
+            custom_note="Great speaking with you earlier! Let us know if Monday at 6:00 PM or Wednesday at 6:00 PM works better for your Free Intro Class.",
+            site=site,
+        )
+
+    if scenario_key == "status_trial_active":
+        return build_contact_status_email(
+            sample_quote,
+            "trial_active",
+            custom_note="Awesome job in your first class tonight! Your 30-Day Free Trial is now active.",
+            site=site,
+        )
+
+    if scenario_key == "status_signed_up":
+        return build_contact_status_email(
+            sample_quote,
+            "signed_up",
+            custom_note="Welcome to the St. Pete BJJ team! Let us know if you have any questions at all.",
+            site=site,
+        )
+
+    if scenario_key == "admin_password_reset":
+        reset_url = f"{base_url}{settings.ADMIN_PATH}/reset-password?token=spbjj-reset-9f8a7b6c5d4e3f2a1b"
+        return build_admin_password_reset_email("admin", reset_url, ip_address="72.184.112.45", site=site)
+
+    if scenario_key == "admin_password_changed":
+        return build_admin_password_changed_email("admin", ip_address="72.184.112.45", site=site)
+
+    if scenario_key == "admin_security_alert":
+        return build_admin_security_alert_email(
+            "5 Failed Admin Login Attempts",
+            ip_address="185.220.101.42",
+            details="5 consecutive failed login attempts for username 'admin'. Temporary rate-limit warning triggered.",
+            site=site,
+        )
+
+    # Default fallback
+    subj, html_body, _ = build_prospect_welcome_email(sample_quote, site=site)
+    return subj, html_body

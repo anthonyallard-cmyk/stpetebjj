@@ -1,8 +1,9 @@
 import hashlib
 import json
 import re
+import secrets
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from fastapi import APIRouter, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse
@@ -14,6 +15,12 @@ from app.services.ai_chat import fetch_compatible_models, PROVIDER_LABELS, PROVI
 from app.services.email_service import (
     CRM_STATUS_OPTIONS,
     CRM_STATUS_LABELS,
+    EMAIL_SCENARIO_CATALOG,
+    dispatch_email,
+    render_scenario_preview,
+    send_admin_password_changed_email,
+    send_admin_password_reset_email,
+    send_admin_security_alert_email,
     send_contact_status_email,
     send_quote_notification,
     send_smtp_test_email,
@@ -22,6 +29,13 @@ from app.services.email_service import (
 router = APIRouter()
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 ADMIN_BASE = settings.ADMIN_PATH
+
+
+def get_client_ip(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "127.0.0.1"
 
 
 def is_authenticated(request: Request) -> bool:
@@ -36,6 +50,12 @@ def verify_password(plain_pw: str, stored_hash: str) -> bool:
     return calc == h
 
 
+def hash_password(plain_pw: str) -> str:
+    salt = secrets.token_hex(8)
+    h = hashlib.sha256((salt + plain_pw).encode("utf-8")).hexdigest()
+    return f"{salt}:{h}"
+
+
 def slugify(text: str) -> str:
     s = re.sub(r"[^a-zA-Z0-9\s-]", "", text.lower()).strip()
     s = re.sub(r"[\s_-]+", "-", s)
@@ -43,13 +63,13 @@ def slugify(text: str) -> str:
 
 
 @router.get(f"{ADMIN_BASE}/login", response_class=HTMLResponse)
-async def admin_login_page(request: Request, error: str = ""):
+async def admin_login_page(request: Request, error: str = "", msg: str = ""):
     if is_authenticated(request):
         return RedirectResponse(url=ADMIN_BASE, status_code=302)
     return templates.TemplateResponse(
         request,
         "admin/login.html",
-        {"admin_path": ADMIN_BASE, "error": error, "site": get_site_settings()},
+        {"admin_path": ADMIN_BASE, "error": error, "msg": msg, "mode": "login", "site": get_site_settings()},
     )
 
 
@@ -59,16 +79,36 @@ async def admin_login_submit(
     username: str = Form(...),
     password: str = Form(...),
 ):
+    ip_addr = get_client_ip(request)
     with db_cursor() as cur:
         cur.execute(
-            "SELECT id, username, password_hash FROM users WHERE username = ? AND is_active = 1",
+            "SELECT id, username, password_hash, failed_attempts FROM users WHERE username = ? AND is_active = 1",
             (username.strip(),),
         )
         user = cur.fetchone()
         if user and verify_password(password, user["password_hash"]):
+            cur.execute(
+                "UPDATE users SET failed_attempts = 0, last_login_at = ? WHERE id = ?",
+                (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user["id"]),
+            )
             request.session["admin_authenticated"] = True
             request.session["admin_user"] = user["username"]
             return RedirectResponse(url=ADMIN_BASE, status_code=302)
+
+        # Increment failed login attempts and trigger Security Alert email on threshold
+        if user:
+            fails = int(user["failed_attempts"] or 0) + 1
+            cur.execute("UPDATE users SET failed_attempts = ? WHERE id = ?", (fails, user["id"]))
+            cur.execute(
+                "INSERT INTO security_events (ip_address, country_code, path, reason) VALUES (?, 'US', ?, ?)",
+                (ip_addr, f"{ADMIN_BASE}/login", f"Failed Admin Login Attempt #{fails} for '{username.strip()}'"),
+            )
+            if fails >= 5 and fails % 5 == 0:
+                send_admin_security_alert_email(
+                    event_title=f"{fails} Failed Admin Login Attempts",
+                    ip_address=ip_addr,
+                    details=f"{fails} consecutive failed login attempts for admin user '{username.strip()}'.",
+                )
 
     return templates.TemplateResponse(
         request,
@@ -76,10 +116,139 @@ async def admin_login_submit(
         {
             "admin_path": ADMIN_BASE,
             "error": "Invalid username or password.",
+            "msg": "",
+            "mode": "login",
             "site": get_site_settings(),
         },
         status_code=401,
     )
+
+
+@router.get(f"{ADMIN_BASE}/forgot-password", response_class=HTMLResponse)
+async def admin_forgot_password_page(request: Request, error: str = "", msg: str = ""):
+    return templates.TemplateResponse(
+        request,
+        "admin/login.html",
+        {"admin_path": ADMIN_BASE, "error": error, "msg": msg, "mode": "forgot", "site": get_site_settings()},
+    )
+
+
+@router.post(f"{ADMIN_BASE}/forgot-password", response_class=HTMLResponse)
+async def admin_forgot_password_submit(request: Request, identifier: str = Form(...)):
+    ident = identifier.strip()
+    ip_addr = get_client_ip(request)
+    site = get_site_settings()
+    base_url = settings.BASE_URL.rstrip("/")
+
+    with db_cursor() as cur:
+        cur.execute(
+            "SELECT id, username, email FROM users WHERE (LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)) AND is_active = 1",
+            (ident, ident),
+        )
+        user = cur.fetchone()
+        if user:
+            token = f"spbjj-{secrets.token_urlsafe(24)}"
+            expires_at = (datetime.now() + timedelta(minutes=60)).strftime("%Y-%m-%d %H:%M:%S")
+            cur.execute(
+                "UPDATE users SET reset_token = ?, reset_expires_at = ? WHERE id = ?",
+                (token, expires_at, user["id"]),
+            )
+            recipient = (user["email"] or site.get("email_contact") or "info@stpetebjj.com").strip()
+            reset_url = f"{base_url}{ADMIN_BASE}/reset-password?token={token}"
+            send_admin_password_reset_email(
+                username=user["username"],
+                recipient_email=recipient,
+                reset_url=reset_url,
+                ip_address=ip_addr,
+            )
+
+    return templates.TemplateResponse(
+        request,
+        "admin/login.html",
+        {
+            "admin_path": ADMIN_BASE,
+            "error": "",
+            "msg": "If that account exists, a branded password reset link has been sent to the administrator email on file.",
+            "mode": "forgot",
+            "site": site,
+        },
+    )
+
+
+@router.get(f"{ADMIN_BASE}/reset-password", response_class=HTMLResponse)
+async def admin_reset_password_page(request: Request, token: str = "", error: str = ""):
+    site = get_site_settings()
+    if not token.strip():
+        return RedirectResponse(url=f"{ADMIN_BASE}/forgot-password?error=Invalid+or+missing+reset+token", status_code=302)
+
+    with db_cursor() as cur:
+        cur.execute("SELECT id, username, reset_expires_at FROM users WHERE reset_token = ? AND is_active = 1", (token.strip(),))
+        user = cur.fetchone()
+        if not user:
+            return templates.TemplateResponse(
+                request,
+                "admin/login.html",
+                {
+                    "admin_path": ADMIN_BASE,
+                    "error": "This password reset link is invalid or has already been used.",
+                    "msg": "",
+                    "mode": "forgot",
+                    "site": site,
+                },
+            )
+
+    return templates.TemplateResponse(
+        request,
+        "admin/login.html",
+        {
+            "admin_path": ADMIN_BASE,
+            "error": error,
+            "msg": "",
+            "mode": "reset",
+            "token": token.strip(),
+            "site": site,
+        },
+    )
+
+
+@router.post(f"{ADMIN_BASE}/reset-password", response_class=HTMLResponse)
+async def admin_reset_password_submit(
+    request: Request,
+    token: str = Form(...),
+    new_password: str = Form(...),
+    confirm_password: str = Form(...),
+):
+    site = get_site_settings()
+    ip_addr = get_client_ip(request)
+    if len(new_password.strip()) < 8 or new_password != confirm_password:
+        return templates.TemplateResponse(
+            request,
+            "admin/login.html",
+            {
+                "admin_path": ADMIN_BASE,
+                "error": "Passwords must match and be at least 8 characters long.",
+                "msg": "",
+                "mode": "reset",
+                "token": token.strip(),
+                "site": site,
+            },
+        )
+
+    with db_cursor() as cur:
+        cur.execute("SELECT id, username, email, reset_expires_at FROM users WHERE reset_token = ? AND is_active = 1", (token.strip(),))
+        user = cur.fetchone()
+        if not user:
+            return RedirectResponse(url=f"{ADMIN_BASE}/forgot-password?error=Reset+token+expired+or+invalid", status_code=302)
+
+        new_hash = hash_password(new_password.strip())
+        cur.execute(
+            "UPDATE users SET password_hash = ?, reset_token = '', reset_expires_at = '', failed_attempts = 0 WHERE id = ?",
+            (new_hash, user["id"]),
+        )
+        recipient = (user["email"] or site.get("email_contact") or "info@stpetebjj.com").strip()
+        send_admin_password_changed_email(username=user["username"], recipient_email=recipient, ip_address=ip_addr)
+
+    return RedirectResponse(url=f"{ADMIN_BASE}/login?msg=Password+Successfully+Reset!+Please+Sign+In.", status_code=302)
 
 
 @router.get(f"{ADMIN_BASE}/logout")
@@ -240,6 +409,7 @@ async def admin_dashboard(request: Request, tab: str = "instructors", msg: str =
             "ai_providers": PROVIDER_LABELS,
             "ai_models_catalog": PROVIDER_MODELS_CATALOG,
             "ai_initial_models": ai_initial_models,
+            "email_scenarios": EMAIL_SCENARIO_CATALOG,
         },
     )
 
@@ -416,7 +586,62 @@ async def admin_preview_email(request: Request, email_id: int):
         row = cur.fetchone()
         if not row or not row["html_body"]:
             return HTMLResponse("<p>Email preview not found.</p>", status_code=404)
-        return HTMLResponse(row["html_body"])
+        body = row["html_body"].replace(f"{settings.BASE_URL.rstrip('/')}/static/", "/static/")
+        return HTMLResponse(body)
+
+
+@router.get(f"{ADMIN_BASE}/emails/scenario/{{scenario_key}}", response_class=HTMLResponse)
+async def admin_preview_scenario_email(request: Request, scenario_key: str):
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
+    _, html_body = render_scenario_preview(scenario_key)
+    body = html_body.replace(f"{settings.BASE_URL.rstrip('/')}/static/", "/static/")
+    return HTMLResponse(body)
+
+
+@router.post(f"{ADMIN_BASE}/emails/scenario/{{scenario_key}}/send")
+async def admin_send_scenario_sample(request: Request, scenario_key: str, recipient: str = Form(...)):
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
+    subj, html_body = render_scenario_preview(scenario_key)
+    sent_ok, _ = dispatch_email(
+        recipients=[recipient.strip()],
+        subject=f"[Preview] {subj}",
+        html_body=html_body,
+        template_type=f"preview_{scenario_key}",
+        quote_id=0,
+    )
+    msg = f"Sample+({scenario_key})+Delivered+to+{recipient.strip()}" if sent_ok else f"Sample+({scenario_key})+Generated+%26+Logged+to+Outbox"
+    return RedirectResponse(url=f"{ADMIN_BASE}?tab=inquiries&msg={msg}", status_code=302)
+
+
+@router.post(f"{ADMIN_BASE}/account/password")
+async def admin_change_password(
+    request: Request,
+    admin_email: str = Form("info@stpetebjj.com"),
+    current_password: str = Form(...),
+    new_password: str = Form(...),
+    confirm_password: str = Form(...),
+):
+    if not is_authenticated(request):
+        return RedirectResponse(url=f"{ADMIN_BASE}/login", status_code=302)
+    if len(new_password.strip()) < 8 or new_password != confirm_password:
+        return RedirectResponse(url=f"{ADMIN_BASE}?tab=security&msg=Error:+New+passwords+must+match+and+be+at+least+8+chars", status_code=302)
+
+    username = request.session.get("admin_user") or "admin"
+    ip_addr = get_client_ip(request)
+    with db_cursor() as cur:
+        cur.execute("SELECT id, username, password_hash FROM users WHERE username = ?", (username,))
+        user = cur.fetchone()
+        if not user or not verify_password(current_password, user["password_hash"]):
+            return RedirectResponse(url=f"{ADMIN_BASE}?tab=security&msg=Error:+Current+password+is+incorrect", status_code=302)
+        new_hash = hash_password(new_password.strip())
+        cur.execute(
+            "UPDATE users SET password_hash = ?, email = ?, failed_attempts = 0 WHERE id = ?",
+            (new_hash, admin_email.strip(), user["id"]),
+        )
+    send_admin_password_changed_email(username=username, recipient_email=admin_email.strip(), ip_address=ip_addr)
+    return RedirectResponse(url=f"{ADMIN_BASE}?tab=security&msg=Admin+Password+Updated+%26+Security+Confirmation+Email+Sent", status_code=302)
 
 
 @router.post(f"{ADMIN_BASE}/quotes/delete")

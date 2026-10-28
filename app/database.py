@@ -287,3 +287,17 @@ def ensure_cms_schema():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
+
+        # 6. Enhance users table for Admin Password Reset & Security Alerts
+        cur.execute("PRAGMA table_info(users)")
+        user_cols = {row["name"] for row in cur.fetchall()}
+        user_extra_cols = [
+            ("email", "TEXT DEFAULT 'info@stpetebjj.com'"),
+            ("reset_token", "TEXT DEFAULT ''"),
+            ("reset_expires_at", "TEXT DEFAULT ''"),
+            ("failed_attempts", "INTEGER DEFAULT 0"),
+            ("last_login_at", "TEXT DEFAULT ''"),
+        ]
+        for col_name, col_def in user_extra_cols:
+            if col_name not in user_cols:
+                cur.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_def}")

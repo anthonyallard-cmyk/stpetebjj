@@ -1547,6 +1547,41 @@
         {% endif %}
       </div>
 
+      <!-- All 10 System Email Scenarios & Live Preview Gallery -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+          <div>
+            <h2 class="font-display text-2xl text-white">ALL SYSTEM EMAIL SCENARIOS &amp; LIVE TEMPLATE GALLERY ({{ email_scenarios|length }})</h2>
+            <p class="text-xs text-zinc-400">Preview every automated &amp; CRM email scenario across the platform (Prospect Welcome, Admin Alerts, Private/Drop-In Requests, CRM Pipeline Statuses, Password Resets &amp; Security Alerts).</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {% for sc in email_scenarios %}
+          <div class="bg-zinc-950 border border-white/10 rounded-xl p-4 flex flex-col justify-between gap-3">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <span class="font-bold text-sm text-white">{{ sc.title }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-[#CE1E36]/20 text-[#FF4D64] border border-[#CE1E36]/30">{{ sc.badge }}</span>
+              </div>
+              <p class="text-[11px] text-zinc-400"><strong>Recipient:</strong> {{ sc.recipient_role }} • {{ sc.trigger }}</p>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5">
+              <button type="button" onclick="openEmailPreviewModal('{{ admin_path }}/emails/scenario/{{ sc.key }}')"
+                class="bg-white/10 hover:bg-[#CE1E36] text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg transition">
+                👁️ Preview Branded HTML
+              </button>
+              <form action="{{ admin_path }}/emails/scenario/{{ sc.key }}/send" method="POST" class="flex items-center gap-1.5">
+                <input type="email" name="recipient" required value="{{ site.email_contact or 'info@stpetebjj.com' }}" class="bg-zinc-900 border border-white/15 rounded-lg px-2.5 py-1 text-[11px] text-white w-40" />
+                <button type="submit" class="bg-emerald-600/80 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase px-2.5 py-1.5 rounded-lg transition">
+                  Send Sample
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
       <!-- Branded Email Outbox & Delivery Log with Live HTML Preview -->
       <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl">
         <div class="flex items-center justify-between border-b border-white/10 pb-3">
@@ -1672,6 +1707,35 @@
           </div>
           {% endfor %}
         </div>
+      </div>
+
+      <!-- Admin Account Password & Recovery Email -->
+      <div class="bg-zinc-900 border border-white/10 rounded-2xl p-6 space-y-4 lg:col-span-2">
+        <div>
+          <h2 class="font-display text-3xl text-white">ADMIN ACCOUNT PASSWORD &amp; RECOVERY EMAIL</h2>
+          <p class="text-xs text-zinc-400">Update your administrator password and recovery email used for "Forgot Password?" links and security alerts.</p>
+        </div>
+        <form action="{{ admin_path }}/account/password" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Admin Recovery Email</label>
+            <input type="email" name="admin_email" required value="{{ site.email_contact or 'info@stpetebjj.com' }}" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Current Password</label>
+            <input type="password" name="current_password" required placeholder="••••••••" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">New Password (min 8 chars)</label>
+            <input type="password" name="new_password" required minlength="8" placeholder="••••••••" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-zinc-400 mb-1">Confirm New Password</label>
+            <div class="flex gap-2">
+              <input type="password" name="confirm_password" required minlength="8" placeholder="••••••••" class="w-full bg-zinc-950 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white" />
+              <button type="submit" class="bg-[#CE1E36] hover:bg-red-700 text-white font-bold text-xs uppercase px-5 py-2 rounded-xl shrink-0">Update</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
     {% endif %}
